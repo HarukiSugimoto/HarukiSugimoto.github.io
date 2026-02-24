@@ -192,6 +192,12 @@
     .data-table tbody tr:hover {
       background: #f8f9fa;
     }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .data-table tbody tr.clickable:hover {
+      background: #e8f4fc;
+    }
     .link {
       color: #3498db;
       text-decoration: none;
@@ -591,69 +597,38 @@
                 <th>ロール名</th>
                 <th>説明</th>
                 <th>利用中ユーザー数</th>
-                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-101_role_edit.html?id=R-01'">
                 <td>R-01</td>
                 <td><a href="SC-101_role_edit.html?id=R-01" class="link">管理者</a></td>
                 <td class="role-description">全ての機能・データへのアクセス権限を持つ</td>
                 <td><span class="user-count">3名</span></td>
-                <td>
-                  <div class="action-buttons">
-                    <a href="SC-101_role_edit.html?id=R-01" class="btn btn-secondary btn-sm">編集</a>
-                    <button class="btn btn-danger btn-sm" onclick="showDeleteModal('管理者')">削除</button>
-                  </div>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-101_role_edit.html?id=R-02'">
                 <td>R-02</td>
                 <td><a href="SC-101_role_edit.html?id=R-02" class="link">営業マネージャー</a></td>
                 <td class="role-description">部署内の案件・活動の参照・編集が可能</td>
                 <td><span class="user-count">5名</span></td>
-                <td>
-                  <div class="action-buttons">
-                    <a href="SC-101_role_edit.html?id=R-02" class="btn btn-secondary btn-sm">編集</a>
-                    <button class="btn btn-danger btn-sm" onclick="showDeleteModal('営業マネージャー')">削除</button>
-                  </div>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-101_role_edit.html?id=R-03'">
                 <td>R-03</td>
                 <td><a href="SC-101_role_edit.html?id=R-03" class="link">営業担当</a></td>
                 <td class="role-description">自分の担当案件の作成・更新が可能</td>
                 <td><span class="user-count">20名</span></td>
-                <td>
-                  <div class="action-buttons">
-                    <a href="SC-101_role_edit.html?id=R-03" class="btn btn-secondary btn-sm">編集</a>
-                    <button class="btn btn-danger btn-sm" onclick="showDeleteModal('営業担当')">削除</button>
-                  </div>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-101_role_edit.html?id=R-04'">
                 <td>R-04</td>
                 <td><a href="SC-101_role_edit.html?id=R-04" class="link">閲覧者</a></td>
                 <td class="role-description">データの参照のみ可能</td>
                 <td><span class="user-count">8名</span></td>
-                <td>
-                  <div class="action-buttons">
-                    <a href="SC-101_role_edit.html?id=R-04" class="btn btn-secondary btn-sm">編集</a>
-                    <button class="btn btn-danger btn-sm" onclick="showDeleteModal('閲覧者')">削除</button>
-                  </div>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-101_role_edit.html?id=R-05'">
                 <td>R-05</td>
                 <td><a href="SC-101_role_edit.html?id=R-05" class="link">デリバリー担当</a></td>
                 <td class="role-description">受注後の案件情報を参照可能</td>
                 <td><span class="user-count">12名</span></td>
-                <td>
-                  <div class="action-buttons">
-                    <a href="SC-101_role_edit.html?id=R-05" class="btn btn-secondary btn-sm">編集</a>
-                    <button class="btn btn-danger btn-sm" onclick="showDeleteModal('デリバリー担当')">削除</button>
-                  </div>
-                </td>
               </tr>
             </tbody>
           </table>

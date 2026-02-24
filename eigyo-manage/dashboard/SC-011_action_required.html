@@ -237,6 +237,12 @@
     .data-table tr:hover {
       background: #f8f9fa;
     }
+    .data-table tr.clickable {
+      cursor: pointer;
+    }
+    .data-table tr.clickable:hover {
+      background: #e8f4fc;
+    }
     /* 種別バッジ */
     .type-badge {
       display: inline-block;
@@ -659,11 +665,10 @@
                 <th class="sortable" data-sort="last_action">最終アクション</th>
                 <th class="sortable" data-sort="next_action">次回アクション日</th>
                 <th>担当</th>
-                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
                 <td><span class="type-badge">商談（本丸）</span></td>
                 <td><a href="#" class="link">A社</a></td>
                 <td>鈴木 一郎</td>
@@ -671,9 +676,8 @@
                 <td>02/01<br><span style="color: #7f8c8d;">提案中</span></td>
                 <td><span style="color: #95a5a6;">（未設定）</span></td>
                 <td>山田/田中</td>
-                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
                 <td><span class="type-badge">リード</span></td>
                 <td><a href="#" class="link">B社</a></td>
                 <td>佐藤 花子</td>
@@ -681,9 +685,8 @@
                 <td>01/20<br><span style="color: #7f8c8d;">接触前</span></td>
                 <td><span class="date-overdue">01/10</span></td>
                 <td>佐藤</td>
-                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
                 <td><span class="type-badge">商談（本丸）</span></td>
                 <td><a href="#" class="link">C社</a></td>
                 <td>田中 太郎</td>
@@ -691,9 +694,8 @@
                 <td>01/30<br><span style="color: #7f8c8d;">交渉中</span></td>
                 <td>02/25</td>
                 <td>田中</td>
-                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
                 <td><span class="type-badge">リード</span></td>
                 <td><a href="#" class="link">D社</a></td>
                 <td>山本 次郎</td>
@@ -701,9 +703,8 @@
                 <td>01/25<br><span style="color: #7f8c8d;">アポ調整中</span></td>
                 <td>02/15</td>
                 <td>山田/佐藤</td>
-                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
                 <td><span class="type-badge">商談（ドア）</span></td>
                 <td><a href="#" class="link">E社</a></td>
                 <td>高橋 三郎</td>
@@ -711,9 +712,8 @@
                 <td>01/15<br><span style="color: #7f8c8d;">見積提出</span></td>
                 <td><span class="date-overdue">02/01</span></td>
                 <td>佐藤</td>
-                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
                 <td><span class="type-badge">リード</span></td>
                 <td><a href="#" class="link">F社</a></td>
                 <td>伊藤 四郎</td>
@@ -721,7 +721,6 @@
                 <td>02/05<br><span style="color: #7f8c8d;">接触前</span></td>
                 <td><span style="color: #95a5a6;">（未設定）</span></td>
                 <td>田中</td>
-                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
               </tr>
             </tbody>
           </table>

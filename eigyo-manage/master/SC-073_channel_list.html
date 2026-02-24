@@ -196,6 +196,12 @@
     .data-table tbody tr:hover {
       background: #f8f9fa;
     }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .data-table tbody tr.clickable:hover {
+      background: #e8f4fc;
+    }
     .action-buttons {
       display: flex;
       gap: 4px;
@@ -583,49 +589,28 @@
               <tr>
                 <th>ID</th>
                 <th>チャネル名</th>
-                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-075_channel_edit.html'">
                 <td>CH01</td>
                 <td>知人</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-075_channel_edit.html'">
                 <td>CH02</td>
                 <td>アウトバウンド</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-075_channel_edit.html'">
                 <td>CH03</td>
                 <td>展示会</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-075_channel_edit.html'">
                 <td>CH04</td>
                 <td>セミナー</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-075_channel_edit.html'">
                 <td>CH05</td>
                 <td>インバウンド</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
             </tbody>
           </table>

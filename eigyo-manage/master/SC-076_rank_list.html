@@ -196,6 +196,12 @@
     .data-table tbody tr:hover {
       background: #f8f9fa;
     }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .data-table tbody tr.clickable:hover {
+      background: #e8f4fc;
+    }
     .action-buttons {
       display: flex;
       gap: 4px;
@@ -588,39 +594,26 @@
                 <th>ランク</th>
                 <th>ターゲット単価</th>
                 <th>ターゲット売上</th>
-                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-078_rank_edit.html'">
                 <td>R-01</td>
                 <td>松</td>
-                <td >1000〜1500万</td>
-                <td >1億</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
+                <td>1000〜1500万</td>
+                <td>1億</td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-078_rank_edit.html'">
                 <td>R-02</td>
                 <td>竹</td>
-                <td >600〜900万</td>
-                <td >0.5億</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
+                <td>600〜900万</td>
+                <td>0.5億</td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-078_rank_edit.html'">
                 <td>R-03</td>
                 <td>梅</td>
-                <td >300〜600万</td>
-                <td >0.1億</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
+                <td>300〜600万</td>
+                <td>0.1億</td>
               </tr>
             </tbody>
           </table>

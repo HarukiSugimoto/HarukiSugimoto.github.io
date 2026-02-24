@@ -196,6 +196,12 @@
     .data-table tbody tr:hover {
       background: #f8f9fa;
     }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .data-table tbody tr.clickable:hover {
+      background: #e8f4fc;
+    }
     .action-buttons {
       display: flex;
       gap: 4px;
@@ -583,41 +589,24 @@
               <tr>
                 <th>ID</th>
                 <th>部署名</th>
-                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-072_department_edit.html'">
                 <td>DEP01</td>
                 <td>経営企画</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-072_department_edit.html'">
                 <td>DEP02</td>
                 <td>DX</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-072_department_edit.html'">
                 <td>DEP03</td>
                 <td>業務部門</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
-              <tr>
+              <tr class="clickable" onclick="location.href='SC-072_department_edit.html'">
                 <td>DEP04</td>
                 <td>情報システム</td>
-                <td class="action-buttons">
-                  <button class="btn btn-secondary btn-sm">編集</button>
-                  <button class="btn btn-danger btn-sm">削除</button>
-                </td>
               </tr>
             </tbody>
           </table>

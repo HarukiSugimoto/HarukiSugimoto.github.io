@@ -786,22 +786,34 @@
       position: absolute;
       bottom: 4px;
     }
-    .target-line-horizontal {
+    .target-line-svg {
       position: absolute;
+      top: 0;
       left: 0;
-      right: 0;
-      bottom: calc(24px + 40px);
-      height: 2px;
-      background: #e74c3c;
-      opacity: 0.7;
+      width: 100%;
+      height: calc(100% - 24px);
+      pointer-events: none;
+      z-index: 10;
+      overflow: visible;
     }
-    .target-line-horizontal::after {
-      content: "目標";
-      position: absolute;
-      right: 0;
-      top: -14px;
+    .target-line-path {
+      fill: none;
+      stroke: #e74c3c;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+    .target-point {
+      fill: #e74c3c;
+      vector-effect: non-scaling-stroke;
+    }
+    .target-label {
+      fill: #e74c3c;
       font-size: 10px;
-      color: #e74c3c;
+      font-weight: 600;
+      text-anchor: middle;
+      dominant-baseline: auto;
     }
     /* ファネル */
     .funnel-container {
@@ -814,6 +826,7 @@
       height: 36px;
       display: flex;
       align-items: center;
+      justify-content: center;
     }
     .funnel-bar {
       height: 100%;
@@ -832,12 +845,13 @@
       background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
     }
     .funnel-info {
-      position: relative;
+      position: absolute;
       z-index: 1;
-      width: 100%;
       display: flex;
       justify-content: space-between;
       padding: 0 12px;
+      left: 50%;
+      transform: translateX(-50%);
     }
     .funnel-name {
       font-weight: 600;
@@ -1282,9 +1296,11 @@
           <div class="chart-legend">
             <span class="legend-item"><span class="legend-dot lead-dot"></span>リード獲得</span>
             <span class="legend-item"><span class="legend-dot deal-dot"></span>商談化</span>
-            <span class="legend-item"><span class="legend-line"></span>目標10件</span>
+            <span class="legend-item"><span class="legend-line"></span>目標</span>
           </div>
-          <div class="monthly-bars-container">
+          <div class="monthly-bars-container" style="position: relative;">
+            <!-- 目標折れ線グラフ（SVG） -->
+            <svg class="target-line-svg" id="targetLineSvg"></svg>
             <div class="monthly-col">
               <div class="stacked-bars">
                 <div class="bar-lead" style="height: 48px;" title="リード12件"></div>
@@ -1355,7 +1371,6 @@
               </div>
               <span class="month-label">1月</span>
             </div>
-            <div class="target-line-horizontal"></div>
           </div>
         </div>
       </div>
@@ -1370,7 +1385,7 @@
             <div class="funnel-container">
               <div class="funnel-stage funnel-lead">
                 <div class="funnel-bar" style="width: 100%;"></div>
-                <div class="funnel-info">
+                <div class="funnel-info" style="width: 100%;">
                   <span class="funnel-name">リード</span>
                   <span class="funnel-count">128件</span>
                 </div>
@@ -1380,7 +1395,7 @@
               </div>
               <div class="funnel-stage funnel-deal">
                 <div class="funnel-bar" style="width: 70%;"></div>
-                <div class="funnel-info">
+                <div class="funnel-info" style="width: 70%;">
                   <span class="funnel-name">ドアオープン</span>
                   <span class="funnel-count">52件</span>
                 </div>
@@ -1390,7 +1405,7 @@
               </div>
               <div class="funnel-stage funnel-won">
                 <div class="funnel-bar" style="width: 35%;"></div>
-                <div class="funnel-info">
+                <div class="funnel-info" style="width: 35%;">
                   <span class="funnel-name">受注</span>
                   <span class="funnel-count">6件</span>
                 </div>
@@ -1403,7 +1418,7 @@
             <div class="funnel-container">
               <div class="funnel-stage funnel-lead">
                 <div class="funnel-bar" style="width: 100%;"></div>
-                <div class="funnel-info">
+                <div class="funnel-info" style="width: 100%;">
                   <span class="funnel-name">リード</span>
                   <span class="funnel-count">128件</span>
                 </div>
@@ -1413,7 +1428,7 @@
               </div>
               <div class="funnel-stage funnel-deal">
                 <div class="funnel-bar" style="width: 70%;"></div>
-                <div class="funnel-info">
+                <div class="funnel-info" style="width: 70%;">
                   <span class="funnel-name">ドアオープン</span>
                   <span class="funnel-count">52件</span>
                 </div>
@@ -1423,7 +1438,7 @@
               </div>
               <div class="funnel-stage" style="position: relative; height: 36px;">
                 <div class="funnel-bar" style="width: 50%; background: linear-gradient(90deg, #9b59b6 0%, #a569bd 100%);"></div>
-                <div class="funnel-info">
+                <div class="funnel-info" style="width: 50%;">
                   <span class="funnel-name">本丸</span>
                   <span class="funnel-count">18件</span>
                 </div>
@@ -1447,6 +1462,58 @@
     function toggleCategory(header) {
       header.parentElement.classList.toggle('collapsed');
     }
+
+    // 目標折れ線グラフを描画
+    function drawTargetLine() {
+      const svg = document.getElementById('targetLineSvg');
+      if (!svg) return;
+
+      const container = svg.parentElement;
+      const cols = container.querySelectorAll('.monthly-col');
+      const targets = [10, 12, 11, 9, 8, 10, 12, 13, 14, 10];
+      const maxTarget = 16; // グラフの最大値
+      const height = svg.clientHeight || 96;
+
+      // 各月の中央X座標と目標Y座標を計算
+      const points = [];
+      cols.forEach((col, i) => {
+        const rect = col.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const x = rect.left - containerRect.left + rect.width / 2;
+        const y = height - (targets[i] / maxTarget) * height;
+        points.push({ x, y, target: targets[i] });
+      });
+
+      // SVGをクリアして再描画
+      svg.innerHTML = '';
+
+      // 折れ線
+      const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      polyline.setAttribute('class', 'target-line-path');
+      polyline.setAttribute('points', points.map(p => `${p.x},${p.y}`).join(' '));
+      svg.appendChild(polyline);
+
+      // 各点とラベル
+      points.forEach(p => {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('class', 'target-point');
+        circle.setAttribute('cx', p.x);
+        circle.setAttribute('cy', p.y);
+        circle.setAttribute('r', 4);
+        svg.appendChild(circle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('class', 'target-label');
+        text.setAttribute('x', p.x);
+        text.setAttribute('y', p.y - 10);
+        text.textContent = p.target;
+        svg.appendChild(text);
+      });
+    }
+
+    // 初期描画とリサイズ対応
+    window.addEventListener('load', drawTargetLine);
+    window.addEventListener('resize', drawTargetLine);
   </script>
 </body>
 </html>

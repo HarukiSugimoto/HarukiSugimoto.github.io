@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-034 紐付け管理 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .breadcrumb {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 12px;
+    }
+    .breadcrumb a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .breadcrumb span {
+      margin: 0 6px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-danger {
+      background: #e74c3c;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    /* チェーン表示 */
+    .chain-container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .chain-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chain-title-icon {
+      font-size: 20px;
+    }
+    .chain {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+    }
+    .chain-node {
+      flex: 1;
+      max-width: 280px;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .chain-node:hover {
+      border-color: #3498db;
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+    }
+    .chain-node.current {
+      border-color: #3498db;
+      background: linear-gradient(135deg, #ebf5fb 0%, #fff 100%);
+    }
+    .chain-node.current::before {
+      content: '現在';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: #3498db;
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .chain-node.empty {
+      border-style: dashed;
+      background: #fafafa;
+    }
+    .chain-node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .chain-node-type {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .type-lead {
+      background: #e8f8f5;
+      color: #1abc9c;
+    }
+    .type-door {
+      background: #ebf5fb;
+      color: #3498db;
+    }
+    .type-honmaru {
+      background: #fef5e7;
+      color: #e67e22;
+    }
+    .chain-node-id {
+      font-size: 11px;
+      color: #95a5a6;
+    }
+    .chain-node-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .chain-node-company {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 12px;
+    }
+    .chain-node-meta {
+      font-size: 12px;
+      color: #95a5a6;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chain-node-actions {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #ecf0f1;
+      display: flex;
+      gap: 8px;
+    }
+    .chain-node-empty-text {
+      color: #bdc3c7;
+      font-size: 14px;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .chain-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      flex-shrink: 0;
+    }
+    .chain-arrow-line {
+      display: flex;
+      align-items: center;
+      color: #bdc3c7;
+      font-size: 24px;
+    }
+    .chain-arrow-line::before {
+      content: '';
+      width: 30px;
+      height: 2px;
+      background: #ddd;
+    }
+
+    /* 付け替えセクション */
+    .switch-section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    .switch-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #ecf0f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .switch-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .switch-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .switch-tab {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      color: #7f8c8d;
+      transition: all 0.2s;
+    }
+    .switch-tab:hover {
+      border-color: #3498db;
+      color: #3498db;
+    }
+    .switch-tab.active {
+      background: #3498db;
+      border-color: #3498db;
+      color: #fff;
+    }
+    .switch-body {
+      padding: 24px;
+    }
+    .switch-panel {
+      display: none;
+    }
+    .switch-panel.active {
+      display: block;
+    }
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid #dce0e4;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    .candidate-list {
+      border: 1px solid #ecf0f1;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .candidate-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #ecf0f1;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .candidate-item:last-child {
+      border-bottom: none;
+    }
+    .candidate-item:hover {
+      background: #f8f9fa;
+    }
+    .candidate-item.selected {
+      background: #ebf5fb;
+    }
+    .candidate-radio {
+      width: 18px;
+      height: 18px;
+      margin-right: 16px;
+      accent-color: #3498db;
+    }
+    .candidate-info {
+      flex: 1;
+    }
+    .candidate-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+    .candidate-sub {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .candidate-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+    .status-empty {
+      background: #d5f5e3;
+      color: #27ae60;
+    }
+    .status-linked {
+      background: #fdebd0;
+      color: #e67e22;
+    }
+    .switch-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .current-link-info {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .current-link-label {
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+    .current-link-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    /* 確認モーダル */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 420px;
+      width: 90%;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+    .modal-body {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-user">
+      <div class="header-user-icon">山</div>
+      <span>山田 太郎</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="breadcrumb">
+      <a href="SC-030_deal_list.html">商談</a>
+      <span>></span>
+      <a href="../master/SC-062_company_detail.html">○○株式会社</a>
+      <span>></span>
+      <a href="#">AI導入支援プロジェクト</a>
+      <span>></span>
+      <a href="SC-031_deal_detail.html">AI伴走支援（初回）</a>
+      <span>></span>
+      紐付け管理
+    </div>
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="SC-031_deal_detail.html" class="btn btn-secondary">← 戻る</a>
+        <h1 class="page-title">紐付け管理</h1>
+      </div>
+    </div>
+
+    <!-- チェーン表示 -->
+    <div class="chain-container">
+      <div class="chain-title">
+        <span class="chain-title-icon">🔗</span>
+        案件の紐付け状況
+      </div>
+      <div class="chain">
+        <!-- リード -->
+        <div class="chain-node">
+          <div class="chain-node-header">
+            <span class="chain-node-type type-lead">リード</span>
+            <span class="chain-node-id">SU-LEAD-000123</span>
+          </div>
+          <div class="chain-node-title">鈴木太郎_初回接触</div>
+          <div class="chain-node-company">○○株式会社</div>
+          <div class="chain-node-meta">
+            <span>獲得日: 2025/12/15</span>
+            <span>ステージ: 商談化済</span>
+          </div>
+          <div class="chain-node-actions">
+            <a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細を見る</a>
+          </div>
+        </div>
+
+        <div class="chain-arrow">
+          <span class="chain-arrow-line">→</span>
+        </div>
+
+        <!-- ドア（現在） -->
+        <div class="chain-node current">
+          <div class="chain-node-header">
+            <span class="chain-node-type type-door">ドアオープン</span>
+            <span class="chain-node-id">SU-DOOR-000045</span>
+          </div>
+          <div class="chain-node-title">AI伴走支援（初回）</div>
+          <div class="chain-node-company">○○株式会社</div>
+          <div class="chain-node-meta">
+            <span>初回面談: 2026/01/05</span>
+            <span>ステージ: 提案中</span>
+          </div>
+          <div class="chain-node-actions">
+            <a href="SC-031_deal_detail.html" class="btn btn-secondary btn-sm">詳細を見る</a>
+          </div>
+        </div>
+
+        <div class="chain-arrow">
+          <span class="chain-arrow-line">→</span>
+        </div>
+
+        <!-- 本丸 -->
+        <div class="chain-node">
+          <div class="chain-node-header">
+            <span class="chain-node-type type-honmaru">本丸</span>
+            <span class="chain-node-id">SU-HON-000123</span>
+          </div>
+          <div class="chain-node-title">本丸展開（検討）</div>
+          <div class="chain-node-company">○○株式会社</div>
+          <div class="chain-node-meta">
+            <span>最終活動: 2026/02/15</span>
+            <span>ステージ: 情報収集</span>
+          </div>
+          <div class="chain-node-actions">
+            <a href="SC-031_deal_detail.html" class="btn btn-secondary btn-sm">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 付け替えセクション -->
+    <div class="switch-section">
+      <div class="switch-header">
+        <div class="switch-title">紐付けの変更</div>
+        <div class="switch-tabs">
+          <button class="switch-tab active" onclick="switchTab('lead')">リードを変更</button>
+          <button class="switch-tab" onclick="switchTab('honmaru')">本丸を変更</button>
+        </div>
+      </div>
+      <div class="switch-body">
+        <!-- リード付け替えパネル -->
+        <div class="switch-panel active" id="panel-lead">
+          <div class="current-link-info">
+            <div>
+              <div class="current-link-label">現在のリード</div>
+              <div class="current-link-value">SU-LEAD-000123 / 鈴木太郎_初回接触</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="showUnlinkModal('lead')">紐付け解除</button>
+          </div>
+
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="リードを検索（企業名、タイトル）">
+            <button class="btn btn-secondary">検索</button>
+          </div>
+
+          <div class="candidate-list">
+            <label class="candidate-item">
+              <input type="radio" name="lead-candidate" class="candidate-radio">
+              <div class="candidate-info">
+                <div class="candidate-title">山田花子_展示会接触</div>
+                <div class="candidate-sub">○○株式会社 / 獲得日: 2025/11/20</div>
+              </div>
+              <span class="candidate-status status-empty">未紐付け</span>
+            </label>
+            <label class="candidate-item">
+              <input type="radio" name="lead-candidate" class="candidate-radio">
+              <div class="candidate-info">
+                <div class="candidate-title">田中一郎_問い合わせ</div>
+                <div class="candidate-sub">○○株式会社 / 獲得日: 2025/10/05</div>
+              </div>
+              <span class="candidate-status status-empty">未紐付け</span>
+            </label>
+            <label class="candidate-item">
+              <input type="radio" name="lead-candidate" class="candidate-radio">
+              <div class="candidate-info">
+                <div class="candidate-title">佐藤次郎_紹介</div>
+                <div class="candidate-sub">○○株式会社 / 獲得日: 2025/09/15</div>
+              </div>
+              <span class="candidate-status status-linked">紐付け済</span>
+            </label>
+          </div>
+
+          <div class="switch-actions">
+            <button class="btn btn-primary">選択したリードに付け替える</button>
+          </div>
+        </div>
+
+        <!-- 本丸付け替えパネル -->
+        <div class="switch-panel" id="panel-honmaru">
+          <div class="current-link-info">
+            <div>
+              <div class="current-link-label">現在の本丸</div>
+              <div class="current-link-value">SU-HON-000123 / 本丸展開（検討）</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="showUnlinkModal('honmaru')">紐付け解除</button>
+          </div>
+
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="本丸商談を検索（企業名、タイトル）">
+            <button class="btn btn-secondary">検索</button>
+          </div>
+
+          <div class="candidate-list">
+            <label class="candidate-item">
+              <input type="radio" name="honmaru-candidate" class="candidate-radio">
+              <div class="candidate-info">
+                <div class="candidate-title">本丸展開（別ルート）</div>
+                <div class="candidate-sub">○○株式会社 / 最終活動: 2026/01/28</div>
+              </div>
+              <span class="candidate-status status-empty">未紐付け</span>
+            </label>
+            <label class="candidate-item">
+              <input type="radio" name="honmaru-candidate" class="candidate-radio">
+              <div class="candidate-info">
+                <div class="candidate-title">追加提案（PoC）</div>
+                <div class="candidate-sub">○○株式会社 / 最終活動: 2026/01/15</div>
+              </div>
+              <span class="candidate-status status-empty">未紐付け</span>
+            </label>
+            <label class="candidate-item">
+              <input type="radio" name="honmaru-candidate" class="candidate-radio">
+              <div class="candidate-info">
+                <div class="candidate-title">既存拡張案件</div>
+                <div class="candidate-sub">○○株式会社 / 最終活動: 2026/02/01</div>
+              </div>
+              <span class="candidate-status status-linked">紐付け済</span>
+            </label>
+          </div>
+
+          <div class="switch-actions">
+            <button class="btn btn-primary">選択した本丸に付け替える</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 紐付け解除確認モーダル -->
+  <div class="modal-overlay" id="unlinkModal">
+    <div class="modal">
+      <div class="modal-title">紐付け解除の確認</div>
+      <div class="modal-body" id="unlinkModalBody">
+        この紐付けを解除しますか？
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="hideUnlinkModal()">キャンセル</button>
+        <button class="btn btn-danger" onclick="executeUnlink()">解除する</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(type) {
+      // タブ切り替え
+      document.querySelectorAll('.switch-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.switch-panel').forEach(panel => panel.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById('panel-' + type).classList.add('active');
+    }
+
+    let unlinkType = '';
+
+    function showUnlinkModal(type) {
+      unlinkType = type;
+      const body = document.getElementById('unlinkModalBody');
+      if (type === 'lead') {
+        body.textContent = 'リード「鈴木太郎_初回接触」との紐付けを解除しますか？';
+      } else {
+        body.textContent = '本丸商談「本丸展開（検討）」との紐付けを解除しますか？';
+      }
+      document.getElementById('unlinkModal').classList.add('active');
+    }
+
+    function hideUnlinkModal() {
+      document.getElementById('unlinkModal').classList.remove('active');
+    }
+
+    function executeUnlink() {
+      alert('紐付けを解除しました');
+      hideUnlinkModal();
+    }
+
+    // 候補選択時のハイライト
+    document.querySelectorAll('.candidate-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const panel = this.closest('.switch-panel');
+        panel.querySelectorAll('.candidate-item').forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>

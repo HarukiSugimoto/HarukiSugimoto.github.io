@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-051 名刺詳細 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .page-title-sub {
+      font-size: 14px;
+      color: #7f8c8d;
+      font-weight: normal;
+    }
+    .page-header-right {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .meishi-preview {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .meishi-image {
+      width: 100%;
+      max-width: 320px;
+      height: 180px;
+      background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+      border: 2px dashed #bdc3c7;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .meishi-format {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .info-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .info-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .info-value {
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    .info-value .required {
+      color: #e74c3c;
+    }
+    .link {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 600;
+      color: #2c3e50;
+      border-bottom: 2px solid #ecf0f1;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    .data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .keyman-star {
+      color: #f1c40f;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-user">
+      <div class="header-user-icon">山</div>
+      <span>山田 太郎</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="SC-050_meishi_list.html" class="btn btn-secondary">← 一覧へ</a>
+        <h1 class="page-title">名刺詳細 <span class="page-title-sub">(名刺ID: BC-001)</span></h1>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-secondary">編集</button>
+        <a href="../master/SC-065_customer_detail.html" class="btn btn-primary">顧客詳細へ</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="meishi-preview">
+            <div class="meishi-image">名刺画像プレビュー（JPEG/PNG）</div>
+            <span class="meishi-format">対応形式: JPEG, PNG</span>
+          </div>
+          <div class="info-section">
+            <div class="info-item">
+              <span class="info-label">企業名<span class="required">*</span></span>
+              <span class="info-value">AAA株式会社</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">氏名<span class="required">*</span></span>
+              <span class="info-value">山田 太郎</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">役職</span>
+              <span class="info-value">部長</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">顧客ID</span>
+              <span class="info-value"><a href="../master/SC-065_customer_detail.html" class="link">CU-010</a></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">最終更新日</span>
+              <span class="info-value">2026/02/18</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">アカウント一覧</div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>キーマン</th>
+                <th>アカウントID</th>
+                <th>タイトル</th>
+                <th>種別</th>
+                <th>ステージ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
+                <td><span class="keyman-star">★</span></td>
+                <td>SU-100</td>
+                <td>新規リード獲得</td>
+                <td>リード</td>
+                <td>提案前</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='../deal/SC-031_deal_detail.html'">
+                <td></td>
+                <td>SU-155</td>
+                <td>AI伴走支援（初回）</td>
+                <td>商談（ドアオープン）</td>
+                <td>提案中</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='../deal/SC-031_deal_detail.html'">
+                <td><span class="keyman-star">★</span></td>
+                <td>SU-201</td>
+                <td>DX推進支援</td>
+                <td>商談（本丸）</td>
+                <td>受注済</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

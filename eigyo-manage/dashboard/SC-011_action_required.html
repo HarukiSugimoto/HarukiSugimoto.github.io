@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-011 要対応一覧 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    /* フィルタ */
+    .filter-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .filter-select, .filter-input {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 120px;
+    }
+    .filter-input {
+      min-width: 200px;
+    }
+    .filter-input:focus, .filter-select:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .filter-note {
+      font-size: 12px;
+      color: #7f8c8d;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+    /* ソート */
+    .sort-section {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #ecf0f1;
+    }
+    .sort-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    /* テーブル */
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #2c3e50;
+      border-bottom: 2px solid #ecf0f1;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    .data-table tr:hover {
+      background: #f8f9fa;
+    }
+    /* 種別バッジ */
+    .type-badge {
+      display: inline-block;
+      font-size: 12px;
+    }
+    /* リンク */
+    .link {
+      color: #3498db;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    /* ページネーション */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 1px solid #ecf0f1;
+      margin-top: 16px;
+    }
+    .pagination-info {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination-btn {
+      padding: 6px 12px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #3498db;
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-current {
+      padding: 6px 12px;
+      background: #3498db;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .page-size-select {
+      padding: 6px 10px;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .date-overdue {
+      color: #e74c3c;
+      font-weight: 500;
+    }
+    /* ソート可能カラム */
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 20px !important;
+    }
+    .sortable:hover {
+      background: #ecf0f1;
+    }
+    .sortable::after {
+      content: "↕";
+      position: absolute;
+      right: 6px;
+      color: #bdc3c7;
+      font-size: 10px;
+    }
+    .sortable.asc::after {
+      content: "↑";
+      color: #3498db;
+    }
+    .sortable.desc::after {
+      content: "↓";
+      color: #3498db;
+    }
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-select, .filter-input {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="SC-010_dashboard.html" class="btn btn-secondary btn-sm">← ダッシュボード</a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">SC-011 要対応（リード/商談 統合）一覧</h1>
+      <a href="SC-010_dashboard.html" class="btn btn-secondary">戻る → SC-010</a>
+    </div>
+
+    <!-- 検索・フィルタ -->
+    <div class="card">
+      <div class="card-header">検索・フィルタ</div>
+      <div class="card-body">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">種別</span>
+            <select class="filter-select">
+              <option selected>全て</option>
+              <option>リード</option>
+              <option>商談</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">担当</span>
+            <input type="text" class="filter-input" style="min-width: 120px;" placeholder="担当者名">
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">タイトル</span>
+            <input type="text" class="filter-input" style="min-width: 150px;" placeholder="タイトル">
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">企業/顧客</span>
+            <input type="text" class="filter-input" style="min-width: 150px;" placeholder="企業名または顧客名">
+          </div>
+          <button class="btn btn-primary">検索</button>
+          <button class="btn btn-secondary">リセット</button>
+        </div>
+        <div class="filter-note">※「一旦OKフラグ」は今は扱わない（将来拡張）</div>
+      </div>
+    </div>
+
+    <!-- 一覧 -->
+    <div class="card">
+      <div class="card-header">要対応一覧</div>
+      <div class="card-body">
+        <!-- ソート説明 -->
+        <div class="sort-section">
+          <span class="sort-label">※ カラムヘッダーをクリックでソート</span>
+        </div>
+
+        <!-- テーブル -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>タイプ</th>
+                <th class="sortable" data-sort="company">企業</th>
+                <th>顧客</th>
+                <th>タイトル</th>
+                <th class="sortable" data-sort="last_action">最終アクション</th>
+                <th class="sortable" data-sort="next_action">次回アクション日</th>
+                <th>担当</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="type-badge">商談（本丸）</span></td>
+                <td><a href="#" class="link">A社</a></td>
+                <td>鈴木 一郎</td>
+                <td>提案DX</td>
+                <td>02/01<br><span style="color: #7f8c8d;">提案中</span></td>
+                <td><span style="color: #95a5a6;">（未設定）</span></td>
+                <td>山田/田中</td>
+                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
+              </tr>
+              <tr>
+                <td><span class="type-badge">リード</span></td>
+                <td><a href="#" class="link">B社</a></td>
+                <td>佐藤 花子</td>
+                <td>新規開拓</td>
+                <td>01/20<br><span style="color: #7f8c8d;">接触前</span></td>
+                <td><span class="date-overdue">01/10</span></td>
+                <td>佐藤</td>
+                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
+              </tr>
+              <tr>
+                <td><span class="type-badge">商談（本丸）</span></td>
+                <td><a href="#" class="link">C社</a></td>
+                <td>田中 太郎</td>
+                <td>更新案件</td>
+                <td>01/30<br><span style="color: #7f8c8d;">交渉中</span></td>
+                <td>02/25</td>
+                <td>田中</td>
+                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
+              </tr>
+              <tr>
+                <td><span class="type-badge">リード</span></td>
+                <td><a href="#" class="link">D社</a></td>
+                <td>山本 次郎</td>
+                <td>AI導入相談</td>
+                <td>01/25<br><span style="color: #7f8c8d;">アポ調整中</span></td>
+                <td>02/15</td>
+                <td>山田/佐藤</td>
+                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
+              </tr>
+              <tr>
+                <td><span class="type-badge">商談（ドア）</span></td>
+                <td><a href="#" class="link">E社</a></td>
+                <td>高橋 三郎</td>
+                <td>基幹システム</td>
+                <td>01/15<br><span style="color: #7f8c8d;">見積提出</span></td>
+                <td><span class="date-overdue">02/01</span></td>
+                <td>佐藤</td>
+                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
+              </tr>
+              <tr>
+                <td><span class="type-badge">リード</span></td>
+                <td><a href="#" class="link">F社</a></td>
+                <td>伊藤 四郎</td>
+                <td>DX推進</td>
+                <td>02/05<br><span style="color: #7f8c8d;">接触前</span></td>
+                <td><span style="color: #95a5a6;">（未設定）</span></td>
+                <td>田中</td>
+                <td><a href="../lead/SC-021_lead_detail.html" class="btn btn-secondary btn-sm">詳細</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+          <div class="pagination-info">
+            全 14 件中 1 - 6 件を表示
+          </div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option selected>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ソート機能
+    document.querySelectorAll('.sortable').forEach(th => {
+      th.addEventListener('click', function() {
+        // 同じテーブル内の他のsortableからクラスを削除
+        const table = this.closest('table');
+        table.querySelectorAll('.sortable').forEach(el => {
+          if (el !== this) {
+            el.classList.remove('asc', 'desc');
+          }
+        });
+        // 現在の状態を切り替え
+        if (this.classList.contains('asc')) {
+          this.classList.remove('asc');
+          this.classList.add('desc');
+        } else if (this.classList.contains('desc')) {
+          this.classList.remove('desc');
+          this.classList.add('asc');
+        } else {
+          this.classList.add('asc');
+        }
+        // 実際のソート処理はバックエンド実装時に追加
+      });
+    });
+  </script>
+</body>
+</html>

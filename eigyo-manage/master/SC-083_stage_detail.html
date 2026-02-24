@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-083 ステージマスタ詳細 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-danger {
+      background: #e74c3c;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .info-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .info-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .info-value {
+      font-size: 15px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-deal {
+      background: #eafaf1;
+      color: #27ae60;
+    }
+    .bool-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .bool-true {
+      background: #d4edda;
+      color: #155724;
+    }
+    .bool-false {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #ecf0f1;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-user">
+      <div class="header-user-icon">山</div>
+      <span>山田 太郎</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="SC-082_stage_list.html" class="btn btn-secondary">← 戻る</a>
+        <h1 class="page-title">ステージマスタ詳細</h1>
+      </div>
+      <a href="SC-084_stage_edit.html" class="btn btn-secondary">編集</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">ステージ情報</div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">ID</span>
+            <span class="info-value">S-D03</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">種別</span>
+            <span class="info-value"><span class="badge badge-deal">商談</span></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">ステージ名</span>
+            <span class="info-value">提案中</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">完了</span>
+            <span class="info-value"><span class="bool-badge bool-true">はい</span></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">提案</span>
+            <span class="info-value"><span class="bool-badge bool-true">はい</span></span>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">当ステージでの取得情報</span>
+            <span class="info-value">提案書を顧客に提出し、フィードバックを収集</span>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">次に行く基準</span>
+            <span class="info-value">顧客から見積依頼を受領</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">アラート対象外</span>
+            <span class="info-value"><span class="bool-badge bool-false">いいえ</span></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">猶予期間</span>
+            <span class="info-value">2週間</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

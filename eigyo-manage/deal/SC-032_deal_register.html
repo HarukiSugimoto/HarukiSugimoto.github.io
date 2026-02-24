@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-032 商談登録 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    /* ヘッダー */
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    /* メインコンテナ */
+    .main-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    /* ページヘッダー */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    /* ボタン共通 */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-success {
+      background: #27ae60;
+      color: #fff;
+      padding: 12px 32px;
+      font-size: 16px;
+    }
+    .btn-success:hover {
+      background: #219a52;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    /* カード */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 24px;
+    }
+    /* フォームグリッド */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-grid-full {
+      grid-column: 1 / -1;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 13px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    .form-label .required {
+      color: #e74c3c;
+      margin-left: 4px;
+    }
+    .form-input, .form-select, .form-textarea {
+      padding: 10px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    /* ラジオボタン */
+    .radio-group {
+      display: flex;
+      gap: 24px;
+      padding: 8px 0;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .radio-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    /* 企業選択 */
+    .company-select-wrapper {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .company-select-wrapper .form-select {
+      flex: 1;
+    }
+    /* アクションフッター */
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #ecf0f1;
+    }
+    /* ヘルプテキスト */
+    .help-text {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 4px;
+    }
+    /* 既存案件検索 */
+    .existing-deal-search {
+      display: none;
+      margin-top: 12px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+    .existing-deal-search.show {
+      display: block;
+    }
+    .search-input-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+    .search-input-wrapper .form-input {
+      flex: 1;
+    }
+    .search-results {
+      margin-top: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .search-result-item {
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid #ecf0f1;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-result-item:hover {
+      background: #e8f4fd;
+      border-color: #3498db;
+    }
+    .search-result-item.selected {
+      background: #e8f4fd;
+      border-color: #3498db;
+    }
+    .search-result-title {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    .search-result-meta {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 4px;
+    }
+    /* タグ選択UI */
+    .tag-select-container {
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fff;
+    }
+    .selected-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      min-height: 28px;
+    }
+    .selected-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: #e8f4fd;
+      border: 1px solid #3498db;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #2980b9;
+    }
+    .selected-tag .remove-tag {
+      cursor: pointer;
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-left: 2px;
+    }
+    .selected-tag .remove-tag:hover {
+      color: #e74c3c;
+    }
+    .tag-dropdown {
+      position: relative;
+    }
+    .tag-dropdown-toggle {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ecf0f1;
+      border-radius: 4px;
+      background: #f8f9fa;
+      cursor: pointer;
+      font-size: 13px;
+      color: #7f8c8d;
+      text-align: left;
+    }
+    .tag-dropdown-toggle:hover {
+      background: #ecf0f1;
+    }
+    .tag-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 10;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .tag-dropdown-menu.show {
+      display: block;
+    }
+    .tag-option {
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tag-option:hover {
+      background: #f8f9fa;
+    }
+    .tag-option input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 太郎</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="main-container">
+    <!-- ページヘッダー -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="SC-030_deal_list.html" class="btn btn-secondary">← 戻る</a>
+        <h1 class="page-title">商談登録</h1>
+      </div>
+      <button class="btn btn-primary">保存</button>
+    </div>
+
+    <!-- 基本情報 -->
+    <div class="card">
+      <div class="card-header">基本情報</div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group form-grid-full">
+            <label class="form-label">商談タイトル<span class="required">*</span></label>
+            <input type="text" class="form-input" placeholder="例: AI伴走支援（初回）">
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">企業名<span class="required">*</span></label>
+            <div class="company-select-wrapper">
+              <select class="form-select">
+                <option value="">既存企業を選択</option>
+                <option value="1">○○株式会社</option>
+                <option value="2">△△株式会社</option>
+                <option value="3">□□コーポレーション</option>
+              </select>
+              <button class="btn btn-secondary btn-sm">＋ 企業を新規作成</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">案件種別<span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="dealType" value="new" checked onchange="toggleExistingDealSearch()">
+                <span>新規</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="dealType" value="existing" onchange="toggleExistingDealSearch()">
+                <span>既存</span>
+              </label>
+            </div>
+            <!-- 既存案件検索 -->
+            <div class="existing-deal-search" id="existingDealSearch">
+              <label class="form-label">既存案件を検索</label>
+              <div class="search-input-wrapper">
+                <input type="text" class="form-input" placeholder="案件名または企業名で検索..." id="dealSearchInput">
+                <button class="btn btn-secondary btn-sm">検索</button>
+              </div>
+              <div class="search-results" id="searchResults">
+                <div class="search-result-item" onclick="selectDeal(this)">
+                  <div class="search-result-title">○○株式会社 | 2025/06</div>
+                </div>
+                <div class="search-result-item" onclick="selectDeal(this)">
+                  <div class="search-result-title">△△株式会社 | 2025/09</div>
+                </div>
+                <div class="search-result-item" onclick="selectDeal(this)">
+                  <div class="search-result-title">□□コーポレーション | 2025/12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">プロジェクト種別<span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="projectType" value="door" checked>
+                <span>ドアオープン</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="projectType" value="honmaru">
+                <span>本丸</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">案件タイトル</label>
+            <input type="text" class="form-input" placeholder="例: AI導入支援プロジェクト">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ドア担当</label>
+            <select class="form-select">
+              <option value="">選択してください</option>
+              <option value="yamada">山田 太郎</option>
+              <option value="sato">佐藤 花子</option>
+              <option value="tanaka">田中 一郎</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">アカウント担当</label>
+            <div class="tag-select-container">
+              <div class="selected-tags" id="selectedAccountTags">
+                <!-- 選択されたタグがここに表示される -->
+              </div>
+              <div class="tag-dropdown">
+                <button type="button" class="tag-dropdown-toggle" onclick="toggleAccountDropdown()">＋ 担当者を追加</button>
+                <div class="tag-dropdown-menu" id="accountDropdown">
+                  <label class="tag-option">
+                    <input type="checkbox" value="yamada" onchange="toggleAccountTag(this, '山田 太郎')">
+                    <span>山田 太郎</span>
+                  </label>
+                  <label class="tag-option">
+                    <input type="checkbox" value="sato" onchange="toggleAccountTag(this, '佐藤 花子')">
+                    <span>佐藤 花子</span>
+                  </label>
+                  <label class="tag-option">
+                    <input type="checkbox" value="tanaka" onchange="toggleAccountTag(this, '田中 一郎')">
+                    <span>田中 一郎</span>
+                  </label>
+                  <label class="tag-option">
+                    <input type="checkbox" value="suzuki" onchange="toggleAccountTag(this, '鈴木 次郎')">
+                    <span>鈴木 次郎</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">デリバリー担当</label>
+            <select class="form-select">
+              <option value="">選択してください</option>
+              <option value="yamada">山田 太郎</option>
+              <option value="sato">佐藤 花子</option>
+              <option value="tanaka">田中 一郎</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">獲得チャネル</label>
+            <select class="form-select">
+              <option value="">選択してください</option>
+              <option value="exhibition">展示会</option>
+              <option value="web">Web問い合わせ</option>
+              <option value="referral">紹介</option>
+              <option value="tel">テレアポ</option>
+              <option value="seminar">セミナー</option>
+              <option value="other">その他</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">獲得日</label>
+            <input type="date" class="form-input" value="2026-02-20">
+            <span class="help-text">デフォルト: 今日</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">初回面談日</label>
+            <input type="date" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">クローズ目標日</label>
+            <input type="date" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">次回アクション日</label>
+            <input type="date" class="form-input">
+            <span class="help-text">デフォルト: 初回面談日</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">予算規模</label>
+            <input type="text" class="form-input" placeholder="例: 10,000,000" style="text-align: right;">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ランク</label>
+            <select class="form-select">
+              <option value="">選択してください</option>
+              <option value="matsu">松</option>
+              <option value="take">竹</option>
+              <option value="ume">梅</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">提案額</label>
+            <input type="text" class="form-input" placeholder="例: 8,000,000" style="text-align: right;">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">提案予定商材</label>
+            <select class="form-select">
+              <option value="">選択してください</option>
+              <option value="ai">AI</option>
+              <option value="dx">DX支援</option>
+              <option value="consulting">コンサルティング</option>
+              <option value="training">研修</option>
+              <option value="other">その他</option>
+            </select>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">メモ</label>
+            <textarea class="form-textarea" placeholder="商談に関するメモを入力"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // 既存案件検索の表示切替
+    function toggleExistingDealSearch() {
+      const existingRadio = document.querySelector('input[name="dealType"][value="existing"]');
+      const searchArea = document.getElementById('existingDealSearch');
+      if (existingRadio.checked) {
+        searchArea.classList.add('show');
+      } else {
+        searchArea.classList.remove('show');
+      }
+    }
+
+    // 案件選択
+    function selectDeal(element) {
+      document.querySelectorAll('.search-result-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      element.classList.add('selected');
+    }
+
+    // アカウント担当ドロップダウン
+    function toggleAccountDropdown() {
+      const dropdown = document.getElementById('accountDropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    // アカウント担当タグの追加/削除
+    function toggleAccountTag(checkbox, name) {
+      const container = document.getElementById('selectedAccountTags');
+      const value = checkbox.value;
+
+      if (checkbox.checked) {
+        const tag = document.createElement('span');
+        tag.className = 'selected-tag';
+        tag.dataset.value = value;
+        tag.innerHTML = `${name}<span class="remove-tag" onclick="removeAccountTag('${value}')">&times;</span>`;
+        container.appendChild(tag);
+      } else {
+        const tag = container.querySelector(`[data-value="${value}"]`);
+        if (tag) tag.remove();
+      }
+    }
+
+    // タグ削除
+    function removeAccountTag(value) {
+      const container = document.getElementById('selectedAccountTags');
+      const tag = container.querySelector(`[data-value="${value}"]`);
+      if (tag) tag.remove();
+
+      const checkbox = document.querySelector(`#accountDropdown input[value="${value}"]`);
+      if (checkbox) checkbox.checked = false;
+    }
+
+    // ドロップダウン外クリックで閉じる
+    document.addEventListener('click', function(e) {
+      const dropdown = document.getElementById('accountDropdown');
+      const toggle = document.querySelector('.tag-dropdown-toggle');
+      if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-031 商談詳細 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    /* ヘッダー */
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    /* メインコンテナ */
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    /* パンくず */
+    .breadcrumb {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 12px;
+    }
+    .breadcrumb a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .breadcrumb span {
+      margin: 0 6px;
+    }
+    /* ページヘッダー */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .page-header-right {
+      display: flex;
+      gap: 8px;
+    }
+    /* ボタン共通 */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-success {
+      background: #27ae60;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #219a52;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    /* アラートバナー */
+    .alert-banner {
+      background: #fdeaec;
+      border: 1px solid #f5c6cb;
+      border-left: 4px solid #c0392b;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .alert-banner-icon {
+      font-size: 24px;
+      color: #c0392b;
+    }
+    .alert-banner-content {
+      flex: 1;
+    }
+    .alert-banner-title {
+      font-weight: 600;
+      color: #c0392b;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    .alert-banner-desc {
+      font-size: 13px;
+      color: #721c24;
+    }
+    /* カード */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    /* 概要グリッド */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px 24px;
+    }
+    .overview-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .overview-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .overview-value {
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    /* リンクセクション */
+    .link-section {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 6px;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .link-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .link-section-link {
+      font-size: 13px;
+      color: #3498db;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .link-section-link:hover {
+      text-decoration: underline;
+    }
+    /* 受注予定フォーム */
+    .forecast-form {
+      display: flex;
+      gap: 24px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .form-input {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 160px;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    /* テーブル */
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 600;
+      color: #2c3e50;
+      border-bottom: 2px solid #ecf0f1;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    .data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    /* 課題バッジ */
+    .issue-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .issue-yes {
+      background: #fdeaec;
+      color: #c0392b;
+    }
+    .issue-no {
+      background: #ecf0f1;
+      color: #7f8c8d;
+    }
+    /* 内容プレビュー */
+    .content-preview {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    /* リンクテキスト */
+    .link-text {
+      color: #3498db;
+      cursor: pointer;
+    }
+    .link-text:hover {
+      text-decoration: underline;
+    }
+    /* ソート可能ヘッダー */
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .sortable:hover {
+      background: #ecf0f1;
+    }
+    .sort-icon {
+      margin-left: 4px;
+      font-size: 10px;
+      color: #7f8c8d;
+    }
+    .sort-icon.active {
+      color: #3498db;
+    }
+    /* キーマンスター */
+    .keyman-star {
+      color: #f1c40f;
+      margin-right: 4px;
+    }
+    /* 顧客追加表示 */
+    .customer-more {
+      background: #ecf0f1;
+      color: #7f8c8d;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    /* ページネーション */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 1px solid #ecf0f1;
+      margin-top: 16px;
+    }
+    .pagination-info {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination-btn {
+      padding: 6px 12px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #3498db;
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-current {
+      padding: 6px 12px;
+      background: #3498db;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .page-size-select {
+      padding: 6px 10px;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .sort-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    /* クリック可能行 */
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 太郎</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="main-container">
+    <!-- パンくず -->
+    <div class="breadcrumb">
+      <a href="SC-030_deal_list.html">商談</a>
+      <span>></span>
+      <a href="#">○○株式会社</a>
+      <span>></span>
+      <a href="#">AI導入支援プロジェクト</a>
+      <span>></span>
+      AI伴走支援（初回）
+    </div>
+
+    <!-- ページヘッダー -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="SC-030_deal_list.html" class="btn btn-secondary">← 一覧へ</a>
+        <h1 class="page-title">商談詳細</h1>
+      </div>
+      <div class="page-header-right">
+        <a href="SC-033_deal_edit.html" class="btn btn-secondary">編集</a>
+        <a href="SC-034_link_management.html" class="btn btn-secondary">紐付け管理</a>
+        <a href="SC-028_activity_register.html" class="btn btn-primary">＋ アクション登録</a>
+      </div>
+    </div>
+
+    <!-- アラートバナー -->
+    <div class="alert-banner">
+      <div class="alert-banner-icon">⚠</div>
+      <div class="alert-banner-content">
+        <div class="alert-banner-title">要対応：この商談は停滞しています</div>
+        <div class="alert-banner-desc">最終アクション日から2週間以上経過しています。次回アクションを設定してください。</div>
+      </div>
+    </div>
+
+    <!-- 基本情報カード -->
+    <div class="card">
+      <div class="card-header">基本情報</div>
+      <div class="card-body">
+        <div class="overview-grid">
+          <div class="overview-item">
+            <span class="overview-label">案件名</span>
+            <span class="overview-value"><a href="#">AI導入支援プロジェクト</a></span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">企業名</span>
+            <span class="overview-value"><a href="../master/SC-062_company_detail.html">○○株式会社</a></span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">商談タイトル</span>
+            <span class="overview-value">AI伴走支援（初回）</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">PJ種別</span>
+            <span class="overview-value">ドアオープン</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">顧客</span>
+            <span class="overview-value"><span class="keyman-star">★</span>佐藤（DX推進室 部長） <span class="customer-more">+2</span> <a href="SC-035_stakeholder_list.html" class="link-text" style="margin-left: 8px; font-size: 12px;">すべて見る →</a></span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">営業担当</span>
+            <span class="overview-value">山田</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">獲得チャネル</span>
+            <span class="overview-value">展示会</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">最終アクションステージ</span>
+            <span class="overview-value">提案中</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">獲得日</span>
+            <span class="overview-value">2025/12/20</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">初回面談日</span>
+            <span class="overview-value">2026/01/05</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">最終アクション日</span>
+            <span class="overview-value">2026/02/01</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">次回アクション日</span>
+            <span class="overview-value">2026/02/20</span>
+          </div>
+          <div class="overview-item" style="grid-column: 1 / -1;">
+            <span class="overview-label">メモ</span>
+            <span class="overview-value">DX推進室との初回接触。AI導入に関心が高く、特に業務効率化に課題感あり。次回は具体的なソリューション提案を予定。</span>
+          </div>
+        </div>
+
+        <!-- ドア→本丸リンク -->
+        <div class="link-section">
+          <div class="link-section-title">本丸商談</div>
+          <a href="#" class="link-section-link">リンク先を見る →</a>
+        </div>
+
+        <!-- リード→商談リンク -->
+        <div class="link-section">
+          <div class="link-section-title">元リード</div>
+          <a href="#" class="link-section-link">リンク先を見る →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 受注予定 / 提案情報 -->
+    <div class="card">
+      <div class="card-header">受注予定 / 提案情報</div>
+      <div class="card-body">
+        <div class="forecast-form">
+          <div class="form-group">
+            <label class="form-label">受注予定時期</label>
+            <input type="date" class="form-input" value="2026-04-15">
+          </div>
+          <div class="form-group">
+            <label class="form-label">受注予定金額</label>
+            <input type="text" class="form-input" value="8,000,000" style="text-align: right;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">提案額</label>
+            <input type="text" class="form-input" value="9,500,000" style="text-align: right;">
+          </div>
+          <button class="btn btn-success">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- アクション一覧 -->
+    <div class="card">
+      <div class="card-header">
+        <span>アクション一覧</span>
+        <a href="SC-028_activity_register.html" class="btn btn-primary btn-sm">＋ アクション登録</a>
+      </div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>担当者</th>
+                <th class="sortable" data-sort="action-date" onclick="sortTable(1)">アクション日 <span class="sort-icon" id="sort-icon-1">↓</span></th>
+                <th>種別</th>
+                <th>相手先担当者</th>
+                <th>内容</th>
+                <th>課題</th>
+                <th class="sortable" data-sort="next-action" onclick="sortTable(6)">次回アクション日 <span class="sort-icon" id="sort-icon-6">↕</span></th>
+                <th>ステージ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable" onclick="location.href='SC-029_activity_detail.html'">
+                <td>山田</td>
+                <td>2026/02/01</td>
+                <td>MTG</td>
+                <td>佐藤（DX推進室 部長）</td>
+                <td class="content-preview">要件整理の方向性について議論。次回は具体的な...</td>
+                <td><span class="issue-badge issue-yes">有</span></td>
+                <td>2026/02/20</td>
+                <td>提案</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-029_activity_detail.html'">
+                <td>山田</td>
+                <td>2026/01/15</td>
+                <td>メール</td>
+                <td>田中 花子</td>
+                <td class="content-preview">資料送付、次回日程調整の依頼を実施...</td>
+                <td><span class="issue-badge issue-no">無</span></td>
+                <td>未設定</td>
+                <td>接触</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-029_activity_detail.html'">
+                <td>山田</td>
+                <td>2026/01/05</td>
+                <td>電話</td>
+                <td>佐藤（DX推進室 部長）</td>
+                <td class="content-preview">初回ヒアリング。AI導入に関心あり...</td>
+                <td><span class="issue-badge issue-no">無</span></td>
+                <td>2026/01/15</td>
+                <td>初回</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-029_activity_detail.html'">
+                <td>佐藤</td>
+                <td>2025/12/20</td>
+                <td>展示会</td>
+                <td>佐藤（DX推進室 部長）</td>
+                <td class="content-preview">展示会にて名刺交換。DX推進について...</td>
+                <td><span class="issue-badge issue-no">無</span></td>
+                <td>2026/01/05</td>
+                <td>接触前</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+          <div class="pagination-info">
+            全 4 件中 1 - 4 件を表示
+          </div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn">＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ソート状態を管理
+    const sortState = {
+      1: 'desc', // アクション日: 初期状態は降順（新しい順）
+      6: null    // 次回アクション: 初期状態はソートなし
+    };
+
+    function sortTable(columnIndex) {
+      const table = document.querySelector('.data-table');
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      // ソート方向を切り替え
+      if (sortState[columnIndex] === null || sortState[columnIndex] === 'desc') {
+        sortState[columnIndex] = 'asc';
+      } else {
+        sortState[columnIndex] = 'desc';
+      }
+
+      // 他のカラムのソート状態をリセット
+      Object.keys(sortState).forEach(key => {
+        if (parseInt(key) !== columnIndex) {
+          sortState[key] = null;
+          const icon = document.getElementById(`sort-icon-${key}`);
+          if (icon) {
+            icon.textContent = '↕';
+            icon.classList.remove('active');
+          }
+        }
+      });
+
+      // アイコンを更新
+      const currentIcon = document.getElementById(`sort-icon-${columnIndex}`);
+      currentIcon.textContent = sortState[columnIndex] === 'asc' ? '↑' : '↓';
+      currentIcon.classList.add('active');
+
+      // 日付をパースする関数
+      function parseDate(dateStr) {
+        if (!dateStr || dateStr === '未設定') return null;
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+          return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+        return null;
+      }
+
+      // ソート実行
+      rows.sort((a, b) => {
+        const aValue = a.cells[columnIndex].textContent.trim();
+        const bValue = b.cells[columnIndex].textContent.trim();
+
+        const aDate = parseDate(aValue);
+        const bDate = parseDate(bValue);
+
+        // 未設定は常に最後
+        if (aDate === null && bDate === null) return 0;
+        if (aDate === null) return 1;
+        if (bDate === null) return -1;
+
+        if (sortState[columnIndex] === 'asc') {
+          return aDate - bDate;
+        } else {
+          return bDate - aDate;
+        }
+      });
+
+      // DOMを更新
+      rows.forEach(row => tbody.appendChild(row));
+    }
+  </script>
+</body>
+</html>

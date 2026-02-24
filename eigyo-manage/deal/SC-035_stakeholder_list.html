@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-035 関係者一覧 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .breadcrumb {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 16px;
+    }
+    .breadcrumb a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .breadcrumb span {
+      margin: 0 6px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    /* テーブル */
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #2c3e50;
+      border-bottom: 2px solid #ecf0f1;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .data-table tr:hover {
+      background: #f8f9fa;
+    }
+    /* キーマンスター */
+    .keyman-cell {
+      text-align: center;
+    }
+    .keyman-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #f1c40f;
+    }
+    .keyman-active {
+      color: #f1c40f;
+      font-size: 18px;
+    }
+    /* 名刺バッジ */
+    .meishi-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .meishi-yes {
+      background: #e8f6f3;
+      color: #1abc9c;
+      text-decoration: none;
+    }
+    a.meishi-yes:hover {
+      text-decoration: underline;
+    }
+    .meishi-no {
+      background: #ecf0f1;
+      color: #95a5a6;
+    }
+    /* 操作ボタン */
+    .link {
+      color: #3498db;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    .link-danger {
+      color: #e74c3c;
+    }
+    /* ページネーション */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 1px solid #ecf0f1;
+      margin-top: 16px;
+    }
+    .pagination-info {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination-btn {
+      padding: 6px 12px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #3498db;
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-current {
+      padding: 6px 12px;
+      background: #3498db;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .page-size-select {
+      padding: 6px 10px;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .sort-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    /* 顧客ID */
+    .customer-id {
+      font-family: monospace;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    /* モーダル */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #7f8c8d;
+    }
+    .modal-close:hover {
+      color: #2c3e50;
+    }
+    .modal-body {
+      padding: 20px;
+    }
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #ecf0f1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    /* フォーム */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2c3e50;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    .form-radio-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .form-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .form-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .search-results {
+      border: 1px solid #ecf0f1;
+      border-radius: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .search-result-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ecf0f1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+    .search-result-item:hover {
+      background: #f8f9fa;
+    }
+    .search-result-item.selected {
+      background: #ebf5fb;
+    }
+    .search-result-name {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    .search-result-detail {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ecf0f1;
+    }
+    .warning-text {
+      font-size: 12px;
+      color: #e67e22;
+      margin-top: 8px;
+    }
+    @media (max-width: 768px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-010_dashboard.html" class="btn btn-secondary btn-sm">ダッシュボード</a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- パンくず -->
+    <div class="breadcrumb">
+      <a href="SC-020_lead_list.html">リード</a>
+      <span>></span>
+      <a href="../master/SC-062_company_detail.html">A株式会社</a>
+      <span>></span>
+      <a href="#">A案件_DX推進</a>
+      <span>></span>
+      <a href="SC-021_lead_detail.html">鈴木太郎_初回接触</a>
+      <span>></span>
+      関係者一覧
+    </div>
+
+    <!-- ページヘッダー -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="SC-021_lead_detail.html" class="btn btn-secondary">← 詳細へ戻る</a>
+        <h1 class="page-title">関係者一覧</h1>
+      </div>
+    </div>
+
+    <!-- 関係者一覧カード -->
+    <div class="card">
+      <div class="card-header">
+        関係者一覧
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">＋ 関係者を追加</button>
+      </div>
+      <div class="card-body">
+        <!-- テーブル -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">キーマン</th>
+                <th>氏名</th>
+                <th>役職</th>
+                <th>名刺</th>
+                <th>顧客ID</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="keyman-cell">
+                  <span class="keyman-active">★</span>
+                </td>
+                <td><strong>鈴木 太郎</strong></td>
+                <td>部長</td>
+                <td><a href="../master/SC-051_meishi_detail.html" class="meishi-badge meishi-yes">あり</a></td>
+                <td><span class="customer-id">CU-000111</span></td>
+                <td>
+                  <a href="#" class="link link-danger" onclick="confirmRemove()">解除</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="keyman-cell">
+                  <input type="checkbox" class="keyman-checkbox" title="キーマンに設定">
+                </td>
+                <td>佐藤 花子</td>
+                <td>課長</td>
+                <td><a href="../master/SC-051_meishi_detail.html" class="meishi-badge meishi-yes">あり</a></td>
+                <td><span class="customer-id">CU-000112</span></td>
+                <td>
+                  <a href="#" class="link link-danger" onclick="confirmRemove()">解除</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="keyman-cell">
+                  <input type="checkbox" class="keyman-checkbox" title="キーマンに設定">
+                </td>
+                <td>田中 次郎</td>
+                <td>（未入力）</td>
+                <td><span class="meishi-badge meishi-no">なし</span></td>
+                <td><span class="customer-id">CU-000113</span></td>
+                <td>
+                  <a href="#" class="link link-danger" onclick="confirmRemove()">解除</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+          <div class="pagination-info">
+            全 3 件中 1 - 3 件を表示
+          </div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn" disabled>＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 関係者追加モーダル -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">関係者を追加</h2>
+        <button class="modal-close" onclick="closeAddModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- 顧客の指定 -->
+        <div class="section-title">顧客の指定</div>
+        <div class="form-radio-group">
+          <label class="form-radio-item">
+            <input type="radio" name="customer-type" value="existing" checked>
+            <span>既存顧客から選択</span>
+          </label>
+          <label class="form-radio-item">
+            <input type="radio" name="customer-type" value="new">
+            <span>新規顧客を作成</span>
+          </label>
+        </div>
+
+        <!-- 既存顧客検索 -->
+        <div id="existingCustomerSection">
+          <div class="search-box">
+            <input type="text" class="form-input" placeholder="氏名・役職で検索...">
+            <button class="btn btn-secondary">検索</button>
+          </div>
+          <div class="search-results">
+            <div class="search-result-item selected">
+              <input type="radio" name="selected-customer" checked>
+              <div>
+                <div class="search-result-name">山本 健一</div>
+                <div class="search-result-detail">CU-000114 | 主任 | 名刺: あり</div>
+              </div>
+            </div>
+            <div class="search-result-item">
+              <input type="radio" name="selected-customer">
+              <div>
+                <div class="search-result-name">高橋 美咲</div>
+                <div class="search-result-detail">CU-000115 | 係長 | 名刺: なし</div>
+              </div>
+            </div>
+            <div class="search-result-item">
+              <input type="radio" name="selected-customer">
+              <div>
+                <div class="search-result-name">渡辺 剛</div>
+                <div class="search-result-detail">CU-000116 | 部長 | 名刺: あり</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新規顧客作成（非表示） -->
+        <div id="newCustomerSection" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">氏名 <span style="color: #e74c3c;">*</span></label>
+            <input type="text" class="form-input" placeholder="例: 山田 太郎">
+          </div>
+          <div class="form-group">
+            <label class="form-label">役職</label>
+            <input type="text" class="form-input" placeholder="例: 部長">
+          </div>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #ecf0f1;">
+            <a href="SC-024_ocr_upload.html" class="link">名刺から取り込む →</a>
+          </div>
+        </div>
+
+        <!-- キーマン設定 -->
+        <div style="margin-top: 20px;">
+          <div class="section-title">キーマン設定</div>
+          <label class="form-checkbox-item">
+            <input type="checkbox" id="setKeyman">
+            <span>キーマンに設定する</span>
+          </label>
+          <p class="warning-text" id="keymanWarning" style="display: none;">
+            ※ この人をキーマンにすると、既存のキーマン（鈴木 太郎）を解除します
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddModal()">キャンセル</button>
+        <button class="btn btn-primary">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 追加モーダル
+    function openAddModal() {
+      document.getElementById('addModal').classList.add('active');
+    }
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('active');
+    }
+
+    // 解除確認
+    function confirmRemove() {
+      if (confirm('この関係者をユニットから解除しますか？\n（顧客マスタからは削除されません）')) {
+        alert('解除しました');
+      }
+    }
+
+    // 顧客タイプ切り替え
+    document.querySelectorAll('input[name="customer-type"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        if (this.value === 'existing') {
+          document.getElementById('existingCustomerSection').style.display = 'block';
+          document.getElementById('newCustomerSection').style.display = 'none';
+        } else {
+          document.getElementById('existingCustomerSection').style.display = 'none';
+          document.getElementById('newCustomerSection').style.display = 'block';
+        }
+      });
+    });
+
+    // キーマン設定時の警告
+    document.getElementById('setKeyman').addEventListener('change', function() {
+      document.getElementById('keymanWarning').style.display = this.checked ? 'block' : 'none';
+    });
+
+    // キーマンチェックボックス
+    document.querySelectorAll('.keyman-checkbox').forEach(function(checkbox) {
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          if (confirm('この関係者をキーマンに設定しますか？\n既存のキーマンは解除されます。')) {
+            // キーマン変更処理
+          } else {
+            this.checked = false;
+          }
+        }
+      });
+    });
+
+    // モーダル外クリックで閉じる
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

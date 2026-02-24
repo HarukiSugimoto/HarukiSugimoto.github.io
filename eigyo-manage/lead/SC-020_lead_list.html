@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-020 リード一覧 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    /* ヘッダー */
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    /* メインコンテナ */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    /* ページタイトル */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    /* ボタン共通 */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    /* カード */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    /* 検索セクション */
+    .search-section {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .form-input, .form-select {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 160px;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    /* フィルタセクション */
+    .filter-section {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #ecf0f1;
+      margin-bottom: 16px;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .filter-group-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .checkbox-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .checkbox-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid #dce0e4;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .checkbox-tag:hover {
+      border-color: #3498db;
+      background: #f8fbfd;
+    }
+    .checkbox-tag input[type="checkbox"] {
+      display: none;
+    }
+    .checkbox-tag.checked {
+      background: #3498db;
+      border-color: #3498db;
+      color: #fff;
+    }
+    .checkbox-tag .check-icon {
+      display: none;
+      font-size: 11px;
+    }
+    .checkbox-tag.checked .check-icon {
+      display: inline;
+    }
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-range-separator {
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    /* 表示オプション */
+    .display-options {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 22px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 22px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #3498db;
+    }
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+    /* 検索アクションボタン */
+    .search-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #ecf0f1;
+    }
+    /* テーブル */
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 600;
+      color: #2c3e50;
+      border-bottom: 2px solid #ecf0f1;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    .data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .data-table tr.has-alert {
+      background: #fef9e7;
+    }
+    .data-table tr.has-alert:hover {
+      background: #fcf3cf;
+    }
+    /* アラートアイコン */
+    .alert-icon {
+      color: #e74c3c;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    /* ソート可能カラム */
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 20px !important;
+    }
+    .sortable:hover {
+      background: #ecf0f1;
+    }
+    .sortable::after {
+      content: "↕";
+      position: absolute;
+      right: 6px;
+      color: #bdc3c7;
+      font-size: 10px;
+    }
+    .sortable.asc::after {
+      content: "↑";
+      color: #3498db;
+    }
+    .sortable.desc::after {
+      content: "↓";
+      color: #3498db;
+    }
+    /* キーマンマーク */
+    .keyman-star {
+      color: #f1c40f;
+      margin-right: 4px;
+    }
+    /* 顧客リスト */
+    .customer-list {
+      font-size: 12px;
+      color: #666;
+    }
+    .customer-list .customer-item {
+      display: inline;
+    }
+    .customer-list .customer-item:not(:last-child)::after {
+      content: ", ";
+    }
+    /* グルーピング */
+    .group-header {
+      background: #e8f4fd !important;
+      cursor: pointer;
+    }
+    .group-header td {
+      padding: 10px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .group-toggle {
+      margin-right: 8px;
+    }
+    .group-count {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: normal;
+      margin-left: 8px;
+    }
+    .group-child {
+      background: #fafbfc;
+    }
+    .group-child td:first-child {
+      padding-left: 36px;
+    }
+    .group-child.has-alert {
+      background: #fef9e7;
+    }
+    .group-child.has-alert:hover {
+      background: #fcf3cf;
+    }
+    /* ページネーション */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 1px solid #ecf0f1;
+      margin-top: 16px;
+    }
+    .pagination-info {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination-btn {
+      padding: 6px 12px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #3498db;
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-current {
+      padding: 6px 12px;
+      background: #3498db;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .page-size-select {
+      padding: 6px 10px;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .sort-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    /* リンク */
+    .link {
+      color: #3498db;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+      .search-section, .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .form-input, .form-select {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-010_dashboard.html" class="btn btn-secondary btn-sm">ダッシュボード</a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 太郎</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテナ -->
+  <main class="main-container">
+    <!-- ページヘッダー -->
+    <div class="page-header">
+      <h1 class="page-title">SC-020 リード一覧</h1>
+      <a href="SC-022_lead_register_select.html" class="btn btn-primary">＋ リード登録</a>
+    </div>
+
+    <!-- 検索・フィルタカード -->
+    <div class="card">
+      <div class="card-header">検索・フィルタ</div>
+      <div class="card-body">
+        <!-- 検索 -->
+        <div class="search-section">
+          <div class="form-group">
+            <label class="form-label">企業名</label>
+            <input type="text" class="form-input" placeholder="企業名で検索">
+          </div>
+          <div class="form-group">
+            <label class="form-label">リードタイトル</label>
+            <input type="text" class="form-input" placeholder="リードタイトルで検索">
+          </div>
+          <div class="form-group">
+            <label class="form-label">営業担当者</label>
+            <input type="text" class="form-input" placeholder="営業担当者で検索">
+          </div>
+          <div class="form-group">
+            <label class="form-label">顧客名</label>
+            <input type="text" class="form-input" placeholder="顧客名で検索">
+          </div>
+        </div>
+
+        <!-- フィルタ -->
+        <div class="filter-section">
+          <div class="filter-group">
+            <span class="filter-group-label">ステージ（複数選択可）</span>
+            <div class="checkbox-tags">
+              <label class="checkbox-tag">
+                <input type="checkbox">
+                <span class="check-icon">✓</span>
+                接触前
+              </label>
+              <label class="checkbox-tag">
+                <input type="checkbox">
+                <span class="check-icon">✓</span>
+                冷却中
+              </label>
+              <label class="checkbox-tag">
+                <input type="checkbox">
+                <span class="check-icon">✓</span>
+                商談化済み
+              </label>
+            </div>
+          </div>
+          <div class="filter-group">
+            <span class="filter-group-label">アラート</span>
+            <select class="form-select">
+              <option value="">すべて</option>
+              <option value="alert">要対応あり</option>
+              <option value="normal">通常のみ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 日付フィルタ -->
+        <div class="filter-section">
+          <div class="filter-group">
+            <span class="filter-group-label">最終アクション日</span>
+            <div class="date-range">
+              <input type="date" class="form-input" style="min-width: 140px;">
+              <span class="date-range-separator">〜</span>
+              <input type="date" class="form-input" style="min-width: 140px;">
+            </div>
+          </div>
+          <div class="filter-group">
+            <span class="filter-group-label">次回アクション日</span>
+            <div class="date-range">
+              <input type="date" class="form-input" style="min-width: 140px;">
+              <span class="date-range-separator">〜</span>
+              <input type="date" class="form-input" style="min-width: 140px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- 表示オプション -->
+        <div class="display-options">
+          <div class="toggle-wrapper">
+            <span>企業別グルーピング</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="groupToggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <span class="form-label" style="margin-left: auto;">※ カラムヘッダーをクリックでソート</span>
+        </div>
+
+        <!-- 検索ボタン -->
+        <div class="search-actions">
+          <button class="btn btn-primary">検索</button>
+          <button class="btn btn-secondary">クリア</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- リード一覧（通常表示） -->
+    <div class="card" id="normalView">
+      <div class="card-header">一覧（5件）</div>
+      <div class="card-body">
+        <!-- テーブル -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 30px;"></th>
+                <th class="sortable" data-sort="company">企業名</th>
+                <th>リードタイトル</th>
+                <th>キーマン</th>
+                <th>顧客</th>
+                <th>現在のステージ</th>
+                <th>アカウント担当</th>
+                <th class="sortable" data-sort="last_action">最終アクション日</th>
+                <th class="sortable" data-sort="next_action">次回アクション日</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable has-alert" onclick="location.href='SC-021_lead_detail.html'">
+                <td><span class="alert-icon">!</span></td>
+                <td><a href="#" class="link">A株式会社</a></td>
+                <td>新規問い合わせ対応</td>
+                <td><span class="keyman-star">★</span>鈴木 太郎</td>
+                <td class="customer-list"><span class="customer-item">鈴木 太郎</span><span class="customer-item">田中 花子</span></td>
+                <td>接触前</td>
+                <td>山田</td>
+                <td>2026/02/10</td>
+                <td>2026/02/15</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td><a href="#" class="link">B株式会社</a></td>
+                <td>展示会フォロー</td>
+                <td><span style="color: #95a5a6;">（未設定）</span></td>
+                <td class="customer-list"><span class="customer-item">佐藤 花子</span></td>
+                <td>冷却中</td>
+                <td>佐藤</td>
+                <td>2026/02/02</td>
+                <td>未設定</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td><a href="#" class="link">C株式会社</a></td>
+                <td>Web問い合わせ</td>
+                <td><span class="keyman-star">★</span>田中 一郎</td>
+                <td class="customer-list"><span class="customer-item">田中 一郎</span><span class="customer-item">山本 二郎</span><span class="customer-item">佐々木 三郎</span></td>
+                <td>接触前</td>
+                <td>山田</td>
+                <td>2026/02/08</td>
+                <td>2026/02/20</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td><a href="#" class="link">D合同会社</a></td>
+                <td>紹介案件</td>
+                <td><span class="keyman-star">★</span>高橋 次郎</td>
+                <td class="customer-list"><span class="customer-item">高橋 次郎</span></td>
+                <td>商談化済み</td>
+                <td>田中</td>
+                <td>2026/02/05</td>
+                <td>2026/02/25</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td><a href="#" class="link">E株式会社</a></td>
+                <td>リピート相談</td>
+                <td><span class="keyman-star">★</span>伊藤 三郎</td>
+                <td class="customer-list"><span class="customer-item">伊藤 三郎</span><span class="customer-item">渡辺 四郎</span></td>
+                <td>商談化済み</td>
+                <td>佐藤</td>
+                <td>2026/02/01</td>
+                <td>2026/02/28</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+          <div class="pagination-info">
+            全 128 件中 1 - 5 件を表示
+          </div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- リード一覧（グルーピング表示）※デフォルトは非表示 -->
+    <div class="card" id="groupView" style="display: none;">
+      <div class="card-header">一覧 - 企業別グルーピング（5件）</div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 30px;"></th>
+                <th class="sortable" data-sort="company">企業名</th>
+                <th>リードタイトル</th>
+                <th>キーマン</th>
+                <th>顧客</th>
+                <th>現在のステージ</th>
+                <th>アカウント担当</th>
+                <th class="sortable" data-sort="last_action">最終アクション日</th>
+                <th class="sortable" data-sort="next_action">次回アクション日</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- A株式会社 グループ -->
+              <tr class="group-header">
+                <td colspan="9">
+                  <span class="group-toggle">▾</span>
+                  A株式会社
+                  <span class="group-count">(1件)</span>
+                </td>
+              </tr>
+              <tr class="group-child clickable has-alert" onclick="location.href='SC-021_lead_detail.html'">
+                <td><span class="alert-icon">!</span></td>
+                <td></td>
+                <td>新規問い合わせ対応</td>
+                <td><span class="keyman-star">★</span>鈴木 太郎</td>
+                <td class="customer-list"><span class="customer-item">鈴木 太郎</span><span class="customer-item">田中 花子</span></td>
+                <td>接触前</td>
+                <td>山田</td>
+                <td>2026/02/10</td>
+                <td>2026/02/15</td>
+              </tr>
+              <!-- B株式会社 グループ -->
+              <tr class="group-header">
+                <td colspan="9">
+                  <span class="group-toggle">▾</span>
+                  B株式会社
+                  <span class="group-count">(1件)</span>
+                </td>
+              </tr>
+              <tr class="group-child clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td></td>
+                <td>展示会フォロー</td>
+                <td><span style="color: #95a5a6;">（未設定）</span></td>
+                <td class="customer-list"><span class="customer-item">佐藤 花子</span></td>
+                <td>冷却中</td>
+                <td>佐藤</td>
+                <td>2026/02/02</td>
+                <td>未設定</td>
+              </tr>
+              <!-- C株式会社 グループ -->
+              <tr class="group-header">
+                <td colspan="9">
+                  <span class="group-toggle">▾</span>
+                  C株式会社
+                  <span class="group-count">(1件)</span>
+                </td>
+              </tr>
+              <tr class="group-child clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td></td>
+                <td>Web問い合わせ</td>
+                <td><span class="keyman-star">★</span>田中 一郎</td>
+                <td class="customer-list"><span class="customer-item">田中 一郎</span><span class="customer-item">山本 二郎</span><span class="customer-item">佐々木 三郎</span></td>
+                <td>接触前</td>
+                <td>山田</td>
+                <td>2026/02/08</td>
+                <td>2026/02/20</td>
+              </tr>
+              <!-- D合同会社 グループ -->
+              <tr class="group-header">
+                <td colspan="9">
+                  <span class="group-toggle">▾</span>
+                  D合同会社
+                  <span class="group-count">(1件)</span>
+                </td>
+              </tr>
+              <tr class="group-child clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td></td>
+                <td>紹介案件</td>
+                <td><span class="keyman-star">★</span>高橋 次郎</td>
+                <td class="customer-list"><span class="customer-item">高橋 次郎</span></td>
+                <td>商談化済み</td>
+                <td>田中</td>
+                <td>2026/02/05</td>
+                <td>2026/02/25</td>
+              </tr>
+              <!-- E株式会社 グループ -->
+              <tr class="group-header">
+                <td colspan="9">
+                  <span class="group-toggle">▾</span>
+                  E株式会社
+                  <span class="group-count">(1件)</span>
+                </td>
+              </tr>
+              <tr class="group-child clickable" onclick="location.href='SC-021_lead_detail.html'">
+                <td></td>
+                <td></td>
+                <td>リピート相談</td>
+                <td><span class="keyman-star">★</span>伊藤 三郎</td>
+                <td class="customer-list"><span class="customer-item">伊藤 三郎</span><span class="customer-item">渡辺 四郎</span></td>
+                <td>商談化済み</td>
+                <td>佐藤</td>
+                <td>2026/02/01</td>
+                <td>2026/02/28</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+          <div class="pagination-info">
+            全 128 件中 1 - 5 件を表示
+          </div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // グルーピング表示切り替え
+    document.getElementById('groupToggle').addEventListener('change', function() {
+      const normalView = document.getElementById('normalView');
+      const groupView = document.getElementById('groupView');
+      if (this.checked) {
+        normalView.style.display = 'none';
+        groupView.style.display = 'block';
+      } else {
+        normalView.style.display = 'block';
+        groupView.style.display = 'none';
+      }
+    });
+
+    // チェックボックスタグの切り替え
+    document.querySelectorAll('.checkbox-tag').forEach(tag => {
+      const checkbox = tag.querySelector('input[type="checkbox"]');
+      tag.addEventListener('click', () => {
+        checkbox.checked = !checkbox.checked;
+        tag.classList.toggle('checked', checkbox.checked);
+      });
+    });
+
+    // ソート機能
+    document.querySelectorAll('.sortable').forEach(th => {
+      th.addEventListener('click', function() {
+        // 同じテーブル内の他のsortableからクラスを削除
+        const table = this.closest('table');
+        table.querySelectorAll('.sortable').forEach(el => {
+          if (el !== this) {
+            el.classList.remove('asc', 'desc');
+          }
+        });
+        // 現在の状態を切り替え
+        if (this.classList.contains('asc')) {
+          this.classList.remove('asc');
+          this.classList.add('desc');
+        } else if (this.classList.contains('desc')) {
+          this.classList.remove('desc');
+          this.classList.add('asc');
+        } else {
+          this.classList.add('asc');
+        }
+        // 実際のソート処理はバックエンド実装時に追加
+      });
+    });
+  </script>
+</body>
+</html>

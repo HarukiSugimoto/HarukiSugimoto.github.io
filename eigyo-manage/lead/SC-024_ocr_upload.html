@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-024 名刺OCRアップロード/撮影 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 32px 24px;
+    }
+    .upload-section {
+      text-align: center;
+    }
+    .upload-area {
+      border: 2px dashed #bdc3c7;
+      border-radius: 12px;
+      padding: 48px 24px;
+      background: #f8f9fa;
+      transition: all 0.3s;
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+    .upload-area:hover {
+      border-color: #3498db;
+      background: #ebf5fb;
+    }
+    .upload-area.drag-over {
+      border-color: #3498db;
+      background: #d4edfa;
+    }
+    .upload-icon {
+      font-size: 64px;
+      color: #bdc3c7;
+      margin-bottom: 16px;
+    }
+    .upload-text {
+      font-size: 16px;
+      color: #7f8c8d;
+      margin-bottom: 8px;
+    }
+    .upload-hint {
+      font-size: 13px;
+      color: #95a5a6;
+    }
+    .upload-input {
+      display: none;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: #7f8c8d;
+    }
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #ecf0f1;
+    }
+    .divider span {
+      padding: 0 16px;
+      font-size: 13px;
+    }
+    .camera-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .preview-section {
+      margin-top: 24px;
+      display: none;
+    }
+    .preview-section.show {
+      display: block;
+    }
+    .preview-label {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 12px;
+    }
+    .preview-container {
+      border: 1px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 16px;
+      background: #f8f9fa;
+      text-align: center;
+    }
+    .preview-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .preview-placeholder {
+      color: #95a5a6;
+      padding: 60px 0;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 32px;
+    }
+    .file-info {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-010_dashboard.html" class="btn btn-secondary btn-sm">ダッシュボード</a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">SC-024 名刺OCRアップロード/撮影</h1>
+      <a href="SC-022_lead_register_select.html" class="btn btn-secondary">キャンセル</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">名刺画像を取り込みます（JPEG/PNG）</div>
+      <div class="card-body">
+        <div class="upload-section">
+          <!-- ドラッグ&ドロップエリア -->
+          <div class="upload-area" id="dropZone">
+            <div class="upload-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="upload-text">ファイルをドラッグ&ドロップ</div>
+            <div class="upload-hint">または</div>
+            <button class="btn btn-secondary" style="margin-top: 12px;" onclick="document.getElementById('fileInput').click()">ファイルを選択</button>
+            <input type="file" id="fileInput" class="upload-input" accept="image/jpeg,image/png">
+          </div>
+
+          <!-- 区切り線 -->
+          <div class="divider">
+            <span>もしくは</span>
+          </div>
+
+          <!-- カメラ撮影ボタン -->
+          <div class="camera-button">
+            <button class="btn btn-primary btn-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              カメラで撮影
+            </button>
+            <span class="upload-hint">デバイスのカメラを使用して名刺を撮影します</span>
+          </div>
+
+          <!-- プレビューセクション -->
+          <div class="preview-section" id="previewSection">
+            <div class="preview-label">プレビュー:</div>
+            <div class="preview-container">
+              <div class="preview-placeholder" id="previewPlaceholder">
+                （ここに画像プレビュー）
+              </div>
+              <img id="previewImage" class="preview-image" style="display: none;">
+            </div>
+            <div class="file-info" id="fileInfo"></div>
+          </div>
+
+          <!-- アクションボタン -->
+          <div class="action-buttons">
+            <a href="SC-022_lead_register_select.html" class="btn btn-secondary">戻る</a>
+            <a href="SC-025_ocr_result.html" class="btn btn-primary btn-lg" id="nextButton">次へ（OCR実行）</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewSection = document.getElementById('previewSection');
+    const previewImage = document.getElementById('previewImage');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    const fileInfo = document.getElementById('fileInfo');
+
+    // ドラッグ&ドロップイベント
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    // ファイル選択イベント
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      if (!file.type.match('image/(jpeg|png)')) {
+        alert('JPEG または PNG ファイルを選択してください');
+        return;
+      }
+
+      previewSection.classList.add('show');
+      previewPlaceholder.style.display = 'none';
+      previewImage.style.display = 'block';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      fileInfo.textContent = `ファイル名: ${file.name} / サイズ: ${(file.size / 1024).toFixed(1)} KB`;
+    }
+  </script>
+</body>
+</html>

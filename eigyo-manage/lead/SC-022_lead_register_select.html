@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-022 リード登録（方式選択） | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-lg {
+      padding: 16px 32px;
+      font-size: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 40px 20px;
+    }
+    .selection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .selection-card {
+      background: #fff;
+      border: 2px solid #ecf0f1;
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .selection-card:hover {
+      border-color: #3498db;
+      box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15);
+      transform: translateY(-2px);
+    }
+    .selection-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .selection-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+    .selection-desc {
+      font-size: 13px;
+      color: #7f8c8d;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .selection-desc ul {
+      list-style: none;
+      text-align: left;
+      padding-left: 0;
+    }
+    .selection-desc li {
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    .selection-desc li::before {
+      content: "・";
+      position: absolute;
+      left: 0;
+      color: #3498db;
+    }
+    @media (max-width: 600px) {
+      .selection-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-010_dashboard.html" class="btn btn-secondary btn-sm">ダッシュボード</a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">SC-022 リード登録（方式選択）</h1>
+      <a href="SC-020_lead_list.html" class="btn btn-secondary">キャンセル</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">登録方法を選択してください</div>
+      <div class="card-body">
+        <div class="selection-grid">
+          <!-- 手動登録 -->
+          <a href="SC-023_lead_register_manual.html" class="selection-card" style="text-decoration: none; color: inherit;">
+            <div class="selection-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </div>
+            <div class="selection-title">手動で登録</div>
+            <div class="selection-desc">
+              <ul>
+                <li>企業/顧客を選択 or 新規作成</li>
+              </ul>
+            </div>
+            <span class="btn btn-primary btn-lg">手動登録へ</span>
+          </a>
+
+          <!-- 名刺OCR -->
+          <a href="SC-024_ocr_upload.html" class="selection-card" style="text-decoration: none; color: inherit;">
+            <div class="selection-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+            <div class="selection-title">名刺OCRで登録</div>
+            <div class="selection-desc">
+              <ul>
+                <li>JPEG/PNGを撮影/アップロード</li>
+                <li>企業名と氏名を自動抽出</li>
+              </ul>
+            </div>
+            <span class="btn btn-primary btn-lg">OCRへ</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

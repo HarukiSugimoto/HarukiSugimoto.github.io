@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-041 進捗表示 | 営業管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 24px;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .form-select {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    /* フィルタカード */
+    .filter-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    /* 週次達成率テーブル */
+    .weekly-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .weekly-table th, .weekly-table td {
+      padding: 12px;
+      border: 1px solid #ecf0f1;
+      text-align: center;
+    }
+    .weekly-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .weekly-table .week-cell {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .weekly-table .total-row {
+      background: #ebf5fb;
+      font-weight: 600;
+    }
+    .rate-good {
+      color: #27ae60;
+      font-weight: 600;
+    }
+    .rate-warning {
+      color: #f39c12;
+      font-weight: 600;
+    }
+    .rate-bad {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .rate-hint {
+      font-size: 10px;
+      color: #7f8c8d;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .week-current {
+      background: #ebf5fb;
+    }
+    .week-future {
+      background: #f8f9fa;
+      color: #95a5a6;
+    }
+    /* 月次目標サマリー */
+    .monthly-target-summary {
+      display: flex;
+      gap: 32px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .target-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .target-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .target-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .target-value.sub {
+      font-size: 16px;
+      color: #3498db;
+    }
+    .target-hint {
+      font-size: 11px;
+      color: #95a5a6;
+    }
+    /* 進捗バー */
+    .weekly-progress {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid #ecf0f1;
+      border-radius: 6px;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .progress-title {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .progress-calc {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .progress-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .progress-bar-bg {
+      height: 24px;
+      background: #ecf0f1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 12px;
+      transition: width 0.3s;
+    }
+    .progress-bar-fill.rate-good {
+      background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+    }
+    .progress-bar-fill.rate-warning {
+      background: linear-gradient(90deg, #f39c12 0%, #f7b731 100%);
+    }
+    .progress-bar-fill.rate-bad {
+      background: linear-gradient(90deg, #e74c3c 0%, #ec7063 100%);
+    }
+    .progress-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #95a5a6;
+    }
+    .progress-rate {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .progress-bar-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #2c3e50;
+      border-radius: 2px;
+    }
+    .progress-bar-bg {
+      position: relative;
+    }
+    .progress-bar-hint {
+      position: relative;
+      height: 16px;
+      margin-top: 2px;
+    }
+    .marker-label {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: #2c3e50;
+      white-space: nowrap;
+    }
+    /* 売上見込みサマリー */
+    .pipeline-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px;
+      background: linear-gradient(135deg, #fef9e7 0%, #fdebd0 100%);
+      border: 1px solid #f5b041;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .pipeline-summary-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .pipeline-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pipeline-question {
+      font-size: 14px;
+      color: #7f8c8d;
+    }
+    .pipeline-answer {
+      font-size: 18px;
+      color: #2c3e50;
+    }
+    .pipeline-answer.warning {
+      color: #e67e22;
+    }
+    .pipeline-answer.ok {
+      color: #27ae60;
+    }
+    .pipeline-stats {
+      display: flex;
+      gap: 24px;
+    }
+    .pipeline-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .pipeline-stat .stat-label {
+      font-size: 11px;
+      color: #7f8c8d;
+    }
+    .pipeline-stat .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .pipeline-stat.shortage .stat-value {
+      color: #e74c3c;
+    }
+    /* 旧ファネル（互換用） */
+    .funnel-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #eafaf1;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .funnel-summary-label {
+      font-size: 14px;
+      color: #2c3e50;
+    }
+    .funnel-summary-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #27ae60;
+    }
+    .funnel-summary-unit {
+      font-size: 14px;
+      color: #7f8c8d;
+    }
+    .funnel-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .funnel-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .funnel-month {
+      width: 60px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .funnel-bar-container {
+      flex: 1;
+      position: relative;
+      height: 32px;
+      background: #ecf0f1;
+      border-radius: 4px;
+      overflow: visible;
+    }
+    .funnel-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    .funnel-bar-fill.good {
+      background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+    }
+    .funnel-bar-fill.warning {
+      background: linear-gradient(90deg, #f39c12 0%, #f7b731 100%);
+    }
+    .funnel-bar-fill.bad {
+      background: linear-gradient(90deg, #e74c3c 0%, #ec7063 100%);
+    }
+    .funnel-bar-value {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .funnel-target-line {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e74c3c;
+    }
+    .funnel-target-label {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: #7f8c8d;
+    }
+    .funnel-status {
+      width: 80px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .status-shortage {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .status-ok {
+      color: #27ae60;
+      font-weight: 600;
+    }
+    /* 12ヶ月先見通しテーブル */
+    .forecast-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .forecast-table th, .forecast-table td {
+      padding: 10px 12px;
+      border: 1px solid #ecf0f1;
+      text-align: center;
+    }
+    .forecast-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .forecast-table .month-current {
+      background: #ebf5fb;
+      font-weight: 600;
+    }
+    .forecast-table .shortage {
+      background: #fef9e7;
+    }
+    .gap-negative {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .gap-positive {
+      color: #27ae60;
+      font-weight: 600;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .status-badge.shortage {
+      background: #fdebd0;
+      color: #e67e22;
+    }
+    .status-badge.ok {
+      background: #d5f5e3;
+      color: #27ae60;
+    }
+    .note-text {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 12px;
+    }
+    @media (max-width: 768px) {
+      .forecast-table {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-010_dashboard.html" class="btn btn-secondary btn-sm">ダッシュボード</a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">SC-041 進捗表示</h1>
+      <a href="SC-040_annual_plan_setting.html" class="btn btn-primary">+ 年間計画設定</a>
+    </div>
+
+    <!-- フィルタ -->
+    <div class="filter-card">
+      <div class="form-row">
+        <div class="form-group">
+          <span class="form-label">表示月</span>
+          <select class="form-select">
+            <option>2026/02</option>
+            <option>2026/01</option>
+            <option>2025/12</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-sm">再計算</button>
+      </div>
+      <p class="note-text">集計: 商談の「受注予定時期」「受注予定金額」を自動集計（更新時に再計算）</p>
+    </div>
+
+    <!-- 週次達成率 -->
+    <div class="card">
+      <div class="card-header">週次達成率（当月: 2026年2月）</div>
+      <div class="card-body">
+        <!-- 月次目標サマリー -->
+        <div class="monthly-target-summary">
+          <div class="target-item">
+            <span class="target-label">月次目標</span>
+            <span class="target-value">10,000,000円</span>
+          </div>
+          <div class="target-item">
+            <span class="target-label">週あたり目安</span>
+            <span class="target-value sub">2,500,000円</span>
+            <span class="target-hint">（月次目標 ÷ 4週）</span>
+          </div>
+          <div class="target-item">
+            <span class="target-label">現在</span>
+            <span class="target-value">第3週目</span>
+          </div>
+        </div>
+
+        <!-- 進捗バー -->
+        <div class="weekly-progress">
+          <div class="progress-header">
+            <span class="progress-title">月次目標に対する進捗</span>
+            <span class="progress-calc">月次目標: 10,000,000円 → 現時点実績: 6,400,000円</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill rate-warning" style="width: 64%;"></div>
+              <div class="progress-bar-marker" style="left: 75%;"></div>
+            </div>
+            <div class="progress-bar-labels">
+              <span>0%</span>
+              <span class="progress-rate rate-warning">64%</span>
+              <span>100%</span>
+            </div>
+            <div class="progress-bar-hint">
+              <span class="marker-label" style="left: 75%;">▲ 3週目目安 75%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 週別内訳テーブル -->
+        <table class="weekly-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">週</th>
+              <th style="width: 140px;">実績（円）</th>
+              <th style="width: 140px;">累計実績（円）</th>
+              <th style="width: 120px;">累計達成率</th>
+              <th>メモ（任意）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="week-cell">第1週</td>
+              <td>1,800,000</td>
+              <td>1,800,000</td>
+              <td class="rate-warning">72%<span class="rate-hint">（/2.5M目安）</span></td>
+              <td><input type="text" style="width: 100%; padding: 4px 8px; border: 1px solid #dce0e4; border-radius: 4px;" value="案件クロージング遅延"></td>
+            </tr>
+            <tr>
+              <td class="week-cell">第2週</td>
+              <td>2,200,000</td>
+              <td>4,000,000</td>
+              <td class="rate-warning">80%<span class="rate-hint">（/5.0M目安）</span></td>
+              <td><input type="text" style="width: 100%; padding: 4px 8px; border: 1px solid #dce0e4; border-radius: 4px;" value=""></td>
+            </tr>
+            <tr class="week-current">
+              <td class="week-cell">第3週</td>
+              <td>2,400,000</td>
+              <td>6,400,000</td>
+              <td class="rate-warning">85%<span class="rate-hint">（/7.5M目安）</span></td>
+              <td><input type="text" style="width: 100%; padding: 4px 8px; border: 1px solid #dce0e4; border-radius: 4px;" value="展示会フォロー成果"></td>
+            </tr>
+            <tr class="week-future">
+              <td class="week-cell">第4週</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td><input type="text" style="width: 100%; padding: 4px 8px; border: 1px solid #dce0e4; border-radius: 4px;" value="" placeholder="未到来"></td>
+            </tr>
+            <tr class="total-row">
+              <td>月末見込</td>
+              <td colspan="2">現ペースで約 8,500,000円（目標比 85%）</td>
+              <td class="rate-warning">85%</td>
+              <td>残り 3,600,000円 必要</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 売上見込み（12ヶ月先） -->
+    <div class="card">
+      <div class="card-header">売上見込み（12ヶ月先）</div>
+      <div class="card-body">
+        <!-- サマリー -->
+        <div class="pipeline-summary">
+          <div class="pipeline-summary-main">
+            <div class="pipeline-text">
+              <span class="pipeline-question">12ヶ月間で、目標達成に必要な商談は揃っている？</span>
+              <span class="pipeline-answer warning">あと <strong>12.6M円</strong> 分の商談が足りません</span>
+            </div>
+          </div>
+          <div class="pipeline-stats">
+            <div class="pipeline-stat">
+              <span class="stat-label">12ヶ月目標合計</span>
+              <span class="stat-value">118.0M</span>
+            </div>
+            <div class="pipeline-stat">
+              <span class="stat-label">受注見込み合計</span>
+              <span class="stat-value">105.4M</span>
+            </div>
+            <div class="pipeline-stat shortage">
+              <span class="stat-label">不足額</span>
+              <span class="stat-value">-12.6M</span>
+            </div>
+            <div class="pipeline-stat">
+              <span class="stat-label">不足月</span>
+              <span class="stat-value" style="color: #e74c3c;">8ヶ月</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 月別テーブル -->
+        <table class="forecast-table">
+          <thead>
+            <tr>
+              <th style="width: 100px;">月</th>
+              <th style="width: 120px;">目標（円）</th>
+              <th style="width: 120px;">受注予定（円）</th>
+              <th style="width: 120px;">ギャップ（円）</th>
+              <th style="width: 100px;">状態</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="month-current shortage">
+              <td>2026/02</td>
+              <td>10.0M</td>
+              <td>8.2M</td>
+              <td class="gap-negative">-1.8M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr class="shortage">
+              <td>2026/03</td>
+              <td>10.0M</td>
+              <td>5.1M</td>
+              <td class="gap-negative">-4.9M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr class="shortage">
+              <td>2026/04</td>
+              <td>10.0M</td>
+              <td>7.9M</td>
+              <td class="gap-negative">-2.1M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr class="shortage">
+              <td>2026/05</td>
+              <td>10.0M</td>
+              <td>9.5M</td>
+              <td class="gap-negative">-0.5M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr>
+              <td>2026/06</td>
+              <td>10.0M</td>
+              <td>10.2M</td>
+              <td class="gap-positive">+0.2M</td>
+              <td><span class="status-badge ok">余裕</span></td>
+            </tr>
+            <tr>
+              <td>2026/07</td>
+              <td>10.0M</td>
+              <td>11.0M</td>
+              <td class="gap-positive">+1.0M</td>
+              <td><span class="status-badge ok">余裕</span></td>
+            </tr>
+            <tr class="shortage">
+              <td>2026/08</td>
+              <td>8.0M</td>
+              <td>7.5M</td>
+              <td class="gap-negative">-0.5M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr>
+              <td>2026/09</td>
+              <td>12.0M</td>
+              <td>13.5M</td>
+              <td class="gap-positive">+1.5M</td>
+              <td><span class="status-badge ok">余裕</span></td>
+            </tr>
+            <tr class="shortage">
+              <td>2026/10</td>
+              <td>10.0M</td>
+              <td>8.0M</td>
+              <td class="gap-negative">-2.0M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr class="shortage">
+              <td>2026/11</td>
+              <td>10.0M</td>
+              <td>9.0M</td>
+              <td class="gap-negative">-1.0M</td>
+              <td><span class="status-badge shortage">★不足</span></td>
+            </tr>
+            <tr>
+              <td>2026/12</td>
+              <td>8.0M</td>
+              <td>10.0M</td>
+              <td class="gap-positive">+2.0M</td>
+              <td><span class="status-badge ok">余裕</span></td>
+            </tr>
+            <tr>
+              <td>2027/01</td>
+              <td>10.0M</td>
+              <td>11.3M</td>
+              <td class="gap-positive">+1.3M</td>
+              <td><span class="status-badge ok">余裕</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="note-text">※受注確定時は実績にも反映（受注処理フローにて年間計画へ反映）</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

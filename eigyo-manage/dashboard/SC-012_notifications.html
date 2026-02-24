@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-012 通知一覧 | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .header-notification {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .header-notification-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+    .header-notification:hover .header-notification-icon {
+      opacity: 0.8;
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .main-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .breadcrumb {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 16px;
+    }
+    .breadcrumb a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .breadcrumb span {
+      margin: 0 6px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 0;
+    }
+    /* 通知リスト */
+    .notification-list {
+      list-style: none;
+    }
+    .notification-item {
+      display: flex;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      transition: background 0.2s;
+      cursor: pointer;
+      align-items: flex-start;
+    }
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+    .notification-item:hover {
+      background: #f8f9fa;
+    }
+    .notification-item.unread {
+      background: #ebf5fb;
+    }
+    .notification-item.unread:hover {
+      background: #d6eaf8;
+    }
+    /* 星フラグ */
+    .notification-star {
+      flex-shrink: 0;
+      cursor: pointer;
+      color: #dce0e4;
+      font-size: 20px;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+    }
+    .notification-star:hover {
+      color: #f1c40f;
+    }
+    .notification-star.starred {
+      color: #f1c40f;
+    }
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .notification-icon .material-icons {
+      font-size: 22px;
+    }
+    .notification-icon.alert {
+      background: #fef9e7;
+      color: #f39c12;
+    }
+    .notification-icon.action {
+      background: #fdebd0;
+      color: #e67e22;
+    }
+    .notification-icon.circleback {
+      background: #f5eef8;
+      color: #9b59b6;
+    }
+    .notification-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .notification-title {
+      font-weight: 500;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+    .notification-item.unread .notification-title {
+      font-weight: 600;
+    }
+    .notification-desc {
+      font-size: 13px;
+      color: #7f8c8d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notification-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .notification-time {
+      font-size: 12px;
+      color: #95a5a6;
+    }
+    .notification-unread-dot {
+      width: 8px;
+      height: 8px;
+      background: #3498db;
+      border-radius: 50%;
+    }
+    /* フィルタタブ */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 12px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      background: #fff;
+    }
+    .filter-tab {
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1px solid #ecf0f1;
+      background: #fff;
+      color: #7f8c8d;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .filter-tab:hover {
+      border-color: #3498db;
+      color: #3498db;
+    }
+    .filter-tab.active {
+      background: #3498db;
+      border-color: #3498db;
+      color: #fff;
+    }
+    .filter-tab .material-icons {
+      font-size: 16px;
+    }
+    .filter-tab .count {
+      background: rgba(0,0,0,0.1);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .filter-tab.active .count {
+      background: rgba(255,255,255,0.3);
+    }
+    /* ページネーション */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-top: 1px solid #ecf0f1;
+    }
+    .pagination-info {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination-btn {
+      padding: 6px 12px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #3498db;
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-current {
+      padding: 6px 12px;
+      background: #3498db;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    @media (max-width: 768px) {
+      .notification-desc {
+        display: none;
+      }
+      .filter-tabs {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="SC-012_notifications.html" class="header-notification" title="通知">
+        <span class="material-icons header-notification-icon">notifications</span>
+        <span class="notification-badge">5</span>
+      </a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- パンくず -->
+    <div class="breadcrumb">
+      <a href="SC-010_dashboard.html">ダッシュボード</a>
+      <span>></span>
+      通知一覧
+    </div>
+
+    <!-- ページヘッダー -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">通知一覧</h1>
+      </div>
+      <div>
+        <button class="btn btn-secondary btn-sm" onclick="markAllAsRead()">すべて既読にする</button>
+      </div>
+    </div>
+
+    <!-- 通知カード -->
+    <div class="card">
+      <!-- フィルタタブ -->
+      <div class="filter-tabs">
+        <button class="filter-tab active">すべて<span class="count">7</span></button>
+        <button class="filter-tab">未読<span class="count">5</span></button>
+        <button class="filter-tab"><span class="material-icons">star</span>スター付き<span class="count">2</span></button>
+        <button class="filter-tab">停滞アラート<span class="count">3</span></button>
+        <button class="filter-tab">アクション<span class="count">2</span></button>
+        <button class="filter-tab">サークルバック<span class="count">2</span></button>
+      </div>
+
+      <div class="card-body">
+        <!-- 通知リスト -->
+        <ul class="notification-list">
+          <!-- 未読：停滞アラート（スター付き） -->
+          <li class="notification-item unread" onclick="location.href='../lead/SC-021_lead_detail.html'">
+            <span class="material-icons notification-star starred" onclick="event.stopPropagation(); toggleStar(this)">star</span>
+            <div class="notification-icon alert">
+              <span class="material-icons">warning</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【停滞アラート】A株式会社 - DX推進案件</div>
+              <div class="notification-desc">最終活動日から14日経過しています。次回アクションを設定してください。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">10分前</span>
+              <span class="notification-unread-dot"></span>
+            </div>
+          </li>
+
+          <!-- 未読：サークルバック -->
+          <li class="notification-item unread" onclick="location.href='../master/SC-091_circleback_approve.html'">
+            <span class="material-icons notification-star" onclick="event.stopPropagation(); toggleStar(this)">star_border</span>
+            <div class="notification-icon circleback">
+              <span class="material-icons">description</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【サークルバック】B社との打ち合わせ議事録が届きました</div>
+              <div class="notification-desc">2026/02/24 14:00 の打ち合わせ内容を確認・承認してください。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">30分前</span>
+              <span class="notification-unread-dot"></span>
+            </div>
+          </li>
+
+          <!-- 未読：アクション入力促進 -->
+          <li class="notification-item unread" onclick="location.href='../lead/SC-028_activity_register.html'">
+            <span class="material-icons notification-star starred" onclick="event.stopPropagation(); toggleStar(this)">star</span>
+            <div class="notification-icon action">
+              <span class="material-icons">edit_note</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【アクション入力】C株式会社の活動内容を入力してください</div>
+              <div class="notification-desc">本日の打ち合わせ結果と次回アクションを記録しましょう。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">1時間前</span>
+              <span class="notification-unread-dot"></span>
+            </div>
+          </li>
+
+          <!-- 未読：停滞アラート -->
+          <li class="notification-item unread" onclick="location.href='../deal/SC-031_deal_detail.html'">
+            <span class="material-icons notification-star" onclick="event.stopPropagation(); toggleStar(this)">star_border</span>
+            <div class="notification-icon alert">
+              <span class="material-icons">warning</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【停滞アラート】D株式会社 - システム開発案件</div>
+              <div class="notification-desc">次回アクション日が過去日付になっています。確認してください。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">2時間前</span>
+              <span class="notification-unread-dot"></span>
+            </div>
+          </li>
+
+          <!-- 未読：停滞アラート -->
+          <li class="notification-item unread" onclick="location.href='../lead/SC-021_lead_detail.html'">
+            <span class="material-icons notification-star" onclick="event.stopPropagation(); toggleStar(this)">star_border</span>
+            <div class="notification-icon alert">
+              <span class="material-icons">warning</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【停滞アラート】E株式会社 - AI導入検討</div>
+              <div class="notification-desc">次回アクション日が未設定です。設定してください。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">3時間前</span>
+              <span class="notification-unread-dot"></span>
+            </div>
+          </li>
+
+          <!-- 既読：サークルバック -->
+          <li class="notification-item" onclick="location.href='../master/SC-091_circleback_approve.html'">
+            <span class="material-icons notification-star" onclick="event.stopPropagation(); toggleStar(this)">star_border</span>
+            <div class="notification-icon circleback">
+              <span class="material-icons">description</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【サークルバック】F社 初回ヒアリング議事録が届きました</div>
+              <div class="notification-desc">2026/02/23 15:00 の打ち合わせ内容を確認・承認してください。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">昨日</span>
+            </div>
+          </li>
+
+          <!-- 既読：アクション入力促進 -->
+          <li class="notification-item" onclick="location.href='../deal/SC-028_activity_register.html'">
+            <span class="material-icons notification-star" onclick="event.stopPropagation(); toggleStar(this)">star_border</span>
+            <div class="notification-icon action">
+              <span class="material-icons">edit_note</span>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">【アクション入力】G株式会社の次回アクションを設定してください</div>
+              <div class="notification-desc">提案後のフォローアップを忘れずに記録しましょう。</div>
+            </div>
+            <div class="notification-meta">
+              <span class="notification-time">昨日</span>
+            </div>
+          </li>
+        </ul>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+          <div class="pagination-info">
+            全 7 件中 1 - 7 件を表示
+          </div>
+          <div class="pagination-controls">
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn" disabled>＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // すべて既読にする
+    function markAllAsRead() {
+      if (confirm('すべての通知を既読にしますか？')) {
+        document.querySelectorAll('.notification-item.unread').forEach(function(item) {
+          item.classList.remove('unread');
+          var dot = item.querySelector('.notification-unread-dot');
+          if (dot) dot.remove();
+        });
+        // バッジを非表示に
+        var badge = document.querySelector('.notification-badge');
+        if (badge) badge.style.display = 'none';
+        alert('すべての通知を既読にしました');
+      }
+    }
+
+    // スター切り替え
+    function toggleStar(element) {
+      if (element.classList.contains('starred')) {
+        element.classList.remove('starred');
+        element.textContent = 'star_border';
+      } else {
+        element.classList.add('starred');
+        element.textContent = 'star';
+      }
+      // TODO: サーバーへの保存処理
+    }
+
+    // フィルタタブ切り替え
+    document.querySelectorAll('.filter-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(function(t) {
+          t.classList.remove('active');
+        });
+        this.classList.add('active');
+        // TODO: フィルタ処理
+      });
+    });
+  </script>
+</body>
+</html>

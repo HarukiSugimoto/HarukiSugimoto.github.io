@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-010 商談分析ダッシュボード | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .header-notification {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .header-notification-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+    .header-notification:hover .header-notification-icon {
+      opacity: 0.8;
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    /* フィルタ */
+    .filter-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 120px;
+    }
+    /* KPIカード */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .kpi-card {
+      background: #fff;
+      border: 1px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .kpi-card.alert {
+      background: #fef9e7;
+      border-color: #f39c12;
+    }
+    .kpi-label {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+    .kpi-card.alert .kpi-value {
+      color: #e74c3c;
+    }
+    .kpi-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #3498db;
+      text-decoration: none;
+    }
+    .kpi-link:hover {
+      text-decoration: underline;
+    }
+    /* チャートグリッド */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .chart-card {
+      background: #fff;
+      border: 1px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chart-toggle {
+      display: flex;
+      gap: 4px;
+    }
+    .chart-toggle-btn {
+      padding: 4px 8px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .chart-toggle-btn.active {
+      background: #3498db;
+      color: #fff;
+      border-color: #3498db;
+    }
+    /* 棒グラフ（CSS模擬） */
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .bar-item:hover .bar-fill {
+      opacity: 0.8;
+    }
+    .bar-label {
+      width: 80px;
+      font-size: 13px;
+      color: #2c3e50;
+    }
+    .bar-container {
+      flex: 1;
+      height: 24px;
+      background: #ecf0f1;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    .bar-value {
+      width: 50px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    /* クロス集計テーブル */
+    .cross-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .cross-table th, .cross-table td {
+      padding: 8px 12px;
+      border: 1px solid #ecf0f1;
+      text-align: center;
+    }
+    .cross-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .cross-table td {
+      cursor: pointer;
+    }
+    .cross-table td:hover {
+      background: #ebf5fb;
+    }
+    .cross-table .row-header {
+      text-align: left;
+      background: #f8f9fa;
+      font-weight: 500;
+    }
+    /* コンバージョン率 */
+    .conversion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .conversion-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+    .conversion-label {
+      font-size: 14px;
+      color: #2c3e50;
+    }
+    .conversion-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #27ae60;
+    }
+    /* 月次推移 */
+    .monthly-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .monthly-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .monthly-label {
+      width: 30px;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .monthly-bars {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      align-items: flex-end;
+      height: 80px;
+      border-bottom: 1px solid #ecf0f1;
+      padding-bottom: 4px;
+    }
+    .monthly-bar {
+      flex: 1;
+      background: #3498db;
+      border-radius: 2px 2px 0 0;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      position: relative;
+    }
+    .monthly-bar:hover {
+      opacity: 0.8;
+    }
+    .monthly-bar-label {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: #7f8c8d;
+    }
+    .target-line {
+      position: relative;
+      height: 2px;
+      background: #e74c3c;
+      margin-top: -50px;
+      margin-bottom: 48px;
+    }
+    .target-line::after {
+      content: "目標: 10件";
+      position: absolute;
+      right: 0;
+      top: -16px;
+      font-size: 11px;
+      color: #e74c3c;
+    }
+    /* 活動サマリー */
+    .activity-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .activity-stats {
+      display: flex;
+      gap: 16px;
+    }
+    .activity-stat {
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      text-align: center;
+      flex: 1;
+    }
+    .activity-stat-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .activity-stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .activity-alert-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e74c3c;
+      margin-top: 8px;
+    }
+    .activity-alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .activity-alert-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #fef9e7;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .activity-alert-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .activity-alert-company {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    .activity-alert-date {
+      font-size: 11px;
+      color: #7f8c8d;
+    }
+    .link {
+      color: #3498db;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    .chart-note {
+      font-size: 11px;
+      color: #7f8c8d;
+      margin-top: 8px;
+    }
+    /* 商談化率セル */
+    .cross-table .conversion-cell {
+      background: #fef9e7;
+      color: #e67e22;
+      font-weight: 600;
+    }
+    .cross-table .total-row {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    /* ステージ別サマリー */
+    .stage-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .stage-group {
+      border: 1px solid #ecf0f1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .stage-group-title {
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .lead-title {
+      background: #ebf5fb;
+      color: #3498db;
+    }
+    .deal-title {
+      background: #eafaf1;
+      color: #27ae60;
+    }
+    .stage-items {
+      padding: 12px;
+    }
+    .stage-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+    .stage-item:hover {
+      background: #f8f9fa;
+      cursor: pointer;
+    }
+    .stage-item.highlight {
+      background: #eafaf1;
+    }
+    .stage-name {
+      flex: 1;
+      color: #2c3e50;
+    }
+    .stage-count {
+      width: 60px;
+      text-align: right;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .stage-amount {
+      width: 80px;
+      text-align: right;
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+    /* 松竹梅カード */
+    .rank-summary {
+      display: flex;
+      gap: 12px;
+    }
+    .rank-card {
+      flex: 1;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .rank-card:hover {
+      transform: translateY(-2px);
+    }
+    .rank-matsu {
+      background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+      border: 1px solid #f1c40f;
+    }
+    .rank-take {
+      background: linear-gradient(135deg, #f0f4f5 0%, #dce4e6 100%);
+      border: 1px solid #95a5a6;
+    }
+    .rank-ume {
+      background: linear-gradient(135deg, #fef5f0 0%, #fdeee5 100%);
+      border: 1px solid #e67e22;
+    }
+    .rank-icon {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .rank-matsu .rank-icon { color: #f39c12; }
+    .rank-take .rank-icon { color: #7f8c8d; }
+    .rank-ume .rank-icon { color: #d35400; }
+    .rank-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .rank-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .rank-label {
+      color: #7f8c8d;
+    }
+    .rank-value {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .rank-value.highlight-green {
+      color: #27ae60;
+    }
+    .rank-value.highlight-red {
+      color: #e74c3c;
+    }
+    /* 月次推移（改善版） */
+    .monthly-chart-improved {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: #7f8c8d;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+    .lead-dot { background: #3498db; }
+    .deal-dot { background: #27ae60; }
+    .legend-line {
+      width: 16px;
+      height: 2px;
+      background: #e74c3c;
+    }
+    .monthly-bars-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 120px;
+      padding-bottom: 24px;
+      position: relative;
+      border-bottom: 1px solid #ecf0f1;
+    }
+    .monthly-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .monthly-col.current-month .stacked-bars {
+      opacity: 0.6;
+    }
+    .stacked-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+    }
+    .bar-lead {
+      background: #3498db;
+      border-radius: 2px 2px 0 0;
+      min-height: 4px;
+    }
+    .bar-deal {
+      background: #27ae60;
+      border-radius: 2px 2px 0 0;
+      min-height: 4px;
+    }
+    .month-label {
+      font-size: 10px;
+      color: #7f8c8d;
+      position: absolute;
+      bottom: 4px;
+    }
+    .target-line-horizontal {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(24px + 40px);
+      height: 2px;
+      background: #e74c3c;
+      opacity: 0.7;
+    }
+    .target-line-horizontal::after {
+      content: "目標";
+      position: absolute;
+      right: 0;
+      top: -14px;
+      font-size: 10px;
+      color: #e74c3c;
+    }
+    /* ファネル */
+    .funnel-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .funnel-stage {
+      position: relative;
+      height: 36px;
+      display: flex;
+      align-items: center;
+    }
+    .funnel-bar {
+      height: 100%;
+      border-radius: 4px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .funnel-lead .funnel-bar {
+      background: linear-gradient(90deg, #3498db 0%, #5dade2 100%);
+    }
+    .funnel-deal .funnel-bar {
+      background: linear-gradient(90deg, #f39c12 0%, #f7b731 100%);
+    }
+    .funnel-won .funnel-bar {
+      background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+    }
+    .funnel-info {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+    .funnel-name {
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .funnel-count {
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .funnel-arrow {
+      display: flex;
+      justify-content: center;
+      padding: 4px 0;
+    }
+    .arrow-rate {
+      background: #ecf0f1;
+      padding: 2px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .door-honmaru-conversion {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .dh-label {
+      font-size: 13px;
+      color: #2c3e50;
+    }
+    .dh-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #9b59b6;
+    }
+    .dh-detail {
+      font-size: 12px;
+      font-weight: 400;
+      color: #7f8c8d;
+      margin-left: 4px;
+    }
+    @media (max-width: 1024px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+      .rank-summary {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">営業管理システム</div>
+    <div class="header-actions">
+      <a href="SC-012_notifications.html" class="header-notification" title="通知">
+        <span class="material-icons header-notification-icon">notifications</span>
+        <span class="notification-badge">5</span>
+      </a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">SC-010 商談分析ダッシュボード</h1>
+    </div>
+
+    <!-- フィルタ -->
+    <div class="card">
+      <div class="card-header">フィルタ</div>
+      <div class="card-body">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">期間</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="month" class="filter-select" value="2025-04" style="min-width: 140px;">
+              <span>〜</span>
+              <input type="month" class="filter-select" value="2026-03" style="min-width: 140px;">
+            </div>
+          </div>
+          <button class="btn btn-primary">適用</button>
+          <button class="btn btn-secondary">リセット</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPIサマリ -->
+    <div class="card">
+      <div class="card-header">KPI（サマリ）</div>
+      <div class="card-body">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">リード数</div>
+            <div class="kpi-value">128</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">商談数</div>
+            <div class="kpi-value">52</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">受注数</div>
+            <div class="kpi-value">6</div>
+          </div>
+          <div class="kpi-card alert">
+            <div class="kpi-label">要対応（停滞）数</div>
+            <div class="kpi-value">14</div>
+            <a href="SC-011_action_required.html" class="kpi-link">見る →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- チャートグリッド -->
+    <div class="chart-grid">
+      <!-- ステージ別集計 -->
+      <div class="chart-card">
+        <div class="chart-title">ステージ別集計</div>
+        <div class="stage-summary">
+          <div class="stage-group">
+            <div class="stage-group-title lead-title">リード</div>
+            <div class="stage-items">
+              <div class="stage-item">
+                <span class="stage-name">接触前</span>
+                <span class="stage-count">45件</span>
+                <span class="stage-amount">—</span>
+              </div>
+              <div class="stage-item">
+                <span class="stage-name">冷却中</span>
+                <span class="stage-count">8件</span>
+                <span class="stage-amount">—</span>
+              </div>
+              <div class="stage-item">
+                <span class="stage-name">商談化済</span>
+                <span class="stage-count">23件</span>
+                <span class="stage-amount">—</span>
+              </div>
+            </div>
+          </div>
+          <div class="stage-group">
+            <div class="stage-group-title deal-title">商談</div>
+            <div class="stage-items">
+              <div class="stage-item">
+                <span class="stage-name">提案中</span>
+                <span class="stage-count">14件</span>
+                <span class="stage-amount">4,200万</span>
+              </div>
+              <div class="stage-item highlight">
+                <span class="stage-name">受注済</span>
+                <span class="stage-count">6件</span>
+                <span class="stage-amount">1,800万</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 獲得チャネル×ステージ（商談化率付） -->
+      <div class="chart-card">
+        <div class="chart-title">獲得チャネル×ステージ（商談化率付）</div>
+        <table class="cross-table">
+          <thead>
+            <tr>
+              <th rowspan="2">チャネル</th>
+              <th colspan="3" style="background: #ebf5fb; color: #3498db;">リード</th>
+              <th colspan="2" style="background: #eafaf1; color: #27ae60;">商談</th>
+              <th rowspan="2" style="background: #fef9e7; color: #e67e22;">商談化率</th>
+            </tr>
+            <tr>
+              <th>接触前</th>
+              <th>冷却中</th>
+              <th>商談化済</th>
+              <th>提案中</th>
+              <th>受注済</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-header">展示会</td>
+              <td>10</td>
+              <td>2</td>
+              <td>5</td>
+              <td>3</td>
+              <td>1</td>
+              <td class="conversion-cell">29%</td>
+            </tr>
+            <tr>
+              <td class="row-header">紹介</td>
+              <td>8</td>
+              <td>1</td>
+              <td>6</td>
+              <td>4</td>
+              <td>2</td>
+              <td class="conversion-cell">40%</td>
+            </tr>
+            <tr>
+              <td class="row-header">Web</td>
+              <td>12</td>
+              <td>3</td>
+              <td>4</td>
+              <td>2</td>
+              <td>1</td>
+              <td class="conversion-cell">21%</td>
+            </tr>
+            <tr>
+              <td class="row-header">レディクル</td>
+              <td>15</td>
+              <td>2</td>
+              <td>8</td>
+              <td>5</td>
+              <td>2</td>
+              <td class="conversion-cell">32%</td>
+            </tr>
+            <tr class="total-row">
+              <td class="row-header">合計</td>
+              <td>45</td>
+              <td>8</td>
+              <td>23</td>
+              <td>14</td>
+              <td>6</td>
+              <td class="conversion-cell">30%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 松竹梅別集計（商談ランク） -->
+      <div class="chart-card">
+        <div class="chart-title">松竹梅別集計（商談ランク）</div>
+        <div class="rank-summary">
+          <div class="rank-card rank-matsu">
+            <div class="rank-icon">松</div>
+            <div class="rank-details">
+              <div class="rank-row">
+                <span class="rank-label">件数</span>
+                <span class="rank-value">8件</span>
+              </div>
+              <div class="rank-row">
+                <span class="rank-label">総額</span>
+                <span class="rank-value">4,800万</span>
+              </div>
+              <div class="rank-row">
+                <span class="rank-label">受注率</span>
+                <span class="rank-value highlight-green">38%</span>
+              </div>
+            </div>
+          </div>
+          <div class="rank-card rank-take">
+            <div class="rank-icon">竹</div>
+            <div class="rank-details">
+              <div class="rank-row">
+                <span class="rank-label">件数</span>
+                <span class="rank-value">6件</span>
+              </div>
+              <div class="rank-row">
+                <span class="rank-label">総額</span>
+                <span class="rank-value">1,200万</span>
+              </div>
+              <div class="rank-row">
+                <span class="rank-label">受注率</span>
+                <span class="rank-value">17%</span>
+              </div>
+            </div>
+          </div>
+          <div class="rank-card rank-ume">
+            <div class="rank-icon">梅</div>
+            <div class="rank-details">
+              <div class="rank-row">
+                <span class="rank-label">件数</span>
+                <span class="rank-value">6件</span>
+              </div>
+              <div class="rank-row">
+                <span class="rank-label">総額</span>
+                <span class="rank-value">600万</span>
+              </div>
+              <div class="rank-row">
+                <span class="rank-label">受注率</span>
+                <span class="rank-value highlight-red">8%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 月次推移（リード獲得→商談化） -->
+      <div class="chart-card">
+        <div class="chart-title">月次推移（リード獲得→商談化）</div>
+        <div class="monthly-chart-improved">
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot lead-dot"></span>リード獲得</span>
+            <span class="legend-item"><span class="legend-dot deal-dot"></span>商談化</span>
+            <span class="legend-item"><span class="legend-line"></span>目標10件</span>
+          </div>
+          <div class="monthly-bars-container">
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 48px;" title="リード12件"></div>
+                <div class="bar-deal" style="height: 24px;" title="商談6件"></div>
+              </div>
+              <span class="month-label">4月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 64px;" title="リード16件"></div>
+                <div class="bar-deal" style="height: 36px;" title="商談9件"></div>
+              </div>
+              <span class="month-label">5月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 56px;" title="リード14件"></div>
+                <div class="bar-deal" style="height: 28px;" title="商談7件"></div>
+              </div>
+              <span class="month-label">6月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 60px;" title="リード15件"></div>
+                <div class="bar-deal" style="height: 32px;" title="商談8件"></div>
+              </div>
+              <span class="month-label">7月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 44px;" title="リード11件"></div>
+                <div class="bar-deal" style="height: 20px;" title="商談5件"></div>
+              </div>
+              <span class="month-label">8月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 40px;" title="リード10件"></div>
+                <div class="bar-deal" style="height: 16px;" title="商談4件"></div>
+              </div>
+              <span class="month-label">9月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 52px;" title="リード13件"></div>
+                <div class="bar-deal" style="height: 24px;" title="商談6件"></div>
+              </div>
+              <span class="month-label">10月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 56px;" title="リード14件"></div>
+                <div class="bar-deal" style="height: 28px;" title="商談7件"></div>
+              </div>
+              <span class="month-label">11月</span>
+            </div>
+            <div class="monthly-col">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 68px;" title="リード17件"></div>
+                <div class="bar-deal" style="height: 32px;" title="商談8件"></div>
+              </div>
+              <span class="month-label">12月</span>
+            </div>
+            <div class="monthly-col current-month">
+              <div class="stacked-bars">
+                <div class="bar-lead" style="height: 28px;" title="リード7件"></div>
+                <div class="bar-deal" style="height: 8px;" title="商談2件"></div>
+              </div>
+              <span class="month-label">1月</span>
+            </div>
+            <div class="target-line-horizontal"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- コンバージョン率（ファネル） -->
+      <div class="chart-card">
+        <div class="chart-title">コンバージョン率（ファネル）</div>
+        <div style="display: flex; gap: 24px;">
+          <!-- ファネル1: リード→ドアオープン→受注 -->
+          <div style="flex: 1;">
+            <div style="font-size: 12px; font-weight: 600; color: #7f8c8d; margin-bottom: 12px; text-align: center;">リード → ドアオープン → 受注</div>
+            <div class="funnel-container">
+              <div class="funnel-stage funnel-lead">
+                <div class="funnel-bar" style="width: 100%;"></div>
+                <div class="funnel-info">
+                  <span class="funnel-name">リード</span>
+                  <span class="funnel-count">128件</span>
+                </div>
+              </div>
+              <div class="funnel-arrow">
+                <span class="arrow-rate">40%</span>
+              </div>
+              <div class="funnel-stage funnel-deal">
+                <div class="funnel-bar" style="width: 70%;"></div>
+                <div class="funnel-info">
+                  <span class="funnel-name">ドアオープン</span>
+                  <span class="funnel-count">52件</span>
+                </div>
+              </div>
+              <div class="funnel-arrow">
+                <span class="arrow-rate">12%</span>
+              </div>
+              <div class="funnel-stage funnel-won">
+                <div class="funnel-bar" style="width: 35%;"></div>
+                <div class="funnel-info">
+                  <span class="funnel-name">受注</span>
+                  <span class="funnel-count">6件</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ファネル2: リード→ドアオープン→本丸 -->
+          <div style="flex: 1;">
+            <div style="font-size: 12px; font-weight: 600; color: #7f8c8d; margin-bottom: 12px; text-align: center;">リード → ドアオープン → 本丸</div>
+            <div class="funnel-container">
+              <div class="funnel-stage funnel-lead">
+                <div class="funnel-bar" style="width: 100%;"></div>
+                <div class="funnel-info">
+                  <span class="funnel-name">リード</span>
+                  <span class="funnel-count">128件</span>
+                </div>
+              </div>
+              <div class="funnel-arrow">
+                <span class="arrow-rate">40%</span>
+              </div>
+              <div class="funnel-stage funnel-deal">
+                <div class="funnel-bar" style="width: 70%;"></div>
+                <div class="funnel-info">
+                  <span class="funnel-name">ドアオープン</span>
+                  <span class="funnel-count">52件</span>
+                </div>
+              </div>
+              <div class="funnel-arrow">
+                <span class="arrow-rate">35%</span>
+              </div>
+              <div class="funnel-stage" style="position: relative; height: 36px;">
+                <div class="funnel-bar" style="width: 50%; background: linear-gradient(90deg, #9b59b6 0%, #a569bd 100%);"></div>
+                <div class="funnel-info">
+                  <span class="funnel-name">本丸</span>
+                  <span class="funnel-count">18件</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

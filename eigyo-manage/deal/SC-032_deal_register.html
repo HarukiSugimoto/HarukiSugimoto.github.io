@@ -311,15 +311,19 @@
     .tag-select-container {
       border: 1px solid #dce0e4;
       border-radius: 6px;
-      padding: 8px;
+      padding: 10px 12px;
       background: #fff;
+      min-height: 42px;
+      cursor: pointer;
+    }
+    .tag-select-container:hover {
+      border-color: #3498db;
     }
     .selected-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 8px;
-      min-height: 28px;
+      align-items: center;
     }
     .selected-tag {
       display: inline-flex;
@@ -341,33 +345,43 @@
     .selected-tag .remove-tag:hover {
       color: #e74c3c;
     }
+    .tag-placeholder {
+      color: #95a5a6;
+      font-size: 14px;
+    }
     .tag-dropdown {
       position: relative;
+      display: inline-block;
     }
-    .tag-dropdown-toggle {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ecf0f1;
+    .tag-add-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border: 1px dashed #bdc3c7;
       border-radius: 4px;
       background: #f8f9fa;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 16px;
       color: #7f8c8d;
-      text-align: left;
+      transition: all 0.2s;
     }
-    .tag-dropdown-toggle:hover {
-      background: #ecf0f1;
+    .tag-add-btn:hover {
+      border-color: #3498db;
+      color: #3498db;
+      background: #e8f4fd;
     }
     .tag-dropdown-menu {
       display: none;
       position: absolute;
-      top: 100%;
+      top: calc(100% + 4px);
       left: 0;
-      right: 0;
+      min-width: 200px;
       background: #fff;
       border: 1px solid #dce0e4;
       border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 10;
       max-height: 200px;
       overflow-y: auto;
@@ -674,15 +688,43 @@
           </div>
 
           <div class="form-group form-grid-full">
-            <label class="form-label">企業名<span class="required">*</span></label>
+            <label class="form-label">企業<span class="required">*</span></label>
             <div class="company-select-wrapper">
-              <select class="form-select">
-                <option value="">既存企業を選択</option>
-                <option value="1">○○株式会社</option>
-                <option value="2">△△株式会社</option>
-                <option value="3">□□コーポレーション</option>
-              </select>
-              <button class="btn btn-secondary btn-sm">＋ 企業を新規作成</button>
+              <input type="text" class="form-input" placeholder="既存検索..." style="flex: 1;">
+              <button type="button" class="btn btn-secondary">＋ 新規作成</button>
+            </div>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">顧客<span class="required">*</span></label>
+            <div style="display: flex; gap: 8px; align-items: flex-start;">
+              <div class="tag-select-container" onclick="toggleCustomerDropdown(event)" style="flex: 1;">
+                <div class="selected-tags" id="selectedCustomerTags">
+                  <span class="tag-placeholder" id="customerPlaceholder">クリックして顧客を選択...</span>
+                  <div class="tag-dropdown">
+                    <button type="button" class="tag-add-btn" onclick="toggleCustomerDropdown(event)">+</button>
+                    <div class="tag-dropdown-menu" id="customerDropdown">
+                      <label class="tag-option">
+                        <input type="checkbox" value="suzuki" onchange="toggleCustomerTag(this, '鈴木 太郎')">
+                        <span>鈴木 太郎</span>
+                      </label>
+                      <label class="tag-option">
+                        <input type="checkbox" value="tanaka" onchange="toggleCustomerTag(this, '田中 花子')">
+                        <span>田中 花子</span>
+                      </label>
+                      <label class="tag-option">
+                        <input type="checkbox" value="yamamoto" onchange="toggleCustomerTag(this, '山本 次郎')">
+                        <span>山本 次郎</span>
+                      </label>
+                      <label class="tag-option">
+                        <input type="checkbox" value="sato" onchange="toggleCustomerTag(this, '佐藤 三郎')">
+                        <span>佐藤 三郎</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm">新規作成</button>
             </div>
           </div>
 
@@ -739,7 +781,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">ドア担当</label>
+            <label class="form-label">ドアオープナー</label>
             <select class="form-select">
               <option value="">選択してください</option>
               <option value="yamada">山田 太郎</option>
@@ -750,29 +792,29 @@
 
           <div class="form-group">
             <label class="form-label">アカウント担当</label>
-            <div class="tag-select-container">
+            <div class="tag-select-container" onclick="toggleAccountDropdown(event)">
               <div class="selected-tags" id="selectedAccountTags">
-                <!-- 選択されたタグがここに表示される -->
-              </div>
-              <div class="tag-dropdown">
-                <button type="button" class="tag-dropdown-toggle" onclick="toggleAccountDropdown()">＋ 担当者を追加</button>
-                <div class="tag-dropdown-menu" id="accountDropdown">
-                  <label class="tag-option">
-                    <input type="checkbox" value="yamada" onchange="toggleAccountTag(this, '山田 太郎')">
-                    <span>山田 太郎</span>
-                  </label>
-                  <label class="tag-option">
-                    <input type="checkbox" value="sato" onchange="toggleAccountTag(this, '佐藤 花子')">
-                    <span>佐藤 花子</span>
-                  </label>
-                  <label class="tag-option">
-                    <input type="checkbox" value="tanaka" onchange="toggleAccountTag(this, '田中 一郎')">
-                    <span>田中 一郎</span>
-                  </label>
-                  <label class="tag-option">
-                    <input type="checkbox" value="suzuki" onchange="toggleAccountTag(this, '鈴木 次郎')">
-                    <span>鈴木 次郎</span>
-                  </label>
+                <span class="tag-placeholder" id="accountPlaceholder">クリックして担当者を選択...</span>
+                <div class="tag-dropdown">
+                  <button type="button" class="tag-add-btn" onclick="toggleAccountDropdown(event)">+</button>
+                  <div class="tag-dropdown-menu" id="accountDropdown">
+                    <label class="tag-option">
+                      <input type="checkbox" value="yamada" onchange="toggleAccountTag(this, '山田 太郎')">
+                      <span>山田 太郎</span>
+                    </label>
+                    <label class="tag-option">
+                      <input type="checkbox" value="sato" onchange="toggleAccountTag(this, '佐藤 花子')">
+                      <span>佐藤 花子</span>
+                    </label>
+                    <label class="tag-option">
+                      <input type="checkbox" value="tanaka" onchange="toggleAccountTag(this, '田中 一郎')">
+                      <span>田中 一郎</span>
+                    </label>
+                    <label class="tag-option">
+                      <input type="checkbox" value="suzuki" onchange="toggleAccountTag(this, '鈴木 次郎')">
+                      <span>鈴木 次郎</span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -887,14 +929,20 @@
     }
 
     // アカウント担当ドロップダウン
-    function toggleAccountDropdown() {
+    function toggleAccountDropdown(event) {
+      event.stopPropagation();
       const dropdown = document.getElementById('accountDropdown');
       dropdown.classList.toggle('show');
+      document.getElementById('customerDropdown').classList.remove('show');
+      const placeholder = document.getElementById('accountPlaceholder');
+      if (placeholder) placeholder.style.display = 'none';
     }
 
     // アカウント担当タグの追加/削除
     function toggleAccountTag(checkbox, name) {
       const container = document.getElementById('selectedAccountTags');
+      const placeholder = document.getElementById('accountPlaceholder');
+      const dropdown = container.querySelector('.tag-dropdown');
       const value = checkbox.value;
 
       if (checkbox.checked) {
@@ -902,29 +950,102 @@
         tag.className = 'selected-tag';
         tag.dataset.value = value;
         tag.innerHTML = `${name}<span class="remove-tag" onclick="removeAccountTag('${value}')">&times;</span>`;
-        container.appendChild(tag);
+        container.insertBefore(tag, dropdown);
+        if (placeholder) placeholder.style.display = 'none';
       } else {
-        const tag = container.querySelector(`[data-value="${value}"]`);
+        const tag = container.querySelector(`span.selected-tag[data-value="${value}"]`);
         if (tag) tag.remove();
+        updateAccountPlaceholder();
+      }
+    }
+
+    function updateAccountPlaceholder() {
+      const container = document.getElementById('selectedAccountTags');
+      const placeholder = document.getElementById('accountPlaceholder');
+      const tags = container.querySelectorAll('span.selected-tag');
+      if (placeholder) {
+        placeholder.style.display = tags.length === 0 ? 'inline' : 'none';
       }
     }
 
     // タグ削除
     function removeAccountTag(value) {
+      event.stopPropagation();
       const container = document.getElementById('selectedAccountTags');
-      const tag = container.querySelector(`[data-value="${value}"]`);
+      const tag = container.querySelector(`span.selected-tag[data-value="${value}"]`);
       if (tag) tag.remove();
 
       const checkbox = document.querySelector(`#accountDropdown input[value="${value}"]`);
       if (checkbox) checkbox.checked = false;
+      updateAccountPlaceholder();
+    }
+
+    // 顧客ドロップダウン
+    function toggleCustomerDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('customerDropdown');
+      dropdown.classList.toggle('show');
+      document.getElementById('accountDropdown').classList.remove('show');
+      const placeholder = document.getElementById('customerPlaceholder');
+      if (placeholder) placeholder.style.display = 'none';
+    }
+
+    // 顧客タグの追加/削除
+    function toggleCustomerTag(checkbox, name) {
+      const container = document.getElementById('selectedCustomerTags');
+      const placeholder = document.getElementById('customerPlaceholder');
+      const dropdown = container.querySelector('.tag-dropdown');
+      const value = checkbox.value;
+
+      if (checkbox.checked) {
+        const tag = document.createElement('span');
+        tag.className = 'selected-tag';
+        tag.dataset.value = value;
+        tag.innerHTML = `${name}<span class="remove-tag" onclick="removeCustomerTag('${value}')">&times;</span>`;
+        container.insertBefore(tag, dropdown);
+        if (placeholder) placeholder.style.display = 'none';
+      } else {
+        const tag = container.querySelector(`span.selected-tag[data-value="${value}"]`);
+        if (tag) tag.remove();
+        updateCustomerPlaceholder();
+      }
+    }
+
+    function updateCustomerPlaceholder() {
+      const container = document.getElementById('selectedCustomerTags');
+      const placeholder = document.getElementById('customerPlaceholder');
+      const tags = container.querySelectorAll('span.selected-tag');
+      if (placeholder) {
+        placeholder.style.display = tags.length === 0 ? 'inline' : 'none';
+      }
+    }
+
+    // 顧客タグ削除
+    function removeCustomerTag(value) {
+      event.stopPropagation();
+      const container = document.getElementById('selectedCustomerTags');
+      const tag = container.querySelector(`span.selected-tag[data-value="${value}"]`);
+      if (tag) tag.remove();
+
+      const checkbox = document.querySelector(`#customerDropdown input[value="${value}"]`);
+      if (checkbox) checkbox.checked = false;
+      updateCustomerPlaceholder();
     }
 
     // ドロップダウン外クリックで閉じる
     document.addEventListener('click', function(e) {
-      const dropdown = document.getElementById('accountDropdown');
-      const toggle = document.querySelector('.tag-dropdown-toggle');
-      if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
-        dropdown.classList.remove('show');
+      const accountDropdown = document.getElementById('accountDropdown');
+      const customerDropdown = document.getElementById('customerDropdown');
+      const tagContainers = document.querySelectorAll('.tag-select-container');
+
+      let clickedInside = false;
+      tagContainers.forEach(container => {
+        if (container.contains(e.target)) clickedInside = true;
+      });
+
+      if (!clickedInside) {
+        accountDropdown.classList.remove('show');
+        customerDropdown.classList.remove('show');
       }
     });
   </script>

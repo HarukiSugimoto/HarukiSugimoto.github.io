@@ -675,20 +675,39 @@
           <!-- OCR抽出項目 -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">企業名<span class="required">*</span></label>
+              <label class="form-label">企業<span class="required">*</span></label>
               <input type="text" class="form-input ocr-highlight" value="株式会社サンプル">
               <span class="form-hint">OCRから抽出（黄色は要確認）</span>
             </div>
           </div>
 
+          <!-- 顧客1（OCRから抽出） -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">顧客<span class="required">*</span></label>
+              <label class="form-label">顧客1<span class="required">*</span></label>
               <input type="text" class="form-input ocr-highlight" value="山本 太郎">
             </div>
             <div class="form-group">
-              <label class="form-label">役職（任意）</label>
+              <label class="form-label">役職</label>
               <input type="text" class="form-input ocr-highlight" value="営業部長">
+            </div>
+          </div>
+
+          <!-- 顧客2（OCRから抽出） -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">顧客2</label>
+              <input type="text" class="form-input ocr-highlight" value="佐藤 花子">
+            </div>
+            <div class="form-group">
+              <label class="form-label">役職</label>
+              <input type="text" class="form-input ocr-highlight" value="主任">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group form-group-full">
+              <a href="SC-024_ocr_upload.html" class="btn btn-secondary btn-sm">＋ 顧客を追加</a>
             </div>
           </div>
 
@@ -829,10 +848,27 @@
             </div>
           </div>
 
-          <!-- メモ -->
+          <!-- 予算規模・ランク -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">予算規模</label>
+              <input type="text" class="form-input" placeholder="例: 10,000,000" style="text-align: right;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ランク</label>
+              <select class="form-select">
+                <option value="">選択してください</option>
+                <option value="matsu">松</option>
+                <option value="take">竹</option>
+                <option value="ume">梅</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ニーズ・課題 -->
           <div class="form-row">
             <div class="form-group" style="grid-column: 1 / -1;">
-              <label class="form-label">メモ</label>
+              <label class="form-label">ニーズ・課題</label>
               <textarea class="form-input" style="min-height: 80px; resize: vertical;" placeholder="自由記述..."></textarea>
             </div>
           </div>

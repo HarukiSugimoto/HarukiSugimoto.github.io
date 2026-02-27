@@ -170,6 +170,10 @@
       font-weight: 500;
       margin-bottom: 6px;
     }
+    .form-label .required {
+      color: #e74c3c;
+      margin-left: 4px;
+    }
     .form-input {
       width: 100%;
       padding: 10px 12px;
@@ -489,7 +493,7 @@
       <div class="card-header">入力フォーム</div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">種別</label>
+          <label class="form-label">種別<span class="required">*</span></label>
           <select class="form-select">
             <option value="">選択してください</option>
             <option value="lead">リード</option>
@@ -498,22 +502,22 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">ステージ名</label>
+          <label class="form-label">ステージ名<span class="required">*</span></label>
           <input type="text" class="form-input" placeholder="ステージ名を入力してください">
         </div>
 
         <div class="form-group">
-          <label class="form-label">当ステージでの取得情報</label>
+          <label class="form-label">当ステージでの取得情報<span class="required">*</span></label>
           <input type="text" class="form-input" placeholder="取得情報を入力してください">
         </div>
 
         <div class="form-group">
-          <label class="form-label">次に行く基準</label>
+          <label class="form-label">次に行く基準<span class="required">*</span></label>
           <input type="text" class="form-input" placeholder="基準を入力してください">
         </div>
 
         <div class="form-group">
-          <label class="form-label">アラート対象外</label>
+          <label class="form-label">アラート対象外<span class="required">*</span></label>
           <div class="radio-group">
             <label>
               <input type="radio" name="alert_excluded" value="no" checked>
@@ -532,7 +536,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">完了</label>
+          <label class="form-label">完了<span class="required">*</span></label>
           <div class="radio-group">
             <label>
               <input type="radio" name="is_completed" value="no" checked>
@@ -546,7 +550,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">提案</label>
+          <label class="form-label">提案<span class="required">*</span></label>
           <div class="radio-group">
             <label>
               <input type="radio" name="is_proposal" value="no" checked>

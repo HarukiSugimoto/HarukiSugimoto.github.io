@@ -283,15 +283,19 @@
     .tag-select-container {
       border: 1px solid #dce0e4;
       border-radius: 6px;
-      padding: 8px;
+      padding: 10px 12px;
       background: #fff;
+      min-height: 42px;
+      cursor: pointer;
+    }
+    .tag-select-container:hover {
+      border-color: #3498db;
     }
     .selected-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 8px;
-      min-height: 28px;
+      align-items: center;
     }
     .selected-tag {
       display: inline-flex;
@@ -313,33 +317,43 @@
     .selected-tag .remove-tag:hover {
       color: #e74c3c;
     }
+    .tag-placeholder {
+      color: #95a5a6;
+      font-size: 14px;
+    }
     .tag-dropdown {
       position: relative;
+      display: inline-block;
     }
-    .tag-dropdown-toggle {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ecf0f1;
+    .tag-add-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border: 1px dashed #bdc3c7;
       border-radius: 4px;
       background: #f8f9fa;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 16px;
       color: #7f8c8d;
-      text-align: left;
+      transition: all 0.2s;
     }
-    .tag-dropdown-toggle:hover {
-      background: #ecf0f1;
+    .tag-add-btn:hover {
+      border-color: #3498db;
+      color: #3498db;
+      background: #e8f4fd;
     }
     .tag-dropdown-menu {
       display: none;
       position: absolute;
-      top: 100%;
+      top: calc(100% + 4px);
       left: 0;
-      right: 0;
+      min-width: 200px;
       background: #fff;
       border: 1px solid #dce0e4;
       border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 10;
       max-height: 200px;
       overflow-y: auto;
@@ -360,13 +374,6 @@
     .tag-option input[type="checkbox"] {
       width: 16px;
       height: 16px;
-    }
-    .tag-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #ecf0f1;
     }
     .context-value a {
       color: #3498db;
@@ -793,30 +800,30 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">相手先担当者</label>
-              <div class="tag-select-container">
-                <div class="selected-tags" id="selectedContactTags">
-                  <span class="selected-tag" data-value="sato">佐藤（DX推進室 部長）<span class="remove-tag" onclick="removeContactTag('sato')">&times;</span></span>
-                </div>
-                <div class="tag-dropdown">
-                  <button type="button" class="tag-dropdown-toggle" onclick="toggleContactDropdown()">＋ 担当者を選択</button>
-                  <div class="tag-dropdown-menu" id="contactDropdown">
-                    <label class="tag-option">
-                      <input type="checkbox" value="sato" checked onchange="toggleContactTag(this, '佐藤（DX推進室 部長）')">
-                      <span>佐藤（DX推進室 部長）</span>
-                    </label>
-                    <label class="tag-option">
-                      <input type="checkbox" value="tanaka" onchange="toggleContactTag(this, '田中 花子')">
-                      <span>田中 花子</span>
-                    </label>
-                    <label class="tag-option">
-                      <input type="checkbox" value="yamamoto" onchange="toggleContactTag(this, '山本 次郎')">
-                      <span>山本 次郎</span>
-                    </label>
+              <div style="display: flex; gap: 8px; align-items: flex-start;">
+                <div class="tag-select-container" onclick="toggleContactDropdown(event)" style="flex: 1;">
+                  <div class="selected-tags" id="selectedContactTags">
+                    <span class="selected-tag" data-value="sato">佐藤（DX推進室 部長）<span class="remove-tag" onclick="removeContactTag('sato')">&times;</span></span>
+                    <div class="tag-dropdown">
+                      <button type="button" class="tag-add-btn" onclick="toggleContactDropdown(event)">+</button>
+                      <div class="tag-dropdown-menu" id="contactDropdown">
+                        <label class="tag-option">
+                          <input type="checkbox" value="sato" checked onchange="toggleContactTag(this, '佐藤（DX推進室 部長）')">
+                          <span>佐藤（DX推進室 部長）</span>
+                        </label>
+                        <label class="tag-option">
+                          <input type="checkbox" value="tanaka" onchange="toggleContactTag(this, '田中 花子')">
+                          <span>田中 花子</span>
+                        </label>
+                        <label class="tag-option">
+                          <input type="checkbox" value="yamamoto" onchange="toggleContactTag(this, '山本 次郎')">
+                          <span>山本 次郎</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="tag-actions">
-                  <button type="button" class="btn btn-secondary btn-sm">＋ 新規追加</button>
-                </div>
+                <button type="button" class="btn btn-secondary btn-sm">新規作成</button>
               </div>
             </div>
           </div>
@@ -824,7 +831,7 @@
           <!-- ステージ -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">ステージ</label>
+              <label class="form-label">ステージ<span class="required">*</span></label>
               <select class="form-select">
                 <option>選択してください</option>
                 <option>初回</option>
@@ -913,7 +920,8 @@
     });
 
     // 相手先担当者ドロップダウン
-    function toggleContactDropdown() {
+    function toggleContactDropdown(event) {
+      event.stopPropagation();
       const dropdown = document.getElementById('contactDropdown');
       dropdown.classList.toggle('show');
     }
@@ -921,6 +929,7 @@
     // 相手先担当者タグの追加/削除
     function toggleContactTag(checkbox, name) {
       const container = document.getElementById('selectedContactTags');
+      const dropdown = container.querySelector('.tag-dropdown');
       const value = checkbox.value;
 
       if (checkbox.checked) {
@@ -928,17 +937,18 @@
         tag.className = 'selected-tag';
         tag.dataset.value = value;
         tag.innerHTML = `${name}<span class="remove-tag" onclick="removeContactTag('${value}')">&times;</span>`;
-        container.appendChild(tag);
+        container.insertBefore(tag, dropdown);
       } else {
-        const tag = container.querySelector(`[data-value="${value}"]`);
+        const tag = container.querySelector(`span.selected-tag[data-value="${value}"]`);
         if (tag) tag.remove();
       }
     }
 
     // タグ削除
     function removeContactTag(value) {
+      event.stopPropagation();
       const container = document.getElementById('selectedContactTags');
-      const tag = container.querySelector(`[data-value="${value}"]`);
+      const tag = container.querySelector(`span.selected-tag[data-value="${value}"]`);
       if (tag) tag.remove();
 
       const checkbox = document.querySelector(`#contactDropdown input[value="${value}"]`);
@@ -948,8 +958,14 @@
     // ドロップダウン外クリックで閉じる
     document.addEventListener('click', function(e) {
       const dropdown = document.getElementById('contactDropdown');
-      const toggle = document.querySelector('.tag-dropdown-toggle');
-      if (dropdown && toggle && !dropdown.contains(e.target) && !toggle.contains(e.target)) {
+      const tagContainers = document.querySelectorAll('.tag-select-container');
+
+      let clickedInside = false;
+      tagContainers.forEach(container => {
+        if (container.contains(e.target)) clickedInside = true;
+      });
+
+      if (!clickedInside && dropdown) {
         dropdown.classList.remove('show');
       }
     });

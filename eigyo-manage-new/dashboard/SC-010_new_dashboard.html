@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-010 商談分析ダッシュボード | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+    /* サイドバー */
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 240px;
+      height: calc(100vh - 56px);
+      background: #2c3e50;
+      overflow-y: auto;
+      z-index: 999;
+      transition: transform 0.3s;
+    }
+    .sidebar-nav {
+      padding: 16px 0;
+    }
+    .sidebar-category {
+      margin-bottom: 8px;
+    }
+    .sidebar-category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      color: #95a5a6;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sidebar-category-header:hover {
+      color: #ecf0f1;
+    }
+    .sidebar-category-header .material-icons {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .sidebar-category.collapsed .sidebar-category-header .material-icons {
+      transform: rotate(-90deg);
+    }
+    .sidebar-category.collapsed .sidebar-items {
+      display: none;
+    }
+    .sidebar-items {
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px 10px 24px;
+      color: #bdc3c7;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .sidebar-item.active {
+      background: rgba(52, 152, 219, 0.2);
+      color: #3498db;
+      border-left-color: #3498db;
+    }
+    .sidebar-item .material-icons {
+      font-size: 20px;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 8px 16px;
+    }
+    /* メインコンテンツ調整 */
+    .main-wrapper {
+      margin-left: 240px;
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .header-notification {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .header-notification-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+    .header-notification:hover .header-notification-icon {
+      opacity: 0.8;
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    
+    /* 新規ダッシュボード用スタイル */
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+    
+    .data-table-wrapper {
+      overflow-x: auto;
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 800px;
+    }
+    
+    .data-table th, .data-table td {
+      padding: 10px 12px;
+      border: 1px solid #dce0e4;
+      text-align: center;
+    }
+    
+    .data-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+      white-space: nowrap;
+    }
+    
+    .data-table .row-header {
+      text-align: left;
+      background-color: #f8f9fa;
+      font-weight: 600;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
+    
+    .data-table .sub-header {
+      text-align: right;
+      color: #7f8c8d;
+      font-size: 12px;
+      background-color: #fff;
+    }
+
+    .data-table tr:hover td:not(.row-header):not(.sub-header) {
+      background-color: #f5f7fa;
+    }
+    
+    /* ハイライト用のスタイル */
+    .cell-target {
+      color: #7f8c8d;
+    }
+    .cell-actual {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .cell-total {
+      background-color: #f0f4f8 !important;
+      font-weight: bold;
+    }
+
+</style></head>
+<body>
+  <header class="header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="menu-toggle" onclick="toggleSidebar()">
+        <span class="material-icons">menu</span>
+      </div>
+      <div class="header-title">営業管理システム</div>
+    </div>
+    <div class="header-actions">
+      <a href="SC-010_new_dashboard.html" class="header-transition-btn" style="background: #e67e22; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: opacity 0.2s;">
+        <span class="material-icons" style="font-size: 16px;">open_in_new</span>
+        New版へ移行
+      </a>
+      <a href="SC-012_notifications.html" class="header-notification" title="通知">
+        <span class="material-icons header-notification-icon">notifications</span>
+        <span class="notification-badge">5</span>
+      </a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- サイドバー -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <!-- ダッシュボード -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>ダッシュボード</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="SC-010_dashboard.html" class="sidebar-item">
+            <span class="material-icons">dashboard</span>
+            <span>商談分析</span>
+          </a>
+          <a href="SC-011_action_required.html" class="sidebar-item">
+            <span class="material-icons">warning</span>
+            <span>要対応一覧</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 営業管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>営業管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
+            <span class="material-icons">person_search</span>
+            <span>リード一覧</span>
+          </a>
+          <a href="../deal/SC-030_deal_list.html" class="sidebar-item">
+            <span class="material-icons">handshake</span>
+            <span>商談一覧</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 年間計画 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>年間計画</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../plan/SC-041_progress.html" class="sidebar-item">
+            <span class="material-icons">trending_up</span>
+            <span>進捗表示</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 名刺管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>名刺管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../meishi/SC-050_meishi_list.html" class="sidebar-item">
+            <span class="material-icons">contact_page</span>
+            <span>名刺一覧</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- マスタ管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>マスタ管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-061_company_list.html" class="sidebar-item">
+            <span class="material-icons">business</span>
+            <span>企業マスタ</span>
+          </a>
+          <a href="../master/SC-064_customer_list.html" class="sidebar-item">
+            <span class="material-icons">people</span>
+            <span>顧客マスタ</span>
+          </a>
+          <a href="../master/SC-067_staff_list.html" class="sidebar-item">
+            <span class="material-icons">badge</span>
+            <span>営業担当者マスタ</span>
+          </a>
+          <a href="../master/SC-070_department_list.html" class="sidebar-item">
+            <span class="material-icons">account_tree</span>
+            <span>部署マスタ</span>
+          </a>
+          <a href="../master/SC-073_channel_list.html" class="sidebar-item">
+            <span class="material-icons">hub</span>
+            <span>獲得チャネルマスタ</span>
+          </a>
+          <a href="../master/SC-076_rank_list.html" class="sidebar-item">
+            <span class="material-icons">military_tech</span>
+            <span>ランクマスタ</span>
+          </a>
+          <a href="../master/SC-079_product_list.html" class="sidebar-item">
+            <span class="material-icons">inventory_2</span>
+            <span>商材マスタ</span>
+          </a>
+          <a href="../master/SC-082_stage_list.html" class="sidebar-item">
+            <span class="material-icons">linear_scale</span>
+            <span>ステージマスタ</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- 設定 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>設定</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-100_role_list.html" class="sidebar-item">
+            <span class="material-icons">admin_panel_settings</span>
+            <span>ロール管理</span>
+          </a>
+          <a href="../master/SC-092_integration_settings.html" class="sidebar-item">
+            <span class="material-icons">settings</span>
+            <span>連携設定</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <div class="main-wrapper">
+  <main class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">SC-010 商談分析ダッシュボード</h1>
+    </div>
+
+    <!-- 1. 年の売上推移グラフ -->
+    <div class="card">
+      <div class="card-header">
+        <span>年の売上推移</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. アポ・提案・受注の目標と実績表 -->
+    <div class="card">
+      <div class="card-header">
+        <span>目標・実績比較表（件数）</span>
+      </div>
+      <div class="card-body data-table-wrapper">
+        <style>
+          .header-group {
+            border-bottom: 1px solid #dce0e4 !important;
+          }
+          .col-target {
+            color: #7f8c8d;
+            font-size: 12px;
+            background-color: #fcfcfc;
+          }
+          .col-actual {
+            font-weight: 600;
+          }
+          .status-achieved {
+            color: #3498db; /* 達成: 青 */
+          }
+          .status-unachieved {
+            color: #e74c3c; /* 未達成: 赤 */
+          }
+          .data-table th.month-header {
+            background-color: #f8f9fa;
+          }
+          .data-table th.type-header {
+            background-color: #f0f4f8;
+            font-size: 11px;
+            padding: 4px 8px;
+          }
+        </style>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="row-header">項目</th>
+              <th colspan="2" class="month-header">1月</th>
+              <th colspan="2" class="month-header">2月</th>
+              <th colspan="2" class="month-header">3月</th>
+              <th colspan="2" class="month-header">4月</th>
+              <th colspan="2" class="month-header">5月</th>
+              <th colspan="2" class="month-header">6月</th>
+              <th colspan="2" class="month-header">7月</th>
+              <th colspan="2" class="month-header">8月</th>
+              <th colspan="2" class="month-header">9月</th>
+              <th colspan="2" class="month-header">10月</th>
+              <th colspan="2" class="month-header">11月</th>
+              <th colspan="2" class="month-header">12月</th>
+              <th colspan="2" class="cell-total">合計</th>
+            </tr>
+            <tr>
+              <!-- 1月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 2月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 3月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 4月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 5月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 6月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 7月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 8月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 9月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 10月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 11月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 12月 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <!-- 合計 -->
+              <th class="type-header">目標</th><th class="type-header">実績</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- アポ -->
+            <tr>
+              <td class="row-header">アポ（初回商談）</td>
+              <td class="col-target">10</td><td class="col-actual status-unachieved">8</td>
+              <td class="col-target">12</td><td class="col-actual status-achieved">14</td>
+              <td class="col-target">15</td><td class="col-actual status-achieved">16</td>
+              <td class="col-target">10</td><td class="col-actual status-achieved">11</td>
+              <td class="col-target">10</td><td class="col-actual status-unachieved">9</td>
+              <td class="col-target">12</td><td class="col-actual status-unachieved">10</td>
+              <td class="col-target">15</td><td class="col-actual status-achieved">18</td>
+              <td class="col-target">10</td><td class="col-actual status-unachieved">8</td>
+              <td class="col-target">10</td><td class="col-actual status-achieved">12</td>
+              <td class="col-target">12</td><td class="col-actual status-achieved">14</td>
+              <td class="col-target">15</td><td class="col-actual status-achieved">16</td>
+              <td class="col-target">10</td><td class="col-actual status-achieved">11</td>
+              <td class="cell-total col-target">136</td><td class="cell-total col-actual status-achieved">147</td>
+            </tr>
+            <!-- 提案 -->
+            <tr>
+              <td class="row-header">提案</td>
+              <td class="col-target">5</td><td class="col-actual status-unachieved">4</td>
+              <td class="col-target">6</td><td class="col-actual status-achieved">7</td>
+              <td class="col-target">8</td><td class="col-actual status-achieved">9</td>
+              <td class="col-target">5</td><td class="col-actual status-achieved">6</td>
+              <td class="col-target">5</td><td class="col-actual status-unachieved">4</td>
+              <td class="col-target">6</td><td class="col-actual status-unachieved">5</td>
+              <td class="col-target">8</td><td class="col-actual status-achieved">10</td>
+              <td class="col-target">5</td><td class="col-actual status-unachieved">4</td>
+              <td class="col-target">5</td><td class="col-actual status-achieved">6</td>
+              <td class="col-target">6</td><td class="col-actual status-achieved">8</td>
+              <td class="col-target">8</td><td class="col-actual status-achieved">9</td>
+              <td class="col-target">5</td><td class="col-actual status-achieved">5</td>
+              <td class="cell-total col-target">72</td><td class="cell-total col-actual status-achieved">77</td>
+            </tr>
+            <!-- 受注 -->
+            <tr>
+              <td class="row-header">受注</td>
+              <td class="col-target">2</td><td class="col-actual status-unachieved">1</td>
+              <td class="col-target">3</td><td class="col-actual status-achieved">4</td>
+              <td class="col-target">4</td><td class="col-actual status-achieved">5</td>
+              <td class="col-target">2</td><td class="col-actual status-achieved">3</td>
+              <td class="col-target">2</td><td class="col-actual status-achieved">2</td>
+              <td class="col-target">3</td><td class="col-actual status-unachieved">2</td>
+              <td class="col-target">4</td><td class="col-actual status-achieved">6</td>
+              <td class="col-target">2</td><td class="col-actual status-unachieved">1</td>
+              <td class="col-target">2</td><td class="col-actual status-achieved">3</td>
+              <td class="col-target">3</td><td class="col-actual status-achieved">4</td>
+              <td class="col-target">4</td><td class="col-actual status-achieved">5</td>
+              <td class="col-target">2</td><td class="col-actual status-achieved">3</td>
+              <td class="cell-total col-target">35</td><td class="cell-total col-actual status-achieved">39</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. アポ内訳表 -->
+    <div class="card">
+      <div class="card-header">
+        <span>アポ（初回商談）獲得チャネル内訳</span>
+      </div>
+      <div class="card-body data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="row-header">チャネル</th>
+              <th>1月</th>
+              <th>2月</th>
+              <th>3月</th>
+              <th>4月</th>
+              <th>5月</th>
+              <th>6月</th>
+              <th>7月</th>
+              <th>8月</th>
+              <th>9月</th>
+              <th>10月</th>
+              <th>11月</th>
+              <th>12月</th>
+              <th class="cell-total">合計</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-header">知人</td>
+              <td>2</td><td>4</td><td>3</td><td>2</td><td>3</td><td>2</td><td>5</td><td>1</td><td>3</td><td>4</td><td>3</td><td>2</td><td class="cell-total">34</td>
+            </tr>
+            <tr>
+              <td class="row-header">レディクル</td>
+              <td>4</td><td>7</td><td>8</td><td>6</td><td>4</td><td>5</td><td>9</td><td>4</td><td>6</td><td>7</td><td>8</td><td>6</td><td class="cell-total">74</td>
+            </tr>
+            <tr>
+              <td class="row-header">顧問バンク</td>
+              <td>2</td><td>3</td><td>5</td><td>3</td><td>2</td><td>3</td><td>4</td><td>3</td><td>3</td><td>3</td><td>5</td><td>3</td><td class="cell-total">39</td>
+            </tr>
+            <tr style="border-top: 2px solid #dce0e4;">
+              <td class="row-header cell-total">合計</td>
+              <td class="cell-total">8</td><td class="cell-total">14</td><td class="cell-total">16</td><td class="cell-total">11</td><td class="cell-total">9</td><td class="cell-total">10</td><td class="cell-total">18</td><td class="cell-total">8</td><td class="cell-total">12</td><td class="cell-total">14</td><td class="cell-total">16</td><td class="cell-total">11</td><td class="cell-total" style="background-color: #dce4e6 !important;">147</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. 提案ステージ別内訳と平均滞留日数 -->
+    <div class="card">
+      <div class="card-header">
+        <span>提案ステージ別内訳（件数）と 平均滞留日数</span>
+      </div>
+      <div class="card-body data-table-wrapper">
+        <style>
+          /* 滞留日数用のスタイル追加 */
+          .trend-icon {
+            font-size: 14px;
+            margin-left: 2px;
+            vertical-align: middle;
+          }
+          .trend-improved {
+            color: #27ae60; /* 改善（日数が減った）: 緑 */
+          }
+          .trend-worsened {
+            color: #e74c3c; /* 悪化（日数が増えた）: 赤 */
+          }
+          .trend-flat {
+            color: #95a5a6; /* 変化なし: グレー */
+          }
+          .cell-days {
+            font-size: 12px;
+            color: #34495e;
+            background-color: #fcfcfc;
+          }
+          .sub-row-header {
+            text-align: right !important;
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: normal !important;
+            background-color: #fff !important;
+            border-right: 1px solid #dce0e4 !important;
+          }
+        </style>
+        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 12px;">
+          ※ <strong>平均滞留日数</strong>：該当月にそのステージにあった商談が、そのステージに留まっていた日数の平均。<br>
+          ※ <span class="material-icons trend-icon trend-improved">arrow_downward</span> は前月比で日数が減少（改善）、<span class="material-icons trend-icon trend-worsened">arrow_upward</span> は増加（悪化）を示します。
+        </p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th colspan="2" class="row-header" style="left: 0; z-index: 2;">ステージ</th>
+              <th>1月</th>
+              <th>2月</th>
+              <th>3月</th>
+              <th>4月</th>
+              <th>5月</th>
+              <th>6月</th>
+              <th>7月</th>
+              <th>8月</th>
+              <th>9月</th>
+              <th>10月</th>
+              <th>11月</th>
+              <th>12月</th>
+              <th class="cell-total">年間合計/平均</th>
+              <th class="cell-total">前年比</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ニーズ確認中 -->
+            <tr>
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">ニーズ確認中</th>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1;">件数</th>
+              <td>1</td><td>2</td><td>3</td><td>2</td><td>1</td><td>1</td><td>3</td><td>1</td><td>2</td><td>2</td><td>3</td><td>1</td><td class="cell-total">22</td><td class="cell-total" style="color: #27ae60; font-weight: bold;">110%</td>
+            </tr>
+            <tr>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1; background-color: #fcfcfc !important;">滞留日数</th>
+              <td class="cell-days">14.0<span class="material-icons trend-icon trend-flat">horizontal_rule</span></td>
+              <td class="cell-days">12.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">15.2<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">10.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">11.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">9.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">14.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">13.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">11.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">12.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">10.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">10.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days cell-total">11.9</td><td class="cell-days cell-total" style="color: #27ae60; font-weight: bold;">92%</td>
+            </tr>
+            
+            <!-- ソリューション提示中 -->
+            <tr style="border-top: 2px solid #ecf0f1;">
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">ソリューション提示中</th>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1;">件数</th>
+              <td>1</td><td>2</td><td>2</td><td>1</td><td>1</td><td>2</td><td>3</td><td>1</td><td>1</td><td>2</td><td>3</td><td>1</td><td class="cell-total">20</td><td class="cell-total" style="color: #e74c3c; font-weight: bold;">95%</td>
+            </tr>
+            <tr>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1; background-color: #fcfcfc !important;">滞留日数</th>
+              <td class="cell-days">8.0<span class="material-icons trend-icon trend-flat">horizontal_rule</span></td>
+              <td class="cell-days">7.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">9.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">6.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">7.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">8.5<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">10.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">9.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">7.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">8.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">7.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">6.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days cell-total">7.9</td><td class="cell-days cell-total" style="color: #e74c3c; font-weight: bold;">105%</td>
+            </tr>
+
+            <!-- 提案中 -->
+            <tr style="border-top: 2px solid #ecf0f1;">
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">提案中</th>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1;">件数</th>
+              <td>1</td><td>2</td><td>2</td><td>2</td><td>1</td><td>1</td><td>2</td><td>1</td><td>2</td><td>3</td><td>2</td><td>2</td><td class="cell-total">21</td><td class="cell-total" style="color: #27ae60; font-weight: bold;">105%</td>
+            </tr>
+            <tr>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1; background-color: #fcfcfc !important;">滞留日数</th>
+              <td class="cell-days">20.0<span class="material-icons trend-icon trend-flat">horizontal_rule</span></td>
+              <td class="cell-days">18.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">22.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">19.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">17.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">21.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">24.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">20.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">18.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">19.5<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">17.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">16.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days cell-total">19.5</td><td class="cell-days cell-total" style="color: #27ae60; font-weight: bold;">88%</td>
+            </tr>
+
+            <!-- 調整・交渉中 -->
+            <tr style="border-top: 2px solid #ecf0f1;">
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">調整・交渉中</th>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1;">件数</th>
+              <td>1</td><td>1</td><td>2</td><td>1</td><td>1</td><td>1</td><td>2</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="cell-total">14</td><td class="cell-total" style="color: #95a5a6; font-weight: bold;">100%</td>
+            </tr>
+            <tr>
+              <th class="sub-row-header" style="position: sticky; left: 100px; z-index: 1; background-color: #fcfcfc !important;">滞留日数</th>
+              <td class="cell-days">10.0<span class="material-icons trend-icon trend-flat">horizontal_rule</span></td>
+              <td class="cell-days">12.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">11.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">9.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">8.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">10.5<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">13.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">11.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">9.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">10.0<span class="material-icons trend-icon trend-worsened">arrow_upward</span></td>
+              <td class="cell-days">8.0<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days">7.5<span class="material-icons trend-icon trend-improved">arrow_downward</span></td>
+              <td class="cell-days cell-total">10.0</td><td class="cell-days cell-total" style="color: #95a5a6; font-weight: bold;">100%</td>
+            </tr>
+
+            <tr style="border-top: 2px solid #dce0e4;">
+              <th colspan="2" class="row-header cell-total" style="left: 0; z-index: 2;">合計（件数）</th>
+              <td class="cell-total">4</td><td class="cell-total">7</td><td class="cell-total">9</td><td class="cell-total">6</td><td class="cell-total">4</td><td class="cell-total">5</td><td class="cell-total">10</td><td class="cell-total">4</td><td class="cell-total">6</td><td class="cell-total">8</td><td class="cell-total">9</td><td class="cell-total">5</td><td class="cell-total" style="background-color: #dce4e6 !important;">77</td><td class="cell-total" style="background-color: #dce4e6 !important; color: #27ae60; font-weight: bold;">104%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+  </div>
+
+  <script>
+    // サイドバーのトグル（モバイル用）
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // カテゴリの折りたたみ
+    function toggleCategory(header) {
+      header.parentElement.classList.toggle('collapsed');
+    }
+
+    // 売上推移グラフの描画
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('salesChart').getContext('2d');
+      
+      const salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          datasets: [
+            {
+              type: 'line',
+              label: '目標売上',
+              data: [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600], // ダミーデータ
+              borderColor: '#e74c3c', // 赤色
+              backgroundColor: '#e74c3c',
+              borderWidth: 2,
+              pointRadius: 4,
+              fill: false,
+              tension: 0.1,
+              order: 0 // 手前に表示
+            },
+            {
+              type: 'bar',
+              label: '受注済み売上',
+              data: [300, 450, 500, 600, 800, 750, 900, 1000, 1100, 1050, 1200, 1300], // ダミーデータ
+              backgroundColor: '#3498db', // 青色
+              order: 1
+            },
+            {
+              type: 'bar',
+              label: '見込み売上',
+              data: [150, 200, 100, 300, 150, 250, 300, 150, 200, 400, 350, 200], // ダミーデータ
+              backgroundColor: '#95a5a6', // グレー
+              order: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              stacked: true, // 積み上げ棒グラフにする
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              stacked: true, // 積み上げ棒グラフにする
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: '金額 (万円)'
+              },
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString(); // カンマ区切りにする
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.y !== null) {
+                    label += context.parsed.y.toLocaleString() + ' 万円';
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

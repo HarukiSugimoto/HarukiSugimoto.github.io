@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-040 年間計画設定 | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2a5f41;
+      font-size: 16px;
+    }
+    .header-notification {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+      text-decoration: none;
+    }
+    .header-notification-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+    .header-notification:hover .header-notification-icon {
+      opacity: 0.8;
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1e4530;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #2a5f41;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #1e4530;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #1e4530;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-success {
+      background: #27ae60;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #219a52;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #1e4530;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 24px;
+    }
+    .form-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      align-items: flex-end;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 13px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .form-input, .form-select, .form-textarea {
+      padding: 10px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #2a5f41;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    /* 年間目標サマリー */
+    .annual-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .summary-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .summary-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e4530;
+    }
+    .summary-value.highlight {
+      color: #27ae60;
+    }
+    /* 月次入力テーブル */
+    .monthly-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .monthly-table th, .monthly-table td {
+      padding: 10px 12px;
+      border: 1px solid #ecf0f1;
+      text-align: center;
+    }
+    .monthly-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #1e4530;
+    }
+    .monthly-table td.month-cell {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2a5f41;
+    }
+    .monthly-table input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      font-size: 13px;
+      text-align: right;
+    }
+    .monthly-table input:focus {
+      outline: none;
+      border-color: #2a5f41;
+    }
+    .monthly-table .total-row {
+      background: #eaf5ee;
+      font-weight: 600;
+    }
+    .monthly-table .total-row td {
+      color: #1e4530;
+    }
+    .monthly-table .memo-input {
+      text-align: left;
+    }
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+      .monthly-table {
+        font-size: 11px;
+      }
+      .monthly-table th, .monthly-table td {
+        padding: 6px 4px;
+      }
+    }
+      /* サイドバー */
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 240px;
+      height: calc(100vh - 56px);
+      background: #1e4530;
+      overflow-y: auto;
+      z-index: 999;
+      transition: transform 0.3s;
+    }
+    .sidebar-nav {
+      padding: 16px 0;
+    }
+    .sidebar-category {
+      margin-bottom: 8px;
+    }
+    .sidebar-category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      color: #95a5a6;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sidebar-category-header:hover {
+      color: #ecf0f1;
+    }
+    .sidebar-category-header .material-icons {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .sidebar-category.collapsed .sidebar-category-header .material-icons {
+      transform: rotate(-90deg);
+    }
+    .sidebar-category.collapsed .sidebar-items {
+      display: none;
+    }
+    .sidebar-items {
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px 10px 24px;
+      color: #bdc3c7;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .sidebar-item.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-left-color: #7de8a8;
+    }
+    .sidebar-item .material-icons {
+      font-size: 20px;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 8px 16px;
+    }
+    /* メインコンテンツ調整 */
+    .main-wrapper {
+      margin-left: 240px;
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .menu-toggle {
+        display: flex !important;
+      }
+    }
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="menu-toggle" onclick="toggleSidebar()">
+        <span class="material-icons">menu</span>
+      </div>
+      <div class="header-title">営業管理システム</div>
+    </div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-012_notifications.html" class="header-notification" title="通知">
+        <span class="material-icons header-notification-icon">notifications</span>
+        <span class="notification-badge">5</span>
+      </a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- サイドバー -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <!-- ダッシュボード（カテゴリなし） -->
+      <a href="../dashboard/SC-010_dashboard.html" class="sidebar-item">
+        <span class="material-icons">dashboard</span>
+        <span>ダッシュボード</span>
+      </a>
+
+      <!-- 営業管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>営業管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
+            <span class="material-icons">warning</span>
+            <span>要対応一覧</span>
+          </a>
+          <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
+            <span class="material-icons">person_search</span>
+            <span>リード一覧</span>
+          </a>
+          <a href="../deal/SC-030_deal_list.html" class="sidebar-item">
+            <span class="material-icons">handshake</span>
+            <span>商談一覧</span>
+          </a>
+          <a href="../master/SC-064_customer_list.html" class="sidebar-item">
+            <span class="material-icons">people</span>
+            <span>顧客一覧</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 年間計画 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>分析・年間計画</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../plan/SC-040_annual_plan_setting.html" class="sidebar-item active">
+            <span class="material-icons">trending_up</span>
+            <span>年間計画</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- マスタ管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>マスタ管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-061_company_list.html" class="sidebar-item">
+            <span class="material-icons">business</span>
+            <span>企業マスタ</span>
+          </a>
+          <a href="../master/SC-067_staff_list.html" class="sidebar-item">
+            <span class="material-icons">badge</span>
+            <span>営業担当者マスタ</span>
+          </a>
+          <a href="../master/SC-070_department_list.html" class="sidebar-item">
+            <span class="material-icons">account_tree</span>
+            <span>部署マスタ</span>
+          </a>
+          <a href="../master/SC-073_channel_list.html" class="sidebar-item">
+            <span class="material-icons">hub</span>
+            <span>獲得チャネルマスタ</span>
+          </a>
+          <a href="../master/SC-076_rank_list.html" class="sidebar-item">
+            <span class="material-icons">military_tech</span>
+            <span>ランクマスタ</span>
+          </a>
+          <a href="../master/SC-079_product_list.html" class="sidebar-item">
+            <span class="material-icons">inventory_2</span>
+            <span>商材マスタ</span>
+          </a>
+          <a href="../master/SC-082_stage_list.html" class="sidebar-item">
+            <span class="material-icons">linear_scale</span>
+            <span>ステージマスタ</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- 設定 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>設定</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-100_role_list.html" class="sidebar-item">
+            <span class="material-icons">admin_panel_settings</span>
+            <span>ロール管理</span>
+          </a>
+          <a href="../master/SC-092_integration_settings.html" class="sidebar-item">
+            <span class="material-icons">settings</span>
+            <span>連携設定</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <div class="main-wrapper">
+  <main class="main-container">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">SC-040 年間計画設定（月次入力）</h1>
+      </div>
+      <button class="btn btn-success">保存</button>
+    </div>
+
+    <!-- 年度選択・操作 -->
+    <div class="card">
+      <div class="card-header">
+        年度設定
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary btn-sm" onclick="copyPreviousYear()">前年コピー</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">対象年度</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select class="form-select" style="min-width: 150px;">
+                <option selected>2026年度</option>
+                <option>2025年度</option>
+                <option>2027年度</option>
+              </select>
+              <button class="btn btn-primary btn-sm">表示</button>
+            </div>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label">前提メモ</label>
+            <input type="text" class="form-input" placeholder="例）月10件以上の完全新規商談が必要..." value="月10件以上の完全新規商談が必要。上期は展示会中心、下期は紹介強化。">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 年間売上目標サマリー -->
+    <div class="card">
+      <div class="card-header">年間売上目標（自動入力）</div>
+      <div class="card-body">
+        <div class="annual-summary">
+          <div class="summary-item">
+            <span class="summary-label">年間売上目標</span>
+            <span class="summary-value highlight">1億2,000万円</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">アポ（初回商談数）（合計）</span>
+            <span class="summary-value">720件</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">提案数（合計）</span>
+            <span class="summary-value">240件</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">受注数（合計）</span>
+            <span class="summary-value">120件</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 月次目標テーブル -->
+    <div class="card">
+      <div class="card-header">月次目標（12ヶ月分）</div>
+      <div class="card-body">
+        <table class="monthly-table">
+          <thead>
+            <tr>
+              <th style="width: 60px;">月</th>
+              <th style="width: 140px;">予算目標（円）</th>
+              <th style="width: 120px;">アポ（初回商談数）</th>
+              <th style="width: 100px;">提案数</th>
+              <th style="width: 100px;">受注数</th>
+              <th>備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="month-cell">1月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value=""></td>
+            </tr>
+            <tr>
+              <td class="month-cell">2月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value=""></td>
+            </tr>
+            <tr>
+              <td class="month-cell">3月</td>
+              <td><input type="text" value="12,000,000"></td>
+              <td><input type="text" value="70"></td>
+              <td><input type="text" value="25"></td>
+              <td><input type="text" value="12"></td>
+              <td><input type="text" class="memo-input" value="年度末追い込み"></td>
+            </tr>
+            <tr>
+              <td class="month-cell">4月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value="展示会シーズン"></td>
+            </tr>
+            <tr>
+              <td class="month-cell">5月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value="GW明け追い込み"></td>
+            </tr>
+            <tr>
+              <td class="month-cell">6月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value=""></td>
+            </tr>
+            <tr>
+              <td class="month-cell">7月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value=""></td>
+            </tr>
+            <tr>
+              <td class="month-cell">8月</td>
+              <td><input type="text" value="8,000,000"></td>
+              <td><input type="text" value="50"></td>
+              <td><input type="text" value="15"></td>
+              <td><input type="text" value="8"></td>
+              <td><input type="text" class="memo-input" value="夏季休暇期間"></td>
+            </tr>
+            <tr>
+              <td class="month-cell">9月</td>
+              <td><input type="text" value="12,000,000"></td>
+              <td><input type="text" value="70"></td>
+              <td><input type="text" value="25"></td>
+              <td><input type="text" value="12"></td>
+              <td><input type="text" class="memo-input" value="上期締め"></td>
+            </tr>
+            <tr>
+              <td class="month-cell">10月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value="下期スタート"></td>
+            </tr>
+            <tr>
+              <td class="month-cell">11月</td>
+              <td><input type="text" value="10,000,000"></td>
+              <td><input type="text" value="60"></td>
+              <td><input type="text" value="20"></td>
+              <td><input type="text" value="10"></td>
+              <td><input type="text" class="memo-input" value=""></td>
+            </tr>
+            <tr>
+              <td class="month-cell">12月</td>
+              <td><input type="text" value="8,000,000"></td>
+              <td><input type="text" value="50"></td>
+              <td><input type="text" value="15"></td>
+              <td><input type="text" value="8"></td>
+              <td><input type="text" class="memo-input" value="年末調整"></td>
+            </tr>
+            <tr class="total-row">
+              <td>合計</td>
+              <td>120,000,000</td>
+              <td>720</td>
+              <td>240</td>
+              <td>120</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  </div>
+
+  <script>
+    function copyPreviousYear() {
+      alert('前年度のデータをコピーしました');
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function toggleCategory(header) {
+      header.parentElement.classList.toggle('collapsed');
+    }
+  </script>
+</body>
+</html>

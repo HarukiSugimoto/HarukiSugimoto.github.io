@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-030 商談一覧 | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== ヘッダー ===== */
+    .header {
+      background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
+      color: #fff;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .menu-toggle { cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center; }
+    .menu-toggle:hover { background: rgba(255,255,255,0.15); }
+    .header-title { font-size: 18px; font-weight: 600; }
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+    .header-notification {
+      position: relative; cursor: pointer; padding: 4px;
+      display: flex; align-items: center; color: #fff; text-decoration: none;
+    }
+    .notification-badge {
+      position: absolute; top: 0; right: 0;
+      background: #e74c3c; color: #fff;
+      font-size: 10px; font-weight: 600;
+      min-width: 18px; height: 18px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; padding: 0 4px;
+    }
+    .header-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .header-user-icon {
+      width: 32px; height: 32px; background: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #2a5f41; font-size: 14px; font-weight: 700;
+    }
+
+    /* ===== サイドバー ===== */
+    .sidebar {
+      position: fixed; top: 56px; left: 0;
+      width: 240px; height: calc(100vh - 56px);
+      background: #1e4530; overflow-y: auto; z-index: 999;
+      transition: transform 0.3s;
+    }
+    .sidebar.collapsed { transform: translateX(-240px); }
+    .sidebar-nav { padding: 16px 0; }
+    .sidebar-category { margin-bottom: 4px; }
+    .sidebar-category-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; color: #95a5a6;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; cursor: pointer; transition: color 0.2s;
+    }
+    .sidebar-category-header:hover { color: #ecf0f1; }
+    .sidebar-category-header .material-icons { font-size: 18px; transition: transform 0.2s; }
+    .sidebar-category.collapsed .sidebar-category-header .material-icons { transform: rotate(-90deg); }
+    .sidebar-category.collapsed .sidebar-items { display: none; }
+    .sidebar-items { display: flex; flex-direction: column; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px 10px 24px; color: #bdc3c7; text-decoration: none;
+      font-size: 13px; transition: all 0.2s; border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar-item.active { background: rgba(255, 255, 255, 0.15); color: #ffffff; border-left-color: #7de8a8; }
+    .sidebar-item .material-icons { font-size: 20px; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px; }
+
+    /* ===== メインレイアウト ===== */
+    .main-wrapper {
+      margin-left: 240px;
+      padding-top: 56px;
+      min-height: 100vh;
+      transition: margin-left 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-wrapper.expanded { margin-left: 0; }
+
+    /* ===== ページヘッダー ===== */
+    .page-top-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .page-top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #1e4530; }
+    .page-subtitle { font-size: 13px; color: #7f8c8d; }
+    .page-top-bar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ===== フィルターバー ===== */
+    .filter-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .filter-label { font-size: 12px; color: #7f8c8d; font-weight: 600; white-space: nowrap; }
+    .filter-select {
+      border: 1px solid #dce0e4; border-radius: 6px;
+      padding: 5px 10px; font-size: 13px; color: #1e4530;
+      background: #f8f9fa; cursor: pointer; outline: none;
+    }
+    .filter-select:focus { border-color: #2a5f41; background: #fff; }
+    .filter-search {
+      display: flex; align-items: center; gap: 4px;
+      border: 1px solid #dce0e4; border-radius: 6px;
+      padding: 4px 10px; background: #f8f9fa;
+    }
+    .filter-search input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: #1e4530; width: 160px;
+    }
+    .filter-search .material-icons { font-size: 18px; color: #95a5a6; }
+    .filter-divider { width: 1px; height: 24px; background: #dce0e4; margin: 0 4px; }
+    .filter-actions {
+      display: flex; align-items: center; gap: 8px;
+      margin-left: auto;
+    }
+    .btn-filter-search {
+      background: #2a5f41; color: #fff;
+      border: none; border-radius: 6px;
+      padding: 5px 14px; font-size: 13px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 4px;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .btn-filter-search:hover { background: #1e4530; }
+    .btn-filter-search .material-icons { font-size: 16px; }
+    .btn-filter-clear {
+      background: #fff; color: #636e72;
+      border: 1px solid #dce0e4; border-radius: 6px;
+      padding: 5px 12px; font-size: 13px; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .btn-filter-clear:hover { background: #f8f9fa; border-color: #b2bec3; }
+
+    /* ===== ボタン ===== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 6px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn .material-icons { font-size: 18px; }
+    .btn-primary { background: #2a5f41; color: #fff; }
+    .btn-primary:hover { background: #1e4530; }
+    .btn-outline {
+      background: #fff; color: #1e4530;
+      border: 1px solid #dce0e4;
+    }
+    .btn-outline:hover { background: #f8f9fa; border-color: #b2bec3; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* ===== カンバンボード ===== */
+    .kanban-wrapper {
+      flex: 1;
+      overflow-x: auto;
+      padding: 20px 24px 24px;
+    }
+    .kanban-board {
+      display: flex;
+      gap: 0;
+      min-width: max-content;
+      align-items: flex-start;
+    }
+
+    /* ===== ステージ列 ===== */
+    .stage-column {
+      width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: #e8ecf0;
+      border-radius: 10px;
+      margin-right: 12px;
+      overflow: hidden;
+    }
+    .stage-column:last-child { margin-right: 0; }
+
+    /* ステージリボンヘッダー */
+    .stage-header {
+      padding: 10px 14px 8px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stage-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 14px; right: 14px;
+      height: 2px;
+      border-radius: 1px;
+    }
+    .stage-name-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stage-name {
+      font-size: 13px; font-weight: 700; letter-spacing: 0.3px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stage-name .material-icons { font-size: 17px; }
+    .stage-badge {
+      font-size: 11px; font-weight: 700;
+      min-width: 22px; height: 22px; border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 6px;
+    }
+
+    /* ステージ別カラー - 統一スタイル（色なし） */
+    .stage-header { background: #dce0e4; }
+    .stage-name { color: #2d3436; }
+    .stage-badge { background: #636e72; color: #fff; }
+    .stage-header::after { background: #b2bec3; }
+
+    /* ステージ集計 */
+    .stage-stats {
+      padding: 8px 14px 10px;
+      background: rgba(0,0,0,0.04);
+      display: flex;
+      gap: 0;
+    }
+    .stage-stat {
+      flex: 1;
+      text-align: center;
+      padding: 0 4px;
+    }
+    .stage-stat + .stage-stat {
+      border-left: 1px solid rgba(0,0,0,0.08);
+    }
+    .stage-stat-label {
+      font-size: 10px;
+      color: #7f8c8d;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .stage-stat-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e4530;
+    }
+
+    /* カードリスト */
+    .stage-cards {
+      padding: 10px 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 80px;
+    }
+    .stage-cards.drag-over {
+      background: rgba(42,95,65,0.08);
+      border-radius: 6px;
+    }
+
+    /* ===== 商談カード ===== */
+    .deal-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 12px;
+      cursor: grab;
+      transition: box-shadow 0.2s, transform 0.15s;
+      border-left: 4px solid transparent;
+      position: relative;
+      user-select: none;
+    }
+    .deal-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+    .deal-card.dragging {
+      opacity: 0.5;
+      transform: rotate(2deg);
+      cursor: grabbing;
+    }
+    .deal-card.drop-target { border: 2px dashed #2a5f41; }
+
+    /* アラート */
+    .deal-card.alert-overdue { border-left-color: #e74c3c; }
+    .deal-card.alert-soon { border-left-color: #f39c12; }
+
+    /* カードタイトル */
+    .card-title {
+      font-size: 13px; font-weight: 700; color: #1e4530;
+      margin-bottom: 4px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 会社・部署（縦並び） */
+    .card-company {
+      font-size: 12px; color: #636e72;
+      margin-bottom: 8px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .card-company-name {
+      display: flex; align-items: center; gap: 4px; font-weight: 600; color: #2d3436;
+    }
+    .card-company-name .material-icons { font-size: 14px; color: #95a5a6; }
+    .card-company-dept {
+      font-size: 11px; color: #95a5a6; padding-left: 18px;
+    }
+
+    /* 担当者セクション（AC + DL） */
+    .card-staff-section {
+      display: flex; flex-direction: column; gap: 4px;
+      margin-bottom: 6px;
+    }
+    .card-staff-row {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .staff-role-label {
+      font-size: 9px; font-weight: 700; padding: 1px 5px;
+      border-radius: 3px; min-width: 22px; text-align: center;
+      background: #e8f0eb; color: #2a5f41; flex-shrink: 0;
+      letter-spacing: 0.3px;
+    }
+    .staff-role-label.delivery {
+      background: #fef0e6; color: #c0612b;
+    }
+    .staff-avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .staff-name { font-size: 12px; color: #1e4530; }
+
+    /* キーマン */
+    .card-keyman {
+      font-size: 12px; color: #1e4530;
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .card-keyman .material-icons { font-size: 14px; color: #95a5a6; }
+
+    /* 区切り線 */
+    .card-divider { height: 1px; background: #f0f2f5; margin: 8px 0; }
+
+    /* メトリクスグリッド */
+    .card-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .card-metric { display: flex; flex-direction: column; gap: 1px; }
+    .card-metric-label {
+      font-size: 10px; color: #95a5a6; font-weight: 600;
+    }
+    .card-metric-value { font-size: 12px; font-weight: 600; color: #1e4530; }
+    .card-metric-value.amount { color: #1e4530; }
+    .card-metric-value.date-overdue { color: #e74c3c; }
+    .card-metric-value.date-soon { color: #e67e22; }
+
+    /* 確度バー */
+    .prob-bar-wrap { margin-top: 2px; }
+    .prob-bar-bg {
+      height: 4px; background: #ecf0f1; border-radius: 2px; overflow: hidden;
+    }
+    .prob-bar-fill { height: 100%; border-radius: 2px; }
+
+    /* アラートアイコン */
+    .card-alert-icon {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 16px; color: #e74c3c;
+    }
+
+    /* ===== ビュー切り替えボタン ===== */
+    .view-toggle-group {
+      display: flex; border: 1px solid #dce0e4; border-radius: 6px; overflow: hidden;
+    }
+    .view-toggle-btn {
+      display: flex; align-items: center; gap: 4px;
+      padding: 5px 12px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; background: #fff; color: #7f8c8d;
+      transition: all 0.15s;
+    }
+    .view-toggle-btn .material-icons { font-size: 18px; }
+    .view-toggle-btn:not(:last-child) { border-right: 1px solid #dce0e4; }
+    .view-toggle-btn.active { background: #2a5f41; color: #fff; }
+    .view-toggle-btn:not(.active):hover { background: #f8f9fa; color: #1e4530; }
+
+    /* ===== リストビュー ===== */
+    .list-wrapper {
+      flex: 1;
+      padding: 20px 24px 24px;
+      display: none;
+    }
+    .list-wrapper.visible { display: block; }
+    .list-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .data-table {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    .data-table th {
+      background: #f8f9fa; padding: 10px 12px;
+      text-align: left; font-weight: 600; color: #1e4530;
+      border-bottom: 2px solid #dce0e4; white-space: nowrap;
+      position: sticky; top: 0; z-index: 1;
+    }
+    .data-table th.sortable { cursor: pointer; user-select: none; padding-right: 22px; position: relative; }
+    .data-table th.sortable:hover { background: #edf1f4; }
+    .data-table th.sortable::after { content: "↕"; position: absolute; right: 6px; color: #b2bec3; font-size: 10px; }
+    .data-table th.sortable.asc::after { content: "↑"; color: #2a5f41; }
+    .data-table th.sortable.desc::after { content: "↓"; color: #2a5f41; }
+    .data-table td {
+      padding: 10px 12px; border-bottom: 1px solid #f0f2f5;
+      vertical-align: middle;
+    }
+    .data-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    .data-table tbody tr:hover { background: #f5f8f5; }
+    .data-table tbody tr.row-alert-overdue { background: #fff5f5; }
+    .data-table tbody tr.row-alert-overdue:hover { background: #fee; }
+    .data-table tbody tr.row-alert-soon { background: #fffbf0; }
+    .data-table tbody tr.row-alert-soon:hover { background: #fff3d0; }
+    .tbl-alert-icon { color: #e74c3c; font-size: 17px; vertical-align: middle; }
+    .tbl-title { font-weight: 600; color: #1e4530; line-height: 1.3; }
+    .tbl-company-name { font-weight: 600; color: #2d3436; }
+    .tbl-dept { font-size: 11px; color: #95a5a6; margin-top: 2px; }
+    .tbl-staff-row { display: flex; align-items: center; gap: 5px; }
+    .tbl-staff-row + .tbl-staff-row { margin-top: 3px; }
+    .tbl-role-label {
+      font-size: 9px; font-weight: 700; padding: 1px 4px;
+      border-radius: 3px; min-width: 20px; text-align: center; flex-shrink: 0;
+      background: #e8f0eb; color: #2a5f41;
+    }
+    .tbl-role-label.delivery { background: #fef0e6; color: #c0612b; }
+    .tbl-avatar {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff;
+    }
+    .stage-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+      background: #ecf0f1; color: #636e72;
+    }
+    /* リスト企業グルーピング */
+    .group-header-row td {
+      background: #f0f2f5; padding: 6px 12px;
+      font-size: 12px; font-weight: 700; color: #1e4530;
+      border-bottom: 1px solid #dce0e4; border-top: 2px solid #dce0e4;
+    }
+    .group-header-row:first-child td { border-top: none; }
+    .group-count {
+      font-size: 11px; color: #7f8c8d; font-weight: 400; margin-left: 8px;
+    }
+    .tbl-date { font-size: 12px; white-space: nowrap; }
+    .tbl-date.overdue { color: #e74c3c; font-weight: 600; }
+    .tbl-date.soon { color: #e67e22; font-weight: 600; }
+    .tbl-amount { font-size: 12px; font-weight: 600; color: #1e4530; }
+
+    /* ===== リストツールバー ===== */
+    .list-toolbar {
+      display: flex; align-items: center; justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+    .btn-group-toggle {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 12px; font-size: 12px; font-weight: 600;
+      border: 1px solid #dce0e4; border-radius: 6px;
+      background: #fff; color: #636e72; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-group-toggle .material-icons { font-size: 16px; }
+    .btn-group-toggle.active {
+      background: #e8f0eb; color: #2a5f41; border-color: #2a5f41;
+    }
+    .btn-group-toggle:hover:not(.active) { background: #f8f9fa; }
+
+    /* ===== アラート凡例 ===== */
+    .legend-bar {
+      padding: 6px 24px;
+      display: flex; align-items: center; gap: 20px;
+      background: #fff; border-bottom: 1px solid #dce0e4;
+      font-size: 12px; color: #7f8c8d;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot {
+      width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== ヘッダー ===== -->
+<header class="header">
+  <div class="header-left">
+    <div class="menu-toggle" onclick="toggleSidebar()">
+      <span class="material-icons" style="color:#fff">menu</span>
+    </div>
+    <div class="header-title">営業管理システム</div>
+  </div>
+  <div class="header-actions">
+    <a href="#" class="header-notification" title="通知">
+      <span class="material-icons">notifications</span>
+      <span class="notification-badge">3</span>
+    </a>
+    <div class="header-user">
+      <div class="header-user-icon">山</div>
+      <span>山田 ▼</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== サイドバー ===== -->
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar-nav">
+    <a href="../dashboard/SC-010_dashboard.html" class="sidebar-item">
+      <span class="material-icons">dashboard</span><span>ダッシュボード</span>
+    </a>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>営業管理</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
+          <span class="material-icons">warning</span><span>要対応一覧</span>
+        </a>
+        <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
+          <span class="material-icons">person_search</span><span>リード一覧</span>
+        </a>
+        <a href="SC-030_deal_list.html" class="sidebar-item active">
+          <span class="material-icons">handshake</span><span>商談一覧</span>
+        </a>
+        <a href="../master/SC-064_customer_list.html" class="sidebar-item">
+          <span class="material-icons">people</span><span>顧客一覧</span>
+        </a>
+      </div>
+    </div>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>分析・年間計画</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../plan/SC-040_annual_plan_setting.html" class="sidebar-item">
+          <span class="material-icons">trending_up</span><span>年間計画</span>
+        </a>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>マスタ管理</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../master/SC-061_company_list.html" class="sidebar-item"><span class="material-icons">business</span><span>企業マスタ</span></a>
+        <a href="../master/SC-067_staff_list.html" class="sidebar-item"><span class="material-icons">badge</span><span>営業担当者マスタ</span></a>
+        <a href="../master/SC-070_department_list.html" class="sidebar-item"><span class="material-icons">account_tree</span><span>部署マスタ</span></a>
+        <a href="../master/SC-073_channel_list.html" class="sidebar-item"><span class="material-icons">hub</span><span>獲得チャネルマスタ</span></a>
+        <a href="../master/SC-076_rank_list.html" class="sidebar-item"><span class="material-icons">military_tech</span><span>ランクマスタ</span></a>
+        <a href="../master/SC-079_product_list.html" class="sidebar-item"><span class="material-icons">inventory_2</span><span>商材マスタ</span></a>
+        <a href="../master/SC-082_stage_list.html" class="sidebar-item"><span class="material-icons">linear_scale</span><span>ステージマスタ</span></a>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>設定</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../master/SC-100_role_list.html" class="sidebar-item"><span class="material-icons">admin_panel_settings</span><span>ロール管理</span></a>
+        <a href="../master/SC-092_integration_settings.html" class="sidebar-item"><span class="material-icons">settings</span><span>連携設定</span></a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ===== メインコンテンツ ===== -->
+<div class="main-wrapper" id="mainWrapper">
+
+  <!-- ページトップバー -->
+  <div class="page-top-bar">
+    <div class="page-top-bar-left">
+      <div>
+        <div class="page-title">商談一覧</div>
+        <div class="page-subtitle">全 <strong id="totalCount">14</strong> 件</div>
+      </div>
+    </div>
+    <div class="page-top-bar-right">
+      <div class="view-toggle-group">
+        <button class="view-toggle-btn active" id="btnKanban" onclick="switchView('kanban')" title="カンバン">
+          <span class="material-icons">view_kanban</span>カンバン
+        </button>
+        <button class="view-toggle-btn" id="btnList" onclick="switchView('list')" title="リスト">
+          <span class="material-icons">list</span>リスト
+        </button>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="alert('新規商談登録')">
+        <span class="material-icons">add</span>新規登録
+      </button>
+    </div>
+  </div>
+
+  <!-- フィルターバー -->
+  <div class="filter-bar">
+    <span class="filter-label">絞り込み</span>
+    <div class="filter-search">
+      <span class="material-icons">search</span>
+      <input type="text" id="searchInput" placeholder="企業名・顧客名・タイトルで検索">
+    </div>
+    <select class="filter-select" id="staffSelect">
+      <option value="">担当者：すべて</option>
+      <option value="山田">山田</option>
+      <option value="佐藤">佐藤</option>
+      <option value="田中">田中</option>
+    </select>
+    <select class="filter-select" id="rankSelect">
+      <option value="">ランク：すべて</option>
+      <option value="松">松</option>
+      <option value="竹">竹</option>
+      <option value="梅">梅</option>
+    </select>
+    <select class="filter-select" id="stageSelect" style="display:none;">
+      <option value="">ステージ：すべて</option>
+      <option value="appo">アポ設定中</option>
+      <option value="needs">面談：ニーズ確認中</option>
+      <option value="solution">面談：ソリューション提示中</option>
+      <option value="proposal">本提案中</option>
+      <option value="negotiation">条件交渉中</option>
+      <option value="decision">意思決定支援中</option>
+      <option value="contracted">契約完了</option>
+      <option value="pic_change">PICチェンジ中</option>
+      <option value="dismissed">見送り</option>
+    </select>
+    <div class="filter-divider"></div>
+    <span class="filter-label">アラート</span>
+    <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+      <input type="checkbox" id="alertOnly"> 要対応のみ
+    </label>
+    <div class="filter-actions">
+      <button class="btn-filter-search" onclick="applyFilterManual()">
+        <span class="material-icons">search</span>検索
+      </button>
+      <button class="btn-filter-clear" onclick="clearFilters()">クリア</button>
+    </div>
+  </div>
+
+  <!-- 凡例バー -->
+  <div class="legend-bar">
+    <span class="filter-label">カード凡例</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span>次回AC日超過</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f39c12;"></span>3日以内</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ecf0f1;border:1px solid #dce0e4;"></span>通常</span>
+  </div>
+
+  <!-- カンバンボード -->
+  <div class="kanban-wrapper" id="kanbanWrapper">
+    <div class="kanban-board" id="kanbanBoard">
+      <!-- JS で生成 -->
+    </div>
+  </div>
+
+  <!-- リストビュー -->
+  <div class="list-wrapper" id="listWrapper">
+    <div class="list-toolbar">
+      <button class="btn-group-toggle active" id="btnGroupToggle" onclick="toggleGroupMode()">
+        <span class="material-icons">business</span>企業別グルーピング
+      </button>
+    </div>
+    <div class="list-card">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:32px;"></th>
+              <th>タイトル</th>
+              <th>企業 / 部署</th>
+              <th>担当者</th>
+              <th>ステージ</th>
+              <th>確度</th>
+              <th class="sortable">提案額</th>
+              <th class="sortable">最終AC日</th>
+              <th class="sortable">次回AC日</th>
+            </tr>
+          </thead>
+          <tbody id="listTableBody">
+            <!-- JS で生成 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== ステージ定義（SC-082 商談ステージ準拠） =====
+const STAGES = [
+  { id: 'appo',        name: 'アポ設定中',             icon: 'event_available',  cls: 'stage-appo' },
+  { id: 'needs',       name: '面談：ニーズ確認中',     icon: 'chat',             cls: 'stage-needs' },
+  { id: 'solution',    name: '面談：ソリューション提示中', icon: 'lightbulb',     cls: 'stage-solution' },
+  { id: 'proposal',    name: '本提案中',               icon: 'description',      cls: 'stage-proposal' },
+  { id: 'negotiation', name: '条件交渉中',             icon: 'handshake',        cls: 'stage-negotiation' },
+  { id: 'decision',    name: '意思決定支援中',         icon: 'how_to_vote',      cls: 'stage-decision' },
+  { id: 'contracted',  name: '契約完了',               icon: 'check_circle',     cls: 'stage-contracted' },
+  { id: 'pic_change',  name: 'PICチェンジ中',          icon: 'person_search',    cls: 'stage-pic-change' },
+  { id: 'dismissed',   name: '見送り',                 icon: 'block',            cls: 'stage-dismissed' },
+];
+
+const STAFF_COLORS = {
+  '山田': '#2a5f41',
+  '佐藤': '#1a5276',
+  '田中': '#e67e22',
+  '鈴木': '#9b59b6',
+  '林':   '#c0612b',
+  '中村': '#16a085',
+};
+
+// サンプルデータ
+let deals = [
+  {
+    id: 1, stage: 'appo',
+    title: 'クラウド基幹システム刷新プロジェクト',
+    company: '株式会社テクノソリューション', dept: '情報システム部',
+    staff: '山田', deliveryStaff: '林', keyman: '鈴木 部長',
+    rank: '松', amount: 5000000, prob: 30,
+    lastAcDate: '2026-02-25', nextAcDate: '2026-02-28',
+  },
+  {
+    id: 2, stage: 'appo',
+    title: 'RPAツール導入支援',
+    company: '三和商事株式会社', dept: '総務部',
+    staff: '佐藤', deliveryStaff: null, keyman: '高橋 課長',
+    rank: '竹', amount: 1500000, prob: 20,
+    lastAcDate: '2026-02-20', nextAcDate: '2026-03-10',
+  },
+  {
+    id: 3, stage: 'needs',
+    title: 'DXコンサルティング支援',
+    company: '東京フィナンシャル株式会社', dept: '経営企画部',
+    staff: '山田', deliveryStaff: '佐藤', keyman: '佐々木 取締役',
+    rank: '松', amount: 8000000, prob: 45,
+    lastAcDate: '2026-03-01', nextAcDate: '2026-03-07',
+  },
+  {
+    id: 4, stage: 'needs',
+    title: 'BI/データ分析基盤導入',
+    company: '製造テクノ株式会社', dept: '生産管理部',
+    staff: '佐藤', deliveryStaff: '林', keyman: '渡辺 部長',
+    rank: '竹', amount: 2500000, prob: 40,
+    lastAcDate: '2026-02-29', nextAcDate: '2026-03-03',
+  },
+  {
+    id: 5, stage: 'solution',
+    title: 'Webサイトリニューアル',
+    company: '株式会社フロンティア', dept: 'マーケティング部',
+    staff: '山田', deliveryStaff: '中村', keyman: '中村 マネージャー',
+    rank: '竹', amount: 800000, prob: 55,
+    lastAcDate: '2026-02-28', nextAcDate: '2026-03-05',
+  },
+  {
+    id: 6, stage: 'solution',
+    title: 'ゼロトラストセキュリティ導入',
+    company: '第一テクノロジー株式会社', dept: '情報セキュリティ室',
+    staff: '田中', deliveryStaff: null, keyman: '福田 CISO',
+    rank: '梅', amount: 900000, prob: 50,
+    lastAcDate: '2026-03-01', nextAcDate: '2026-03-15',
+  },
+  {
+    id: 7, stage: 'proposal',
+    title: 'ERP導入プロジェクト',
+    company: 'インターナショナル商事', dept: '経理部',
+    staff: '山田', deliveryStaff: '田中', keyman: '木村 CFO',
+    rank: '松', amount: 12000000, prob: 65,
+    lastAcDate: '2026-03-02', nextAcDate: '2026-03-06',
+  },
+  {
+    id: 8, stage: 'proposal',
+    title: 'モバイルアプリ開発',
+    company: '株式会社リテールプラス', dept: 'EC事業部',
+    staff: '佐藤', deliveryStaff: '中村', keyman: '加藤 事業部長',
+    rank: '竹', amount: 4000000, prob: 60,
+    lastAcDate: '2026-03-01', nextAcDate: '2026-03-04',
+  },
+  {
+    id: 9, stage: 'negotiation',
+    title: 'セキュリティ診断サービス',
+    company: 'グローバルロジック株式会社', dept: 'IT推進室',
+    staff: '田中', deliveryStaff: null, keyman: '伊藤 室長',
+    rank: '松', amount: 3200000, prob: 70,
+    lastAcDate: '2026-02-15', nextAcDate: '2026-02-20',
+  },
+  {
+    id: 10, stage: 'decision',
+    title: 'サーバー移行・クラウド化',
+    company: 'ナショナルインシュアランス', dept: 'IT部',
+    staff: '田中', deliveryStaff: '林', keyman: '山本 部長',
+    rank: '松', amount: 6500000, prob: 85,
+    lastAcDate: '2026-02-28', nextAcDate: null,
+  },
+  {
+    id: 11, stage: 'contracted',
+    title: '人事システム再構築',
+    company: '日本サービス株式会社', dept: '人事部',
+    staff: '田中', deliveryStaff: null, keyman: '小林 部長',
+    rank: '梅', amount: 600000, prob: 100,
+    lastAcDate: '2026-02-22', nextAcDate: null,
+  },
+  {
+    id: 12, stage: 'contracted',
+    title: 'AI活用コンサルティング',
+    company: '株式会社スマートロジクス', dept: 'DX推進室',
+    staff: '山田', deliveryStaff: '佐藤', keyman: '岡田 室長',
+    rank: '松', amount: 9000000, prob: 100,
+    lastAcDate: '2026-03-03', nextAcDate: null,
+  },
+  {
+    id: 13, stage: 'pic_change',
+    title: 'コールセンターシステム刷新',
+    company: 'サポートセンター株式会社', dept: 'CS部',
+    staff: '佐藤', deliveryStaff: null, keyman: '松田 部長',
+    rank: '竹', amount: 2000000, prob: 30,
+    lastAcDate: '2026-02-10', nextAcDate: '2026-03-20',
+  },
+  {
+    id: 14, stage: 'dismissed',
+    title: 'レガシー基幹システム保守移管',
+    company: '昭和産業株式会社', dept: '情報システム部',
+    staff: '田中', deliveryStaff: null, keyman: '川上 部長',
+    rank: '梅', amount: 500000, prob: 0,
+    lastAcDate: '2026-02-05', nextAcDate: null,
+  },
+];
+
+// ===== ユーティリティ =====
+const today = new Date('2026-03-05');
+
+function getAlertStatus(nextAcDate) {
+  if (!nextAcDate) return null;
+  const d = new Date(nextAcDate);
+  const diff = Math.floor((d - today) / 86400000);
+  if (diff < 0) return 'overdue';
+  if (diff <= 3) return 'soon';
+  return null;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+function formatAmount(n) {
+  if (!n && n !== 0) return '—';
+  if (n >= 1000000) return `${(n/1000000).toFixed(1)}M`;
+  if (n >= 10000) return `${Math.round(n/10000)}万`;
+  return `${n.toLocaleString()}`;
+}
+
+function getProbColor(prob) {
+  if (prob >= 70) return '#27ae60';
+  if (prob >= 40) return '#f39c12';
+  return '#95a5a6';
+}
+
+// ===== カードHTML生成 =====
+function buildCardHTML(deal) {
+  const alert = getAlertStatus(deal.nextAcDate);
+  const alertClass = alert ? `alert-${alert}` : '';
+  const staffColor = STAFF_COLORS[deal.staff] || '#7f8c8d';
+  const deliveryColor = STAFF_COLORS[deal.deliveryStaff] || '#c0612b';
+  const probColor = getProbColor(deal.prob);
+  const nextAcClass = alert === 'overdue' ? 'date-overdue' : alert === 'soon' ? 'date-soon' : '';
+
+  const deliveryHTML = deal.deliveryStaff ? `
+      <div class="card-staff-row">
+        <span class="staff-role-label delivery">DL</span>
+        <div class="staff-avatar" style="background:${deliveryColor}">${deal.deliveryStaff[0]}</div>
+        <span class="staff-name">${deal.deliveryStaff}</span>
+      </div>` : '';
+
+  return `
+    <div class="deal-card ${alertClass}"
+         draggable="true"
+         data-id="${deal.id}"
+         data-company="${deal.company}"
+         data-staff="${deal.staff}"
+         data-rank="${deal.rank}"
+         onclick="openDetail(${deal.id})"
+         ondragstart="onDragStart(event)"
+         ondragend="onDragEnd(event)">
+      ${alert === 'overdue' ? `<span class="material-icons card-alert-icon">error</span>` : ''}
+      <div class="card-title">${deal.title}</div>
+      <div class="card-company">
+        <div class="card-company-name">
+          <span class="material-icons">corporate_fare</span>${deal.company}
+        </div>
+        <div class="card-company-dept">${deal.dept}</div>
+      </div>
+      <div class="card-staff-section">
+        <div class="card-staff-row">
+          <span class="staff-role-label">AC</span>
+          <div class="staff-avatar" style="background:${staffColor}">${deal.staff[0]}</div>
+          <span class="staff-name">${deal.staff}</span>
+        </div>
+        ${deliveryHTML}
+      </div>
+      <div class="card-keyman">
+        <span class="material-icons">person</span>
+        ${deal.keyman}
+      </div>
+      <div class="card-divider"></div>
+      <div class="card-metrics">
+        <div class="card-metric">
+          <span class="card-metric-label">提案額</span>
+          <span class="card-metric-value amount">${formatAmount(deal.amount)}</span>
+        </div>
+        <div class="card-metric">
+          <span class="card-metric-label">確度</span>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:${probColor}">${deal.prob}%</div>
+            <div class="prob-bar-wrap">
+              <div class="prob-bar-bg">
+                <div class="prob-bar-fill" style="width:${deal.prob}%;background:${probColor}"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-metric">
+          <span class="card-metric-label">最終AC日</span>
+          <span class="card-metric-value">${formatDate(deal.lastAcDate)}</span>
+        </div>
+        <div class="card-metric">
+          <span class="card-metric-label">次回AC日</span>
+          <span class="card-metric-value ${nextAcClass}">
+            ${deal.nextAcDate ? formatDate(deal.nextAcDate) + (alert === 'overdue' ? ' ⚠️ 超過' : alert === 'soon' ? ' ⚡ 近日' : '') : '未設定'}
+          </span>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== 集計 =====
+function calcStats(stageDeals) {
+  const visible = stageDeals.filter(d => !d._hidden);
+  const total = visible.reduce((s, d) => s + (d.amount || 0), 0);
+  const avg = visible.length > 0 ? Math.round(total / visible.length) : 0;
+  return { total, avg, count: visible.length };
+}
+
+// ===== ボード描画 =====
+function renderBoard(dealsData) {
+  const board = document.getElementById('kanbanBoard');
+  board.innerHTML = '';
+
+  STAGES.forEach(stage => {
+    const stageDeals = dealsData.filter(d => d.stage === stage.id && !d._hidden);
+    const { total, avg, count } = calcStats(dealsData.filter(d => d.stage === stage.id));
+
+    const col = document.createElement('div');
+    col.className = `stage-column ${stage.cls}`;
+    col.dataset.stage = stage.id;
+
+    col.innerHTML = `
+      <div class="stage-header">
+        <div class="stage-name-row">
+          <div class="stage-name">
+            <span class="material-icons">${stage.icon}</span>
+            ${stage.name}
+          </div>
+          <span class="stage-badge">${count}</span>
+        </div>
+      </div>
+      <div class="stage-stats">
+        <div class="stage-stat">
+          <div class="stage-stat-label">合計受注予定額</div>
+          <div class="stage-stat-value">${formatAmount(total)}</div>
+        </div>
+        <div class="stage-stat">
+          <div class="stage-stat-label">平均単価</div>
+          <div class="stage-stat-value">${formatAmount(avg)}</div>
+        </div>
+      </div>
+      <div class="stage-cards"
+           data-stage="${stage.id}"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)"
+           ondrop="onDrop(event)">
+        ${stageDeals.map(d => buildCardHTML(d)).join('')}
+      </div>`;
+
+    board.appendChild(col);
+  });
+
+  updateTotalCount(dealsData);
+}
+
+function updateTotalCount(dealsData) {
+  const visible = dealsData.filter(d => !d._hidden);
+  document.getElementById('totalCount').textContent = visible.length;
+}
+
+// ===== DnD =====
+let dragId = null;
+
+function onDragStart(e) {
+  dragId = parseInt(e.currentTarget.dataset.id);
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.stage-cards').forEach(el => el.classList.remove('drag-over'));
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const newStage = e.currentTarget.dataset.stage;
+  if (dragId !== null && newStage) {
+    const deal = deals.find(d => d.id === dragId);
+    if (deal && deal.stage !== newStage) {
+      deal.stage = newStage;
+      renderBoard(deals);
+    }
+  }
+  dragId = null;
+}
+
+// ===== ステージ表示設定 =====
+const STAGE_DISPLAY = {
+  'appo':        { label: 'アポ設定中',             bg: '#d5e8d4', color: '#1e4530' },
+  'needs':       { label: '面談：ニーズ確認中',     bg: '#dae8fc', color: '#1a3a5c' },
+  'solution':    { label: '面談：ソリューション提示中', bg: '#e1d5e7', color: '#4a235a' },
+  'proposal':    { label: '本提案中',               bg: '#fff2cc', color: '#5a4200' },
+  'negotiation': { label: '条件交渉中',             bg: '#ffe6cc', color: '#5a2d00' },
+  'decision':    { label: '意思決定支援中',         bg: '#f8cecc', color: '#5a0000' },
+  'contracted':  { label: '契約完了',               bg: '#d5e8d4', color: '#1a4a1a' },
+  'pic_change':  { label: 'PICチェンジ中',          bg: '#dae8fc', color: '#1a2a5c' },
+  'dismissed':   { label: '見送り',                 bg: '#f0f2f5', color: '#636e72' },
+};
+
+// ===== リストビュー 行HTML生成 =====
+function buildRowHTML(deal) {
+  const alert = getAlertStatus(deal.nextAcDate);
+  const rowClass = alert === 'overdue' ? 'row-alert-overdue' : alert === 'soon' ? 'row-alert-soon' : '';
+  const alertIcon = alert === 'overdue'
+    ? `<span class="material-icons tbl-alert-icon" title="次回AC日超過">error</span>`
+    : alert === 'soon'
+    ? `<span class="material-icons" style="color:#e67e22;font-size:17px;" title="3日以内">schedule</span>`
+    : '';
+  const staffColor = STAFF_COLORS[deal.staff] || '#7f8c8d';
+  const deliveryColor = STAFF_COLORS[deal.deliveryStaff] || '#c0612b';
+  const stage = STAGE_DISPLAY[deal.stage] || { label: deal.stage };
+  const nextAcClass = alert === 'overdue' ? 'overdue' : alert === 'soon' ? 'soon' : '';
+  const nextAcLabel = deal.nextAcDate
+    ? formatDate(deal.nextAcDate) + (alert === 'overdue' ? ' ⚠️' : alert === 'soon' ? ' ⚡' : '')
+    : '未設定';
+  const deliveryRow = deal.deliveryStaff ? `
+    <div class="tbl-staff-row">
+      <span class="tbl-role-label delivery">DL</span>
+      <div class="tbl-avatar" style="background:${deliveryColor}">${deal.deliveryStaff[0]}</div>
+      <span style="font-size:12px;color:#1e4530;">${deal.deliveryStaff}</span>
+    </div>` : '';
+
+  return `
+    <tr class="${rowClass}" onclick="openDetail(${deal.id})">
+      <td style="text-align:center;">${alertIcon}</td>
+      <td><div class="tbl-title">${deal.title}</div></td>
+      <td>
+        <div class="tbl-company-name">${deal.company}</div>
+        <div class="tbl-dept">${deal.dept}</div>
+      </td>
+      <td>
+        <div class="tbl-staff-row">
+          <span class="tbl-role-label">AC</span>
+          <div class="tbl-avatar" style="background:${staffColor}">${deal.staff[0]}</div>
+          <span style="font-size:12px;color:#1e4530;">${deal.staff}</span>
+        </div>
+        ${deliveryRow}
+      </td>
+      <td>
+        <span class="stage-tag" style="background:${stage.bg};color:${stage.color};">${stage.label}</span>
+      </td>
+      <td style="white-space:nowrap;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:48px;height:4px;background:#ecf0f1;border-radius:2px;overflow:hidden;flex-shrink:0;">
+            <div style="width:${deal.prob}%;height:100%;background:${getProbColor(deal.prob)};border-radius:2px;"></div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:${getProbColor(deal.prob)};">${deal.prob}%</span>
+        </div>
+      </td>
+      <td class="tbl-amount">${formatAmount(deal.amount)}</td>
+      <td class="tbl-date">${formatDate(deal.lastAcDate)}</td>
+      <td class="tbl-date ${nextAcClass}">${nextAcLabel}</td>
+    </tr>`;
+}
+
+// ===== リストビュー描画 =====
+function renderTable(dealsData) {
+  const tbody = document.getElementById('listTableBody');
+  if (!tbody) return;
+  const visible = dealsData.filter(d => !d._hidden);
+
+  if (visible.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:#95a5a6;">該当する商談がありません</td></tr>`;
+    return;
+  }
+
+  if (groupMode) {
+    const grouped = {};
+    visible.forEach(deal => {
+      if (!grouped[deal.company]) grouped[deal.company] = [];
+      grouped[deal.company].push(deal);
+    });
+    const sortedCompanies = Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'ja'));
+
+    let html = '';
+    sortedCompanies.forEach(company => {
+      const companyDeals = grouped[company];
+      html += `<tr class="group-header-row">
+        <td colspan="9">
+          <span class="material-icons" style="font-size:14px;vertical-align:middle;margin-right:6px;color:#636e72;">business</span>
+          ${company}
+          <span class="group-count">${companyDeals.length}件</span>
+        </td>
+      </tr>`;
+      html += companyDeals.map(deal => buildRowHTML(deal)).join('');
+    });
+    tbody.innerHTML = html;
+  } else {
+    tbody.innerHTML = visible.map(deal => buildRowHTML(deal)).join('');
+  }
+}
+
+// ===== グルーピングモード =====
+let groupMode = true;
+
+function toggleGroupMode() {
+  groupMode = !groupMode;
+  const btn = document.getElementById('btnGroupToggle');
+  btn.classList.toggle('active', groupMode);
+  renderTable(deals);
+}
+
+// ===== ビュー切り替え =====
+let currentView = 'kanban';
+
+function switchView(mode) {
+  currentView = mode;
+  const kanbanWrapper = document.getElementById('kanbanWrapper');
+  const listWrapper   = document.getElementById('listWrapper');
+  const btnKanban     = document.getElementById('btnKanban');
+  const btnList       = document.getElementById('btnList');
+  const stageSelect   = document.getElementById('stageSelect');
+
+  if (mode === 'kanban') {
+    kanbanWrapper.style.display = '';
+    listWrapper.classList.remove('visible');
+    btnKanban.classList.add('active');
+    btnList.classList.remove('active');
+    stageSelect.style.display = 'none';
+  } else {
+    kanbanWrapper.style.display = 'none';
+    listWrapper.classList.add('visible');
+    btnKanban.classList.remove('active');
+    btnList.classList.add('active');
+    stageSelect.style.display = '';
+    renderTable(deals);
+  }
+}
+
+// ===== フィルター =====
+let filters = { text: '', staff: '', rank: '', stage: '', alertOnly: false };
+
+function applyFilters() {
+  deals.forEach(d => {
+    let hidden = false;
+    if (filters.text) {
+      const q = filters.text.toLowerCase();
+      hidden = !d.company.toLowerCase().includes(q) &&
+               !d.title.toLowerCase().includes(q) &&
+               !d.keyman.toLowerCase().includes(q);
+    }
+    if (!hidden && filters.staff) hidden = d.staff !== filters.staff;
+    if (!hidden && filters.rank)  hidden = d.rank !== filters.rank;
+    if (!hidden && filters.stage) hidden = d.stage !== filters.stage;
+    if (!hidden && filters.alertOnly) {
+      hidden = !getAlertStatus(d.nextAcDate);
+    }
+    d._hidden = hidden;
+  });
+  renderBoard(deals);
+  if (currentView === 'list') renderTable(deals);
+}
+
+function applyFilterManual() {
+  filters.text      = document.getElementById('searchInput').value;
+  filters.staff     = document.getElementById('staffSelect').value;
+  filters.rank      = document.getElementById('rankSelect').value;
+  filters.stage     = document.getElementById('stageSelect').value;
+  filters.alertOnly = document.getElementById('alertOnly').checked;
+  applyFilters();
+}
+
+function clearFilters() {
+  filters = { text: '', staff: '', rank: '', stage: '', alertOnly: false };
+  document.getElementById('searchInput').value = '';
+  document.getElementById('staffSelect').value = '';
+  document.getElementById('rankSelect').value = '';
+  document.getElementById('stageSelect').value = '';
+  document.getElementById('alertOnly').checked = false;
+  deals.forEach(d => { d._hidden = false; });
+  renderBoard(deals);
+  if (currentView === 'list') renderTable(deals);
+}
+
+// ===== サイドバー =====
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const wrapper = document.getElementById('mainWrapper');
+  sidebar.classList.toggle('collapsed');
+  wrapper.classList.toggle('expanded');
+}
+
+function toggleCategory(header) {
+  header.closest('.sidebar-category').classList.toggle('collapsed');
+}
+
+// ===== カード詳細（仮） =====
+function openDetail(id) {
+  const deal = deals.find(d => d.id === id);
+  if (deal) alert(`「${deal.title}」\n会社: ${deal.company}\n担当: ${deal.staff}\n金額: ${deal.amount?.toLocaleString()}円`);
+}
+
+// ===== 初期描画 =====
+renderBoard(deals);
+</script>
+</body>
+</html>

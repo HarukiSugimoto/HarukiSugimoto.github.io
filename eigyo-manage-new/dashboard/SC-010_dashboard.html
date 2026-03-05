@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SC-010 商談分析ダッシュボード | 営業管理システム</title>
+  <title>SC-010 ダッシュボード | 営業管理システム</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -20,7 +20,7 @@
       line-height: 1.6;
     }
     .header {
-      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
       color: #fff;
       padding: 12px 24px;
       display: flex;
@@ -41,7 +41,7 @@
       left: 0;
       width: 240px;
       height: calc(100vh - 56px);
-      background: #2c3e50;
+      background: #1e4530;
       overflow-y: auto;
       z-index: 999;
       transition: transform 0.3s;
@@ -98,9 +98,9 @@
       color: #fff;
     }
     .sidebar-item.active {
-      background: rgba(52, 152, 219, 0.2);
-      color: #3498db;
-      border-left-color: #3498db;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-left-color: #7de8a8;
     }
     .sidebar-item .material-icons {
       font-size: 20px;
@@ -139,7 +139,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #3498db;
+      color: #2a5f41;
       font-size: 16px;
     }
     .header-notification {
@@ -190,7 +190,7 @@
     .page-title {
       font-size: 24px;
       font-weight: 600;
-      color: #2c3e50;
+      color: #1e4530;
     }
     .card {
       background: #fff;
@@ -202,7 +202,7 @@
       padding: 16px 20px;
       border-bottom: 1px solid #ecf0f1;
       font-weight: 600;
-      color: #2c3e50;
+      color: #1e4530;
       background: #f8f9fa;
       border-radius: 8px 8px 0 0;
       display: flex;
@@ -240,7 +240,7 @@
     .data-table th {
       background-color: #f8f9fa;
       font-weight: 600;
-      color: #2c3e50;
+      color: #1e4530;
       white-space: nowrap;
     }
     
@@ -270,7 +270,7 @@
     }
     .cell-actual {
       font-weight: 600;
-      color: #2c3e50;
+      color: #1e4530;
     }
     .cell-total {
       background-color: #f0f4f8 !important;
@@ -287,10 +287,6 @@
       <div class="header-title">営業管理システム</div>
     </div>
     <div class="header-actions">
-      <a href="SC-010_new_dashboard.html" class="header-transition-btn" style="background: #e67e22; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: opacity 0.2s;">
-        <span class="material-icons" style="font-size: 16px;">open_in_new</span>
-        New版へ移行
-      </a>
       <a href="SC-012_notifications.html" class="header-notification" title="通知">
         <span class="material-icons header-notification-icon">notifications</span>
         <span class="notification-badge">5</span>
@@ -305,23 +301,11 @@
   <!-- サイドバー -->
   <aside class="sidebar" id="sidebar">
     <nav class="sidebar-nav">
-      <!-- ダッシュボード -->
-      <div class="sidebar-category">
-        <div class="sidebar-category-header" onclick="toggleCategory(this)">
-          <span>ダッシュボード</span>
-          <span class="material-icons">expand_more</span>
-        </div>
-        <div class="sidebar-items">
-          <a href="SC-010_dashboard.html" class="sidebar-item">
-            <span class="material-icons">dashboard</span>
-            <span>商談分析</span>
-          </a>
-          <a href="SC-011_action_required.html" class="sidebar-item">
-            <span class="material-icons">warning</span>
-            <span>要対応一覧</span>
-          </a>
-        </div>
-      </div>
+      <!-- ダッシュボード（カテゴリなし） -->
+      <a href="SC-010_dashboard.html" class="sidebar-item active">
+        <span class="material-icons">dashboard</span>
+        <span>ダッシュボード</span>
+      </a>
 
       <!-- 営業管理 -->
       <div class="sidebar-category">
@@ -330,6 +314,10 @@
           <span class="material-icons">expand_more</span>
         </div>
         <div class="sidebar-items">
+          <a href="SC-011_action_required.html" class="sidebar-item">
+            <span class="material-icons">warning</span>
+            <span>要対応一覧</span>
+          </a>
           <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
             <span class="material-icons">person_search</span>
             <span>リード一覧</span>
@@ -338,33 +326,23 @@
             <span class="material-icons">handshake</span>
             <span>商談一覧</span>
           </a>
+          <a href="../master/SC-064_customer_list.html" class="sidebar-item">
+            <span class="material-icons">people</span>
+            <span>顧客一覧</span>
+          </a>
         </div>
       </div>
 
       <!-- 年間計画 -->
       <div class="sidebar-category">
         <div class="sidebar-category-header" onclick="toggleCategory(this)">
-          <span>年間計画</span>
+          <span>分析・年間計画</span>
           <span class="material-icons">expand_more</span>
         </div>
         <div class="sidebar-items">
-          <a href="../plan/SC-041_progress.html" class="sidebar-item">
+          <a href="../plan/SC-040_annual_plan_setting.html" class="sidebar-item">
             <span class="material-icons">trending_up</span>
-            <span>進捗表示</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- 名刺管理 -->
-      <div class="sidebar-category">
-        <div class="sidebar-category-header" onclick="toggleCategory(this)">
-          <span>名刺管理</span>
-          <span class="material-icons">expand_more</span>
-        </div>
-        <div class="sidebar-items">
-          <a href="../meishi/SC-050_meishi_list.html" class="sidebar-item">
-            <span class="material-icons">contact_page</span>
-            <span>名刺一覧</span>
+            <span>年間計画</span>
           </a>
         </div>
       </div>
@@ -381,10 +359,6 @@
           <a href="../master/SC-061_company_list.html" class="sidebar-item">
             <span class="material-icons">business</span>
             <span>企業マスタ</span>
-          </a>
-          <a href="../master/SC-064_customer_list.html" class="sidebar-item">
-            <span class="material-icons">people</span>
-            <span>顧客マスタ</span>
           </a>
           <a href="../master/SC-067_staff_list.html" class="sidebar-item">
             <span class="material-icons">badge</span>
@@ -439,7 +413,7 @@
   <div class="main-wrapper">
   <main class="main-container">
     <div class="page-header">
-      <h1 class="page-title">SC-010 商談分析ダッシュボード</h1>
+      <h1 class="page-title">SC-010 ダッシュボード</h1>
     </div>
 
     <!-- 1. 年の売上推移グラフ -->
@@ -473,7 +447,7 @@
             font-weight: 600;
           }
           .status-achieved {
-            color: #3498db; /* 達成: 青 */
+            color: #2a5f41; /* 達成: 青 */
           }
           .status-unachieved {
             color: #e74c3c; /* 未達成: 赤 */
@@ -490,101 +464,124 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th rowspan="2" class="row-header">項目</th>
-              <th colspan="2" class="month-header">1月</th>
-              <th colspan="2" class="month-header">2月</th>
-              <th colspan="2" class="month-header">3月</th>
-              <th colspan="2" class="month-header">4月</th>
-              <th colspan="2" class="month-header">5月</th>
-              <th colspan="2" class="month-header">6月</th>
-              <th colspan="2" class="month-header">7月</th>
-              <th colspan="2" class="month-header">8月</th>
-              <th colspan="2" class="month-header">9月</th>
-              <th colspan="2" class="month-header">10月</th>
-              <th colspan="2" class="month-header">11月</th>
-              <th colspan="2" class="month-header">12月</th>
-              <th colspan="2" class="cell-total">合計</th>
-            </tr>
-            <tr>
-              <!-- 1月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 2月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 3月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 4月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 5月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 6月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 7月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 8月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 9月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 10月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 11月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 12月 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
-              <!-- 合計 -->
-              <th class="type-header">目標</th><th class="type-header">実績</th>
+              <th colspan="2" class="row-header">項目</th>
+              <th class="month-header">1月</th>
+              <th class="month-header">2月</th>
+              <th class="month-header">3月</th>
+              <th class="month-header">4月</th>
+              <th class="month-header">5月</th>
+              <th class="month-header">6月</th>
+              <th class="month-header">7月</th>
+              <th class="month-header">8月</th>
+              <th class="month-header">9月</th>
+              <th class="month-header">10月</th>
+              <th class="month-header">11月</th>
+              <th class="month-header">12月</th>
+              <th class="cell-total">合計</th>
             </tr>
           </thead>
           <tbody>
             <!-- アポ -->
             <tr>
-              <td class="row-header">アポ（初回商談）</td>
-              <td class="col-target">10</td><td class="col-actual status-unachieved">8</td>
-              <td class="col-target">12</td><td class="col-actual status-achieved">14</td>
-              <td class="col-target">15</td><td class="col-actual status-achieved">16</td>
-              <td class="col-target">10</td><td class="col-actual status-achieved">11</td>
-              <td class="col-target">10</td><td class="col-actual status-unachieved">9</td>
-              <td class="col-target">12</td><td class="col-actual status-unachieved">10</td>
-              <td class="col-target">15</td><td class="col-actual status-achieved">18</td>
-              <td class="col-target">10</td><td class="col-actual status-unachieved">8</td>
-              <td class="col-target">10</td><td class="col-actual status-achieved">12</td>
-              <td class="col-target">12</td><td class="col-actual status-achieved">14</td>
-              <td class="col-target">15</td><td class="col-actual status-achieved">16</td>
-              <td class="col-target">10</td><td class="col-actual status-achieved">11</td>
-              <td class="cell-total col-target">136</td><td class="cell-total col-actual status-achieved">147</td>
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">アポ（初回商談）</th>
+              <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">目標</th>
+              <td class="col-target">10</td>
+              <td class="col-target">12</td>
+              <td class="col-target">15</td>
+              <td class="col-target">10</td>
+              <td class="col-target">10</td>
+              <td class="col-target">12</td>
+              <td class="col-target">15</td>
+              <td class="col-target">10</td>
+              <td class="col-target">10</td>
+              <td class="col-target">12</td>
+              <td class="col-target">15</td>
+              <td class="col-target">10</td>
+              <td class="cell-total col-target">136</td>
+            </tr>
+            <tr>
+              <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">実績</th>
+              <td class="col-actual status-unachieved">8</td>
+              <td class="col-actual status-achieved">14</td>
+              <td class="col-actual status-achieved">16</td>
+              <td class="col-actual status-achieved">11</td>
+              <td class="col-actual status-unachieved">9</td>
+              <td class="col-actual status-unachieved">10</td>
+              <td class="col-actual status-achieved">18</td>
+              <td class="col-actual status-unachieved">8</td>
+              <td class="col-actual status-achieved">12</td>
+              <td class="col-actual status-achieved">14</td>
+              <td class="col-actual status-achieved">16</td>
+              <td class="col-actual status-achieved">11</td>
+              <td class="cell-total col-actual status-achieved">147</td>
             </tr>
             <!-- 提案 -->
+            <tr style="border-top: 2px solid #ecf0f1;">
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">提案</th>
+              <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">目標</th>
+              <td class="col-target">5</td>
+              <td class="col-target">6</td>
+              <td class="col-target">8</td>
+              <td class="col-target">5</td>
+              <td class="col-target">5</td>
+              <td class="col-target">6</td>
+              <td class="col-target">8</td>
+              <td class="col-target">5</td>
+              <td class="col-target">5</td>
+              <td class="col-target">6</td>
+              <td class="col-target">8</td>
+              <td class="col-target">5</td>
+              <td class="cell-total col-target">72</td>
+            </tr>
             <tr>
-              <td class="row-header">提案</td>
-              <td class="col-target">5</td><td class="col-actual status-unachieved">4</td>
-              <td class="col-target">6</td><td class="col-actual status-achieved">7</td>
-              <td class="col-target">8</td><td class="col-actual status-achieved">9</td>
-              <td class="col-target">5</td><td class="col-actual status-achieved">6</td>
-              <td class="col-target">5</td><td class="col-actual status-unachieved">4</td>
-              <td class="col-target">6</td><td class="col-actual status-unachieved">5</td>
-              <td class="col-target">8</td><td class="col-actual status-achieved">10</td>
-              <td class="col-target">5</td><td class="col-actual status-unachieved">4</td>
-              <td class="col-target">5</td><td class="col-actual status-achieved">6</td>
-              <td class="col-target">6</td><td class="col-actual status-achieved">8</td>
-              <td class="col-target">8</td><td class="col-actual status-achieved">9</td>
-              <td class="col-target">5</td><td class="col-actual status-achieved">5</td>
-              <td class="cell-total col-target">72</td><td class="cell-total col-actual status-achieved">77</td>
+              <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">実績</th>
+              <td class="col-actual status-unachieved">4</td>
+              <td class="col-actual status-achieved">7</td>
+              <td class="col-actual status-achieved">9</td>
+              <td class="col-actual status-achieved">6</td>
+              <td class="col-actual status-unachieved">4</td>
+              <td class="col-actual status-unachieved">5</td>
+              <td class="col-actual status-achieved">10</td>
+              <td class="col-actual status-unachieved">4</td>
+              <td class="col-actual status-achieved">6</td>
+              <td class="col-actual status-achieved">8</td>
+              <td class="col-actual status-achieved">9</td>
+              <td class="col-actual status-achieved">5</td>
+              <td class="cell-total col-actual status-achieved">77</td>
             </tr>
             <!-- 受注 -->
+            <tr style="border-top: 2px solid #ecf0f1;">
+              <th rowspan="2" class="row-header" style="left: 0; z-index: 1;">受注</th>
+              <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">目標</th>
+              <td class="col-target">2</td>
+              <td class="col-target">3</td>
+              <td class="col-target">4</td>
+              <td class="col-target">2</td>
+              <td class="col-target">2</td>
+              <td class="col-target">3</td>
+              <td class="col-target">4</td>
+              <td class="col-target">2</td>
+              <td class="col-target">2</td>
+              <td class="col-target">3</td>
+              <td class="col-target">4</td>
+              <td class="col-target">2</td>
+              <td class="cell-total col-target">35</td>
+            </tr>
             <tr>
-              <td class="row-header">受注</td>
-              <td class="col-target">2</td><td class="col-actual status-unachieved">1</td>
-              <td class="col-target">3</td><td class="col-actual status-achieved">4</td>
-              <td class="col-target">4</td><td class="col-actual status-achieved">5</td>
-              <td class="col-target">2</td><td class="col-actual status-achieved">3</td>
-              <td class="col-target">2</td><td class="col-actual status-achieved">2</td>
-              <td class="col-target">3</td><td class="col-actual status-unachieved">2</td>
-              <td class="col-target">4</td><td class="col-actual status-achieved">6</td>
-              <td class="col-target">2</td><td class="col-actual status-unachieved">1</td>
-              <td class="col-target">2</td><td class="col-actual status-achieved">3</td>
-              <td class="col-target">3</td><td class="col-actual status-achieved">4</td>
-              <td class="col-target">4</td><td class="col-actual status-achieved">5</td>
-              <td class="col-target">2</td><td class="col-actual status-achieved">3</td>
-              <td class="cell-total col-target">35</td><td class="cell-total col-actual status-achieved">39</td>
+              <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">実績</th>
+              <td class="col-actual status-unachieved">1</td>
+              <td class="col-actual status-achieved">4</td>
+              <td class="col-actual status-achieved">5</td>
+              <td class="col-actual status-achieved">3</td>
+              <td class="col-actual status-achieved">2</td>
+              <td class="col-actual status-unachieved">2</td>
+              <td class="col-actual status-achieved">6</td>
+              <td class="col-actual status-unachieved">1</td>
+              <td class="col-actual status-achieved">3</td>
+              <td class="col-actual status-achieved">4</td>
+              <td class="col-actual status-achieved">5</td>
+              <td class="col-actual status-achieved">3</td>
+              <td class="cell-total col-actual status-achieved">39</td>
             </tr>
           </tbody>
         </table>
@@ -675,7 +672,7 @@
           }
         </style>
         <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 12px;">
-          ※ <strong>平均滞留日数</strong>：該当月にそのステージにあった商談が、そのステージに留まっていた日数の平均。<br>
+          ※ <strong>平均滞留日数</strong>：該当月とその先月にそのステージにあったアクションが、そのステージに留まっていた日数の平均。<br>
           ※ <span class="material-icons trend-icon trend-improved">arrow_downward</span> は前月比で日数が減少（改善）、<span class="material-icons trend-icon trend-worsened">arrow_upward</span> は増加（悪化）を示します。
         </p>
         <table class="data-table">
@@ -839,7 +836,7 @@
               type: 'bar',
               label: '受注済み売上',
               data: [300, 450, 500, 600, 800, 750, 900, 1000, 1100, 1050, 1200, 1300], // ダミーデータ
-              backgroundColor: '#3498db', // 青色
+              backgroundColor: '#2a5f41', // 青色
               order: 1
             },
             {

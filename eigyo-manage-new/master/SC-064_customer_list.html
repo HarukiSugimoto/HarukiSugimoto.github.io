@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-064 顧客マスタ一覧 | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2a5f41;
+      font-size: 16px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-notification {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+      text-decoration: none;
+    }
+    .header-notification-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+    .header-notification:hover .header-notification-icon {
+      opacity: 0.8;
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1e4530;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #2a5f41;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #1e4530;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #1e4530;
+      border: 1px solid #bdc3c7;
+    }
+    .btn-secondary:hover {
+      background: #d5dbdb;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #1e4530;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .search-section {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .form-input {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 180px;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #2a5f41;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 600;
+      color: #1e4530;
+      border-bottom: 2px solid #ecf0f1;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    .data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    .data-table tbody tr.clickable {
+      cursor: pointer;
+    }
+    .link {
+      color: #2a5f41;
+      text-decoration: none;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    /* 検索・フィルタ */
+    .form-select {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 120px;
+      transition: border-color 0.2s;
+    }
+    .form-select:focus {
+      outline: none;
+      border-color: #2a5f41;
+    }
+    .search-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #ecf0f1;
+    }
+    /* ページネーション */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      margin-top: 16px;
+    }
+    .pagination-info {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination-btn {
+      padding: 6px 12px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #2a5f41;
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-current {
+      padding: 6px 12px;
+      background: #2a5f41;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .page-size-select {
+      padding: 6px 10px;
+      border: 1px solid #dce0e4;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .sort-label {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .note {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 12px;
+    }
+      /* サイドバー */
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 240px;
+      height: calc(100vh - 56px);
+      background: #1e4530;
+      overflow-y: auto;
+      z-index: 999;
+      transition: transform 0.3s;
+    }
+    .sidebar-nav {
+      padding: 16px 0;
+    }
+    .sidebar-category {
+      margin-bottom: 8px;
+    }
+    .sidebar-category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      color: #95a5a6;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sidebar-category-header:hover {
+      color: #ecf0f1;
+    }
+    .sidebar-category-header .material-icons {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .sidebar-category.collapsed .sidebar-category-header .material-icons {
+      transform: rotate(-90deg);
+    }
+    .sidebar-category.collapsed .sidebar-items {
+      display: none;
+    }
+    .sidebar-items {
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px 10px 24px;
+      color: #bdc3c7;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .sidebar-item.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-left-color: #7de8a8;
+    }
+    .sidebar-item .material-icons {
+      font-size: 20px;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 8px 16px;
+    }
+    /* メインコンテンツ調整 */
+    .main-wrapper {
+      margin-left: 240px;
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .menu-toggle {
+        display: flex !important;
+      }
+    }
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      color: #fff;
+    }
+    /* モーダル */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 480px;
+      max-width: 95vw;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #e8ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      display: flex;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e8ecef;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .required-mark {
+      color: #e74c3c;
+      margin-left: 2px;
+    }
+    .company-select-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .company-select-row .form-select {
+      flex: 1;
+    }
+    .new-company-form {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #dce0e4;
+    }
+    .new-company-form.open {
+      display: flex;
+    }
+    .new-company-form-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e4530;
+    }
+    .btn-outline-sm {
+      background: #fff;
+      color: #2a5f41;
+      border: 1px solid #2a5f41;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-outline-sm:hover {
+      background: #eaf5ee;
+    }
+    .btn-outline {
+      background: #fff;
+      color: #1e4530;
+      border: 1px solid #dce0e4;
+    }
+    .btn-outline:hover {
+      background: #f8f9fa;
+      border-color: #b2bec3;
+    }
+    /* OCR ドロップゾーン */
+    .ocr-dropzone {
+      border: 2px dashed #bdc3c7;
+      border-radius: 10px;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8f9fa;
+      min-height: 200px;
+      user-select: none;
+    }
+    .ocr-dropzone:hover, .ocr-dropzone.drag-over {
+      border-color: #2a5f41;
+      background: #eaf5ee;
+    }
+    .ocr-dropzone.drag-over {
+      border-style: solid;
+    }
+    .ocr-dropzone-icon .material-icons {
+      font-size: 56px;
+      color: #bdc3c7;
+      transition: color 0.2s;
+    }
+    .ocr-dropzone:hover .ocr-dropzone-icon .material-icons,
+    .ocr-dropzone.drag-over .ocr-dropzone-icon .material-icons {
+      color: #2a5f41;
+    }
+    .ocr-dropzone-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .ocr-main-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e4530;
+    }
+    .ocr-sub-text {
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+    .ocr-format-text {
+      font-size: 11px;
+      color: #95a5a6;
+      margin-top: 4px;
+    }
+    .ocr-file-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e4530;
+      word-break: break-all;
+      text-align: center;
+    }
+    .ocr-change-text {
+      font-size: 11px;
+      color: #95a5a6;
+    }
+    .ocr-result-form {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 16px;
+      border-top: 1px solid #e8ecef;
+    }
+    .ocr-result-form.open {
+      display: flex;
+    }
+    .ocr-result-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #27ae60;
+      padding: 8px 12px;
+      background: #eafaf1;
+      border-radius: 6px;
+    }
+    .ocr-result-notice .material-icons {
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="menu-toggle" onclick="toggleSidebar()">
+        <span class="material-icons">menu</span>
+      </div>
+      <div class="header-title">営業管理システム</div>
+    </div>
+    <div class="header-actions">
+      <a href="../dashboard/SC-012_notifications.html" class="header-notification" title="通知">
+        <span class="material-icons header-notification-icon">notifications</span>
+        <span class="notification-badge">5</span>
+      </a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- サイドバー -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <!-- ダッシュボード（カテゴリなし） -->
+      <a href="../dashboard/SC-010_dashboard.html" class="sidebar-item">
+        <span class="material-icons">dashboard</span>
+        <span>ダッシュボード</span>
+      </a>
+
+      <!-- 営業管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>営業管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
+            <span class="material-icons">warning</span>
+            <span>要対応一覧</span>
+          </a>
+          <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
+            <span class="material-icons">person_search</span>
+            <span>リード一覧</span>
+          </a>
+          <a href="../deal/SC-030_deal_list.html" class="sidebar-item">
+            <span class="material-icons">handshake</span>
+            <span>商談一覧</span>
+          </a>
+          <a href="../master/SC-064_customer_list.html" class="sidebar-item active">
+            <span class="material-icons">people</span>
+            <span>顧客一覧</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 年間計画 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>分析・年間計画</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../plan/SC-040_annual_plan_setting.html" class="sidebar-item">
+            <span class="material-icons">trending_up</span>
+            <span>年間計画</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- マスタ管理 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>マスタ管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-061_company_list.html" class="sidebar-item">
+            <span class="material-icons">business</span>
+            <span>企業マスタ</span>
+          </a>
+          <a href="../master/SC-067_staff_list.html" class="sidebar-item">
+            <span class="material-icons">badge</span>
+            <span>営業担当者マスタ</span>
+          </a>
+          <a href="../master/SC-070_department_list.html" class="sidebar-item">
+            <span class="material-icons">account_tree</span>
+            <span>部署マスタ</span>
+          </a>
+          <a href="../master/SC-073_channel_list.html" class="sidebar-item">
+            <span class="material-icons">hub</span>
+            <span>獲得チャネルマスタ</span>
+          </a>
+          <a href="../master/SC-076_rank_list.html" class="sidebar-item">
+            <span class="material-icons">military_tech</span>
+            <span>ランクマスタ</span>
+          </a>
+          <a href="../master/SC-079_product_list.html" class="sidebar-item">
+            <span class="material-icons">inventory_2</span>
+            <span>商材マスタ</span>
+          </a>
+          <a href="../master/SC-082_stage_list.html" class="sidebar-item">
+            <span class="material-icons">linear_scale</span>
+            <span>ステージマスタ</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- 設定 -->
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>設定</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-100_role_list.html" class="sidebar-item">
+            <span class="material-icons">admin_panel_settings</span>
+            <span>ロール管理</span>
+          </a>
+          <a href="../master/SC-092_integration_settings.html" class="sidebar-item">
+            <span class="material-icons">settings</span>
+            <span>連携設定</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <div class="main-wrapper">
+  <main class="main-container">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">顧客マスタ一覧</h1>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-outline" onclick="openOcrModal()">
+          <span class="material-icons" style="font-size:18px">document_scanner</span>名刺OCR
+        </button>
+        <button class="btn btn-primary" onclick="openCreateModal()">＋ 新規作成</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">検索・フィルタ</div>
+      <div class="card-body">
+        <div class="search-section">
+          <div class="form-group">
+            <label class="form-label">顧客名</label>
+            <input type="text" class="form-input" placeholder="部分一致で検索">
+          </div>
+          <div class="form-group">
+            <label class="form-label">企業名</label>
+            <input type="text" class="form-input" placeholder="部分一致で検索">
+          </div>
+          <div class="form-group">
+            <label class="form-label">役職</label>
+            <input type="text" class="form-input" placeholder="部分一致で検索" style="min-width: 120px;">
+          </div>
+        </div>
+        <div class="search-actions">
+          <button class="btn btn-primary">検索</button>
+          <button class="btn btn-secondary">クリア</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">顧客一覧（80件）</div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>顧客名</th>
+                <th>所属企業</th>
+                <th>役職</th>
+                <th>最終更新日</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
+                <td>P-001</td>
+                <td><a href="SC-065_customer_detail.html" class="link">山田 太郎</a></td>
+                <td><a href="SC-062_company_detail.html" class="link">○○株式会社</a></td>
+                <td>部長</td>
+                <td>2026/02/18</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
+                <td>P-002</td>
+                <td><a href="SC-065_customer_detail.html" class="link">佐藤 花子</a></td>
+                <td><a href="SC-062_company_detail.html" class="link">△△合同会社</a></td>
+                <td>Mgr</td>
+                <td>2026/02/10</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
+                <td>P-003</td>
+                <td><a href="SC-065_customer_detail.html" class="link">田中 一郎</a></td>
+                <td><a href="SC-062_company_detail.html" class="link">□□コーポレーション</a></td>
+                <td>課長</td>
+                <td>2026/02/08</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
+                <td>P-004</td>
+                <td><a href="SC-065_customer_detail.html" class="link">高橋 次郎</a></td>
+                <td><a href="SC-062_company_detail.html" class="link">××ホールディングス</a></td>
+                <td>担当者</td>
+                <td>2026/02/05</td>
+              </tr>
+              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
+                <td>P-005</td>
+                <td><a href="SC-065_customer_detail.html" class="link">伊藤 三郎</a></td>
+                <td><a href="SC-062_company_detail.html" class="link">◇◇テクノロジー</a></td>
+                <td>-</td>
+                <td>2026/02/01</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <div class="pagination-info">
+            全 80 件中 1 - 5 件を表示
+          </div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  </div>
+
+  <!-- 名刺OCRモーダル -->
+  <div class="modal-overlay" id="ocrModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">名刺OCR登録</span>
+        <button class="modal-close" onclick="closeOcrModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="ocr-dropzone" id="ocrDropzone"
+             onclick="document.getElementById('ocrFileInput').click()"
+             ondragover="onOcrDragOver(event)"
+             ondragleave="onOcrDragLeave(event)"
+             ondrop="onOcrDrop(event)">
+          <input type="file" id="ocrFileInput" accept="image/jpeg,image/png" style="display:none" onchange="onOcrFileSelect(event)">
+          <div id="ocrDropzoneIcon" class="ocr-dropzone-icon">
+            <span class="material-icons">document_scanner</span>
+          </div>
+          <div id="ocrDropzoneText" class="ocr-dropzone-text">
+            <span class="ocr-main-text">ドラッグ＆ドロップ</span>
+            <span class="ocr-sub-text">または クリックしてファイルを選択</span>
+            <span class="ocr-format-text">対応形式：JPEG / PNG</span>
+          </div>
+          <div id="ocrFilePreview" style="display:none;flex-direction:column;align-items:center;gap:8px;">
+            <span class="material-icons" style="font-size:44px;color:#2a5f41">image</span>
+            <span class="ocr-file-name" id="ocrFileName"></span>
+            <span class="ocr-change-text">クリックでファイルを変更</span>
+          </div>
+        </div>
+        <div class="ocr-result-form" id="ocrResultForm">
+          <div class="ocr-result-notice">
+            <span class="material-icons">check_circle</span>
+            読み取り完了 — 内容を確認・修正してください
+          </div>
+          <div class="form-group">
+            <label class="form-label">企業<span class="required-mark">*</span></label>
+            <div class="company-select-row">
+              <select class="form-select" id="ocrCompanySelect" onchange="onOcrCompanySelectChange(this.value)">
+                <option value="">-- 企業を選択 --</option>
+                <option value="C-001">○○株式会社</option>
+                <option value="C-002">△△合同会社</option>
+                <option value="C-003">□□コーポレーション</option>
+                <option value="C-004">××ホールディングス</option>
+                <option value="C-005">◇◇テクノロジー</option>
+                <option value="__new__">＋ 新規追加...</option>
+              </select>
+            </div>
+            <div class="new-company-form" id="ocrNewCompanyForm">
+              <span class="new-company-form-title">新規企業を追加</span>
+              <div class="form-group">
+                <label class="form-label">企業名<span class="required-mark">*</span></label>
+                <input type="text" class="form-input" id="ocrNewCompanyName" placeholder="例：○○株式会社">
+              </div>
+              <div class="form-group">
+                <label class="form-label">業種</label>
+                <input type="text" class="form-input" id="ocrNewCompanyIndustry" placeholder="例：IT">
+              </div>
+              <div class="form-group">
+                <label class="form-label">営業利益額</label>
+                <input type="text" class="form-input" id="ocrNewCompanyProfit" placeholder="例：500,000k">
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-outline-sm" onclick="addOcrNewCompany()">
+                  <span class="material-icons" style="font-size:14px">add</span>追加
+                </button>
+                <button class="btn-outline-sm" style="color:#7f8c8d;border-color:#dce0e4;" onclick="cancelOcrNewCompany()">キャンセル</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">氏名<span class="required-mark">*</span></label>
+            <input type="text" class="form-input" id="ocrCustomerName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">役職</label>
+            <input type="text" class="form-input" id="ocrPosition">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeOcrModal()">キャンセル</button>
+        <button class="btn btn-primary" id="ocrScanBtn" onclick="submitOcr()" disabled>読み取り開始</button>
+        <button class="btn btn-primary" id="ocrRegisterBtn" onclick="submitOcrResult()" style="display:none">登録</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新規作成モーダル -->
+  <div class="modal-overlay" id="createModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">顧客 新規作成</span>
+        <button class="modal-close" onclick="closeCreateModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">企業<span class="required-mark">*</span></label>
+          <div class="company-select-row">
+            <select class="form-select" id="modalCompanySelect" onchange="onCompanySelectChange(this.value)">
+              <option value="">-- 企業を選択 --</option>
+              <option value="C-001">○○株式会社</option>
+              <option value="C-002">△△合同会社</option>
+              <option value="C-003">□□コーポレーション</option>
+              <option value="C-004">××ホールディングス</option>
+              <option value="C-005">◇◇テクノロジー</option>
+              <option value="__new__">＋ 新規追加...</option>
+            </select>
+          </div>
+          <div class="new-company-form" id="newCompanyForm">
+            <span class="new-company-form-title">新規企業を追加</span>
+            <div class="form-group">
+              <label class="form-label">企業名<span class="required-mark">*</span></label>
+              <input type="text" class="form-input" id="newCompanyName" placeholder="例：○○株式会社">
+            </div>
+            <div class="form-group">
+              <label class="form-label">業種</label>
+              <input type="text" class="form-input" id="newCompanyIndustry" placeholder="例：IT">
+            </div>
+            <div class="form-group">
+              <label class="form-label">営業利益額</label>
+              <input type="text" class="form-input" id="newCompanyProfit" placeholder="例：500,000k">
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-outline-sm" onclick="addNewCompany()">
+                <span class="material-icons" style="font-size:14px">add</span>追加
+              </button>
+              <button class="btn-outline-sm" style="color:#7f8c8d;border-color:#dce0e4;" onclick="cancelNewCompany()">キャンセル</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">氏名<span class="required-mark">*</span></label>
+          <input type="text" class="form-input" id="modalCustomerName" placeholder="例：山田 太郎">
+        </div>
+        <div class="form-group">
+          <label class="form-label">役職</label>
+          <input type="text" class="form-input" id="modalPosition" placeholder="例：部長">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCreateModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="submitCreate()">登録</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+    function toggleCategory(header) {
+      header.parentElement.classList.toggle('collapsed');
+    }
+    // ===== OCR Modal =====
+    function openOcrModal() {
+      document.getElementById('ocrModal').classList.add('open');
+    }
+    function closeOcrModal() {
+      document.getElementById('ocrModal').classList.remove('open');
+      document.getElementById('ocrFileInput').value = '';
+      document.getElementById('ocrDropzoneIcon').style.display = '';
+      document.getElementById('ocrDropzoneText').style.display = '';
+      document.getElementById('ocrFilePreview').style.display = 'none';
+      document.getElementById('ocrScanBtn').disabled = true;
+      document.getElementById('ocrScanBtn').style.display = '';
+      document.getElementById('ocrRegisterBtn').style.display = 'none';
+      document.getElementById('ocrDropzone').classList.remove('drag-over');
+      document.getElementById('ocrResultForm').classList.remove('open');
+      document.getElementById('ocrCompanySelect').value = '';
+      document.getElementById('ocrNewCompanyForm').classList.remove('open');
+      document.getElementById('ocrNewCompanyName').value = '';
+      document.getElementById('ocrNewCompanyIndustry').value = '';
+      document.getElementById('ocrNewCompanyProfit').value = '';
+      document.getElementById('ocrCustomerName').value = '';
+      document.getElementById('ocrPosition').value = '';
+    }
+    function onOcrDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('ocrDropzone').classList.add('drag-over');
+    }
+    function onOcrDragLeave(e) {
+      e.stopPropagation();
+      document.getElementById('ocrDropzone').classList.remove('drag-over');
+    }
+    function onOcrDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('ocrDropzone').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) setOcrFile(file);
+    }
+    function onOcrFileSelect(e) {
+      const file = e.target.files[0];
+      if (file) setOcrFile(file);
+    }
+    function setOcrFile(file) {
+      if (!file.type.match('image/(jpeg|png)')) {
+        alert('JPEG または PNG ファイルを選択してください。');
+        return;
+      }
+      document.getElementById('ocrDropzoneIcon').style.display = 'none';
+      document.getElementById('ocrDropzoneText').style.display = 'none';
+      document.getElementById('ocrFileName').textContent = file.name;
+      document.getElementById('ocrFilePreview').style.display = 'flex';
+      document.getElementById('ocrScanBtn').disabled = false;
+    }
+    function submitOcr() {
+      // 読み取り結果フォームを表示（ダミーデータ）
+      document.getElementById('ocrCompanySelect').value = 'C-001';
+      document.getElementById('ocrCustomerName').value = '田中 花子';
+      document.getElementById('ocrPosition').value = '課長';
+      document.getElementById('ocrResultForm').classList.add('open');
+      document.getElementById('ocrScanBtn').style.display = 'none';
+      document.getElementById('ocrRegisterBtn').style.display = '';
+    }
+    function submitOcrResult() {
+      const company = document.getElementById('ocrCompanySelect').value;
+      const name = document.getElementById('ocrCustomerName').value.trim();
+      if (!company || company === '__new__') { alert('企業を選択してください。'); return; }
+      if (!name) { alert('氏名は必須です。'); return; }
+      // TODO: API連携
+      closeOcrModal();
+    }
+    function onOcrCompanySelectChange(val) {
+      const form = document.getElementById('ocrNewCompanyForm');
+      if (val === '__new__') { form.classList.add('open'); }
+      else { form.classList.remove('open'); }
+    }
+    function addOcrNewCompany() {
+      const name = document.getElementById('ocrNewCompanyName').value.trim();
+      if (!name) { alert('企業名は必須です。'); return; }
+      const select = document.getElementById('ocrCompanySelect');
+      const newOpt = document.createElement('option');
+      const tempId = 'NEW-' + Date.now();
+      newOpt.value = tempId;
+      newOpt.textContent = name;
+      select.insertBefore(newOpt, select.querySelector('option[value="__new__"]'));
+      select.value = tempId;
+      document.getElementById('ocrNewCompanyForm').classList.remove('open');
+      document.getElementById('ocrNewCompanyName').value = '';
+      document.getElementById('ocrNewCompanyIndustry').value = '';
+      document.getElementById('ocrNewCompanyProfit').value = '';
+    }
+    function cancelOcrNewCompany() {
+      document.getElementById('ocrNewCompanyForm').classList.remove('open');
+      document.getElementById('ocrCompanySelect').value = 'C-001';
+      document.getElementById('ocrNewCompanyName').value = '';
+      document.getElementById('ocrNewCompanyIndustry').value = '';
+      document.getElementById('ocrNewCompanyProfit').value = '';
+    }
+    document.getElementById('ocrModal').addEventListener('click', function(e) {
+      if (e.target === this) closeOcrModal();
+    });
+    // ===== 新規作成 Modal =====
+    function openCreateModal() {
+      document.getElementById('createModal').classList.add('open');
+    }
+    function closeCreateModal() {
+      document.getElementById('createModal').classList.remove('open');
+      document.getElementById('modalCompanySelect').value = '';
+      document.getElementById('newCompanyForm').classList.remove('open');
+      document.getElementById('newCompanyName').value = '';
+      document.getElementById('newCompanyIndustry').value = '';
+      document.getElementById('newCompanyProfit').value = '';
+      document.getElementById('modalCustomerName').value = '';
+      document.getElementById('modalPosition').value = '';
+    }
+    function onCompanySelectChange(val) {
+      const form = document.getElementById('newCompanyForm');
+      if (val === '__new__') {
+        form.classList.add('open');
+      } else {
+        form.classList.remove('open');
+      }
+    }
+    function addNewCompany() {
+      const name = document.getElementById('newCompanyName').value.trim();
+      if (!name) { alert('企業名は必須です。'); return; }
+      const select = document.getElementById('modalCompanySelect');
+      // __new__ の前に新しい企業を挿入
+      const newOpt = document.createElement('option');
+      const tempId = 'NEW-' + Date.now();
+      newOpt.value = tempId;
+      newOpt.textContent = name;
+      const newOptPlaceholder = select.querySelector('option[value="__new__"]');
+      select.insertBefore(newOpt, newOptPlaceholder);
+      select.value = tempId;
+      document.getElementById('newCompanyForm').classList.remove('open');
+      document.getElementById('newCompanyName').value = '';
+      document.getElementById('newCompanyIndustry').value = '';
+      document.getElementById('newCompanyProfit').value = '';
+    }
+    function cancelNewCompany() {
+      document.getElementById('newCompanyForm').classList.remove('open');
+      document.getElementById('modalCompanySelect').value = '';
+      document.getElementById('newCompanyName').value = '';
+      document.getElementById('newCompanyIndustry').value = '';
+      document.getElementById('newCompanyProfit').value = '';
+    }
+    function submitCreate() {
+      const company = document.getElementById('modalCompanySelect').value;
+      const name = document.getElementById('modalCustomerName').value.trim();
+      if (!company || company === '__new__') { alert('企業を選択してください。'); return; }
+      if (!name) { alert('氏名は必須です。'); return; }
+      // TODO: API連携
+      closeCreateModal();
+    }
+    document.getElementById('createModal').addEventListener('click', function(e) {
+      if (e.target === this) closeCreateModal();
+    });
+  </script>
+</body>
+</html>

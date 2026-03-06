@@ -674,7 +674,7 @@
   <!-- 凡例バー -->
   <div class="legend-bar">
     <span class="filter-label">カード凡例</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span>次回AC日超過</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span>要対応</span>
     <span class="legend-item"><span class="legend-dot" style="background:#f39c12;"></span>3日以内</span>
     <span class="legend-item"><span class="legend-dot" style="background:#ecf0f1;border:1px solid #dce0e4;"></span>通常</span>
   </div>
@@ -703,8 +703,6 @@
               <th>企業 / 部署</th>
               <th>担当者</th>
               <th>ステージ</th>
-              <th>確度</th>
-              <th class="sortable">提案額</th>
               <th class="sortable">最終AC日</th>
               <th class="sortable">次回AC日</th>
             </tr>
@@ -872,16 +870,8 @@ function buildCardHTML(lead) {
   const alert = getAlertStatus(lead.nextAcDate);
   const alertClass = alert ? `alert-${alert}` : '';
   const staffColor = STAFF_COLORS[lead.staff] || '#7f8c8d';
-  const deliveryColor = STAFF_COLORS[lead.deliveryStaff] || '#c0612b';
   const probColor = getProbColor(lead.prob);
   const nextAcClass = alert === 'overdue' ? 'date-overdue' : alert === 'soon' ? 'date-soon' : '';
-
-  const deliveryHTML = lead.deliveryStaff ? `
-      <div class="card-staff-row">
-        <span class="staff-role-label delivery">DL</span>
-        <div class="staff-avatar" style="background:${deliveryColor}">${lead.deliveryStaff[0]}</div>
-        <span class="staff-name">${lead.deliveryStaff}</span>
-      </div>` : '';
 
   return `
     <div class="lead-card ${alertClass}"
@@ -907,7 +897,6 @@ function buildCardHTML(lead) {
           <div class="staff-avatar" style="background:${staffColor}">${lead.staff[0]}</div>
           <span class="staff-name">${lead.staff}</span>
         </div>
-        ${deliveryHTML}
       </div>
       <div class="card-keyman">
         <span class="material-icons">person</span>
@@ -915,21 +904,6 @@ function buildCardHTML(lead) {
       </div>
       <div class="card-divider"></div>
       <div class="card-metrics">
-        <div class="card-metric">
-          <span class="card-metric-label">提案額</span>
-          <span class="card-metric-value amount">${formatAmount(lead.amount)}</span>
-        </div>
-        <div class="card-metric">
-          <span class="card-metric-label">確度</span>
-          <div>
-            <div style="font-size:12px;font-weight:600;color:${probColor}">${lead.prob}%</div>
-            <div class="prob-bar-wrap">
-              <div class="prob-bar-bg">
-                <div class="prob-bar-fill" style="width:${lead.prob}%;background:${probColor}"></div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="card-metric">
           <span class="card-metric-label">最終AC日</span>
           <span class="card-metric-value">${formatDate(lead.lastAcDate)}</span>
@@ -973,16 +947,6 @@ function renderBoard(leadsData) {
             ${stage.name}
           </div>
           <span class="stage-badge">${count}</span>
-        </div>
-      </div>
-      <div class="stage-stats">
-        <div class="stage-stat">
-          <div class="stage-stat-label">合計受注予定額</div>
-          <div class="stage-stat-value">${formatAmount(total)}</div>
-        </div>
-        <div class="stage-stat">
-          <div class="stage-stat-label">平均単価</div>
-          <div class="stage-stat-value">${formatAmount(avg)}</div>
         </div>
       </div>
       <div class="stage-cards"
@@ -1060,18 +1024,11 @@ function buildRowHTML(lead) {
     ? `<span class="material-icons" style="color:#e67e22;font-size:17px;" title="3日以内">schedule</span>`
     : '';
   const staffColor = STAFF_COLORS[lead.staff] || '#7f8c8d';
-  const deliveryColor = STAFF_COLORS[lead.deliveryStaff] || '#c0612b';
   const stage = STAGE_DISPLAY[lead.stage] || { label: lead.stage };
   const nextAcClass = alert === 'overdue' ? 'overdue' : alert === 'soon' ? 'soon' : '';
   const nextAcLabel = lead.nextAcDate
     ? formatDate(lead.nextAcDate) + (alert === 'overdue' ? ' ⚠️' : alert === 'soon' ? ' ⚡' : '')
     : '未設定';
-  const deliveryRow = lead.deliveryStaff ? `
-    <div class="tbl-staff-row">
-      <span class="tbl-role-label delivery">DL</span>
-      <div class="tbl-avatar" style="background:${deliveryColor}">${lead.deliveryStaff[0]}</div>
-      <span style="font-size:12px;color:#1e4530;">${lead.deliveryStaff}</span>
-    </div>` : '';
 
   return `
     <tr class="${rowClass}" onclick="openDetail(${lead.id})">
@@ -1087,20 +1044,10 @@ function buildRowHTML(lead) {
           <div class="tbl-avatar" style="background:${staffColor}">${lead.staff[0]}</div>
           <span style="font-size:12px;color:#1e4530;">${lead.staff}</span>
         </div>
-        ${deliveryRow}
       </td>
       <td>
         <span class="stage-tag">${stage.label}</span>
       </td>
-      <td style="white-space:nowrap;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:48px;height:4px;background:#ecf0f1;border-radius:2px;overflow:hidden;flex-shrink:0;">
-            <div style="width:${lead.prob}%;height:100%;background:${getProbColor(lead.prob)};border-radius:2px;"></div>
-          </div>
-          <span style="font-size:12px;font-weight:600;color:${getProbColor(lead.prob)};">${lead.prob}%</span>
-        </div>
-      </td>
-      <td class="tbl-amount">${formatAmount(lead.amount)}</td>
       <td class="tbl-date">${formatDate(lead.lastAcDate)}</td>
       <td class="tbl-date ${nextAcClass}">${nextAcLabel}</td>
     </tr>`;
@@ -1113,7 +1060,7 @@ function renderTable(leadsData) {
   const visible = leadsData.filter(l => !l._hidden);
 
   if (visible.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:#95a5a6;">該当するリードがありません</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#95a5a6;">該当するリードがありません</td></tr>`;
     return;
   }
 
@@ -1130,7 +1077,7 @@ function renderTable(leadsData) {
     sortedCompanies.forEach(company => {
       const companyLeads = grouped[company];
       html += `<tr class="group-header-row">
-        <td colspan="9">
+        <td colspan="7">
           <span class="material-icons" style="font-size:14px;vertical-align:middle;margin-right:6px;color:#636e72;">business</span>
           ${company}
           <span class="group-count">${companyLeads.length}件</span>
@@ -1239,10 +1186,9 @@ function toggleCategory(header) {
   header.closest('.sidebar-category').classList.toggle('collapsed');
 }
 
-// ===== カード詳細（仮） =====
+// ===== カード詳細 =====
 function openDetail(id) {
-  const lead = leads.find(l => l.id === id);
-  if (lead) alert(`「${lead.title}」\n会社: ${lead.company}\n担当: ${lead.staff}\n金額: ${lead.amount?.toLocaleString()}円`);
+  location.href = `SC-021_lead_detail.html?id=${id}`;
 }
 
 // ===== 初期描画 =====

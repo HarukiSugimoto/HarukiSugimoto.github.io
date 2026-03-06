@@ -307,9 +307,9 @@
       transform: rotate(2deg);
       cursor: grabbing;
     }
-    .action-card.alert-overdue  { border-left-color: #e74c3c; }
-    .action-card.alert-soon     { border-left-color: #f39c12; }
-    .action-card.alert-no-action { border-left-color: #95a5a6; }
+    .action-card.alert-overdue          { border-left-color: #e74c3c; }
+    .action-card.alert-no-action-overdue { border-left-color: #2980b9; }
+    .action-card.alert-no-action        { border-left-color: #95a5a6; }
 
     /* 種別バッジ */
     .card-type-badge {
@@ -330,9 +330,9 @@
       margin-left: 4px;
     }
     .card-alert-badge .material-icons { font-size: 12px; }
-    .card-alert-badge.overdue   { background: #fdecea; color: #c0392b; }
-    .card-alert-badge.soon      { background: #fef3e2; color: #d35400; }
-    .card-alert-badge.no-action { background: #f0f2f5; color: #636e72; }
+    .card-alert-badge.overdue           { background: #fdecea; color: #c0392b; }
+    .card-alert-badge.no-action-overdue { background: #e8f4fd; color: #1a6fa8; }
+    .card-alert-badge.no-action         { background: #f0f2f5; color: #636e72; }
 
     /* カードタイトル */
     .card-title {
@@ -383,7 +383,6 @@
     .card-metric-label { font-size: 10px; color: #95a5a6; font-weight: 600; }
     .card-metric-value { font-size: 12px; font-weight: 600; color: #1e4530; }
     .card-metric-value.date-overdue { color: #e74c3c; }
-    .card-metric-value.date-soon { color: #e67e22; }
     .card-metric-value.date-none { color: #95a5a6; }
 
     /* ===== ビュー切り替えボタン ===== */
@@ -433,8 +432,8 @@
     .data-table tbody tr:hover { background: #f5f8f5; }
     .data-table tbody tr.row-alert-overdue  { background: #fff5f5; }
     .data-table tbody tr.row-alert-overdue:hover  { background: #fee; }
-    .data-table tbody tr.row-alert-soon     { background: #fffbf0; }
-    .data-table tbody tr.row-alert-soon:hover     { background: #fff3d0; }
+    .data-table tbody tr.row-alert-no-action-overdue { background: #eaf4fc; }
+    .data-table tbody tr.row-alert-no-action-overdue:hover { background: #d5eaf8; }
     .data-table tbody tr.row-alert-no-action { background: #f8f9fa; }
     .tbl-title { font-weight: 600; color: #1e4530; line-height: 1.3; }
     .tbl-company-name { font-weight: 600; color: #2d3436; }
@@ -469,12 +468,11 @@
       padding: 2px 7px; border-radius: 4px;
       font-size: 10px; font-weight: 700; white-space: nowrap;
     }
-    .alert-tag.overdue   { background: #fdecea; color: #c0392b; }
-    .alert-tag.soon      { background: #fef3e2; color: #d35400; }
-    .alert-tag.no-action { background: #f0f2f5; color: #636e72; }
+    .alert-tag.overdue           { background: #fdecea; color: #c0392b; }
+    .alert-tag.no-action-overdue { background: #e8f4fd; color: #1a6fa8; }
+    .alert-tag.no-action         { background: #f0f2f5; color: #636e72; }
     .tbl-date { font-size: 12px; white-space: nowrap; }
     .tbl-date.overdue  { color: #e74c3c; font-weight: 600; }
-    .tbl-date.soon     { color: #e67e22; font-weight: 600; }
     .tbl-date.no-action { color: #95a5a6; }
     .tbl-amount { font-size: 12px; font-weight: 600; color: #1e4530; }
 
@@ -626,11 +624,6 @@
       <span class="material-icons">search</span>
       <input type="text" id="searchInput" placeholder="企業名・顧客名・タイトルで検索">
     </div>
-    <select class="filter-select" id="typeSelect">
-      <option value="">種別：すべて</option>
-      <option value="lead">リード</option>
-      <option value="deal">商談</option>
-    </select>
     <select class="filter-select" id="staffSelect">
       <option value="">担当者：すべて</option>
       <option value="山田">山田</option>
@@ -640,8 +633,13 @@
     <select class="filter-select" id="alertSelect">
       <option value="">要対応種別：すべて</option>
       <option value="overdue">次回AC日超過</option>
-      <option value="soon">3日以内</option>
-      <option value="no-action">次回AC日未設定</option>
+      <option value="no-action-overdue">AC未設定・猶予期間超過</option>
+      <option value="no-action">次回AC日未設定（猶予内）</option>
+    </select>
+    <select class="filter-select" id="typeSelect" style="display:none;">
+      <option value="">種別：すべて</option>
+      <option value="lead">リード</option>
+      <option value="deal">商談</option>
     </select>
     <select class="filter-select" id="stageSelect" style="display:none;">
       <option value="">ステージ：すべて</option>
@@ -675,7 +673,7 @@
   <div class="legend-bar">
     <span class="filter-label">要対応種別</span>
     <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span>次回AC日超過（優先度：高）</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#f39c12;"></span>3日以内（優先度：高）</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#2980b9;border:2px dashed #1a6fa8;"></span>AC未設定・猶予超過（優先度：高）</span>
     <span class="legend-item"><span class="legend-dot" style="background:#95a5a6;"></span>次回AC日未設定（優先度：中）</span>
     <span style="margin-left:auto;font-size:11px;">
       <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#d5e8d4;color:#1e4530;font-weight:700;margin-right:6px;">リード</span>
@@ -726,21 +724,21 @@
 <script>
 // ===== ステージ定義（リード → 商談 順） =====
 const STAGES = [
-  // リードステージ
-  { id: 'contact_before', name: '接触前',     icon: 'person_add',     stageType: 'lead' },
-  { id: 'deal_done',      name: '商談化済み', icon: 'check_circle',   stageType: 'lead' },
-  { id: 'cooling',        name: '冷却中',     icon: 'ac_unit',        stageType: 'lead' },
-  { id: 'trash',          name: '捨て',       icon: 'delete_forever', stageType: 'lead' },
-  // 商談ステージ
-  { id: 'appo',        name: 'アポ設定中',             icon: 'event_available', stageType: 'deal' },
-  { id: 'needs',       name: '面談：ニーズ確認中',     icon: 'chat',            stageType: 'deal' },
-  { id: 'solution',    name: '面談：ソリューション提示中', icon: 'lightbulb',   stageType: 'deal' },
-  { id: 'proposal',    name: '本提案中',               icon: 'description',     stageType: 'deal' },
-  { id: 'negotiation', name: '条件交渉中',             icon: 'handshake',       stageType: 'deal' },
-  { id: 'decision',    name: '意思決定支援中',         icon: 'how_to_vote',     stageType: 'deal' },
-  { id: 'contracted',  name: '契約完了',               icon: 'check_circle',    stageType: 'deal' },
-  { id: 'pic_change',  name: 'PICチェンジ中',          icon: 'person_search',   stageType: 'deal' },
-  { id: 'dismissed',   name: '見送り',                 icon: 'block',           stageType: 'deal' },
+  // リードステージ（gracePeriodDays = SC-082 猶予期間）
+  { id: 'contact_before', name: '接触前',     icon: 'person_add',     stageType: 'lead', gracePeriodDays: 14 },
+  { id: 'deal_done',      name: '商談化済み', icon: 'check_circle',   stageType: 'lead', gracePeriodDays: 14 },
+  { id: 'cooling',        name: '冷却中',     icon: 'ac_unit',        stageType: 'lead', gracePeriodDays: 30 },
+  { id: 'trash',          name: '捨て',       icon: 'delete_forever', stageType: 'lead', gracePeriodDays: null },
+  // 商談ステージ（gracePeriodDays = SC-082 猶予期間）
+  { id: 'appo',        name: 'アポ設定中',             icon: 'event_available', stageType: 'deal', gracePeriodDays: 7  },
+  { id: 'needs',       name: '面談：ニーズ確認中',     icon: 'chat',            stageType: 'deal', gracePeriodDays: 14 },
+  { id: 'solution',    name: '面談：ソリューション提示中', icon: 'lightbulb',   stageType: 'deal', gracePeriodDays: 14 },
+  { id: 'proposal',    name: '本提案中',               icon: 'description',     stageType: 'deal', gracePeriodDays: 10 },
+  { id: 'negotiation', name: '条件交渉中',             icon: 'handshake',       stageType: 'deal', gracePeriodDays: 7  },
+  { id: 'decision',    name: '意思決定支援中',         icon: 'how_to_vote',     stageType: 'deal', gracePeriodDays: 7  },
+  { id: 'contracted',  name: '契約完了',               icon: 'check_circle',    stageType: 'deal', gracePeriodDays: null },
+  { id: 'pic_change',  name: 'PICチェンジ中',          icon: 'person_search',   stageType: 'deal', gracePeriodDays: 14 },
+  { id: 'dismissed',   name: '見送り',                 icon: 'block',           stageType: 'deal', gracePeriodDays: null },
 ];
 
 const STAGE_DISPLAY = {
@@ -764,7 +762,7 @@ const STAFF_COLORS = {
   '鈴木': '#9b59b6', '林':   '#c0612b', '中村': '#16a085',
 };
 
-// ===== サンプルデータ（要対応のみ：overdue / soon / no-action） =====
+// ===== サンプルデータ（要対応のみ：overdue / no-action-overdue / no-action） =====
 let allItems = [
   // --- リード ---
   {
@@ -797,7 +795,7 @@ let allItems = [
     company: 'インターナショナル商事', dept: '経理部',
     staff: '山田', deliveryStaff: '田中', keyman: '木村 CFO',
     rank: '松', amount: 12000000,
-    lastAcDate: '2026-02-20', nextAcDate: null,
+    lastAcDate: '2026-02-10', nextAcDate: null,
   },
   {
     id: 5, type: 'lead', stage: 'contact_before',
@@ -854,7 +852,7 @@ let allItems = [
     company: '株式会社スマートロジクス', dept: 'DX推進室',
     staff: '山田', deliveryStaff: '佐藤', keyman: '岡田 室長',
     rank: '松', amount: 9000000,
-    lastAcDate: '2026-02-25', nextAcDate: null,
+    lastAcDate: '2026-02-15', nextAcDate: null,
   },
   {
     id: 12, type: 'deal', stage: 'pic_change',
@@ -869,12 +867,20 @@ let allItems = [
 // ===== ユーティリティ =====
 const today = new Date('2026-03-05');
 
-function getAlertStatus(nextAcDate) {
-  if (!nextAcDate) return 'no-action';
+function getAlertStatus(nextAcDate, lastAcDate, stageId) {
+  if (!nextAcDate) {
+    const stageInfo = STAGES.find(s => s.id === stageId);
+    const grace = stageInfo?.gracePeriodDays ?? 14;
+    if (grace !== null && lastAcDate) {
+      const last = new Date(lastAcDate);
+      const elapsed = Math.floor((today - last) / 86400000);
+      if (elapsed > grace) return 'no-action-overdue';
+    }
+    return 'no-action';
+  }
   const d = new Date(nextAcDate);
   const diff = Math.floor((d - today) / 86400000);
   if (diff < 0) return 'overdue';
-  if (diff <= 3) return 'soon';
   return null;
 }
 
@@ -892,21 +898,21 @@ function formatAmount(n) {
 }
 
 const ALERT_LABEL = {
-  'overdue':   { label: 'AC日超過',  icon: 'error',          cls: 'overdue' },
-  'soon':      { label: '3日以内',   icon: 'schedule',       cls: 'soon' },
-  'no-action': { label: 'AC日未設定', icon: 'help_outline',  cls: 'no-action' },
+  'overdue':          { label: 'AC日超過',          icon: 'error',        cls: 'overdue' },
+  'no-action-overdue':{ label: 'AC未設定・猶予超過', icon: 'error',        cls: 'no-action-overdue' },
+  'no-action':        { label: 'AC日未設定',         icon: 'help_outline', cls: 'no-action' },
 };
 
 // ===== カードHTML生成 =====
 function buildCardHTML(item) {
-  const alert = getAlertStatus(item.nextAcDate);
+  const alert = getAlertStatus(item.nextAcDate, item.lastAcDate, item.stage);
   const alertInfo = ALERT_LABEL[alert] || null;
   const alertClass = alert ? `alert-${alert}` : '';
   const staffColor = STAFF_COLORS[item.staff] || '#7f8c8d';
   const deliveryColor = STAFF_COLORS[item.deliveryStaff] || '#c0612b';
-  const nextAcClass = alert === 'overdue' ? 'date-overdue' : alert === 'soon' ? 'date-soon' : alert === 'no-action' ? 'date-none' : '';
+  const nextAcClass = alert === 'overdue' ? 'date-overdue' : alert === 'no-action' ? 'date-none' : '';
   const nextAcText = item.nextAcDate
-    ? formatDate(item.nextAcDate) + (alert === 'overdue' ? ' ⚠️ 超過' : alert === 'soon' ? ' ⚡ 近日' : '')
+    ? formatDate(item.nextAcDate) + (alert === 'overdue' ? ' ⚠️ 超過' : '')
     : '未設定';
 
   const deliveryHTML = item.deliveryStaff ? `
@@ -1050,15 +1056,15 @@ function updateTotalCount(data) {
 
 // ===== リストビュー 行HTML生成 =====
 function buildRowHTML(item) {
-  const alert = getAlertStatus(item.nextAcDate);
+  const alert = getAlertStatus(item.nextAcDate, item.lastAcDate, item.stage);
   const alertInfo = ALERT_LABEL[alert] || null;
-  const rowClass = alert === 'overdue' ? 'row-alert-overdue' : alert === 'soon' ? 'row-alert-soon' : alert === 'no-action' ? 'row-alert-no-action' : '';
+  const rowClass = alert === 'overdue' ? 'row-alert-overdue' : alert === 'no-action-overdue' ? 'row-alert-no-action-overdue' : alert === 'no-action' ? 'row-alert-no-action' : '';
   const staffColor = STAFF_COLORS[item.staff] || '#7f8c8d';
   const deliveryColor = STAFF_COLORS[item.deliveryStaff] || '#c0612b';
   const stage = STAGE_DISPLAY[item.stage] || { label: item.stage, bg: '#ecf0f1', color: '#636e72' };
-  const nextAcClass = alert === 'overdue' ? 'overdue' : alert === 'soon' ? 'soon' : alert === 'no-action' ? 'no-action' : '';
+  const nextAcClass = alert === 'overdue' ? 'overdue' : alert === 'no-action' ? 'no-action' : '';
   const nextAcLabel = item.nextAcDate
-    ? formatDate(item.nextAcDate) + (alert === 'overdue' ? ' ⚠️' : alert === 'soon' ? ' ⚡' : '')
+    ? formatDate(item.nextAcDate) + (alert === 'overdue' ? ' ⚠️' : '')
     : '未設定';
 
   const typeLabelText = item.type === 'lead' ? 'リード' : '商談';
@@ -1072,7 +1078,7 @@ function buildRowHTML(item) {
   return `
     <tr class="${rowClass}" onclick="openDetail(${item.id})">
       <td style="text-align:center;">
-        ${alertInfo ? `<span class="material-icons" style="font-size:17px;color:${alert==='overdue'?'#e74c3c':alert==='soon'?'#e67e22':'#95a5a6'};">${alertInfo.icon}</span>` : ''}
+        ${alertInfo ? `<span class="material-icons" style="font-size:17px;color:${alert==='overdue'?'#e74c3c':alert==='no-action-overdue'?'#2980b9':'#95a5a6'};">${alertInfo.icon}</span>` : ''}
       </td>
       <td><span class="type-tag ${item.type}">${typeLabelText}</span></td>
       <td><div class="tbl-title">${item.title}</div></td>
@@ -1196,18 +1202,22 @@ function switchView(mode) {
   const btnList       = document.getElementById('btnList');
   const stageSelect   = document.getElementById('stageSelect');
 
+  const typeSelect = document.getElementById('typeSelect');
+
   if (mode === 'kanban') {
     kanbanWrapper.style.display = '';
     listWrapper.classList.remove('visible');
     btnKanban.classList.add('active');
     btnList.classList.remove('active');
     stageSelect.style.display = 'none';
+    typeSelect.style.display = 'none';
   } else {
     kanbanWrapper.style.display = 'none';
     listWrapper.classList.add('visible');
     btnKanban.classList.remove('active');
     btnList.classList.add('active');
     stageSelect.style.display = '';
+    typeSelect.style.display = '';
     renderTable(allItems);
   }
 }
@@ -1217,7 +1227,7 @@ let filters = { text: '', type: '', staff: '', alertType: '', stage: '' };
 
 function applyFilters() {
   allItems.forEach(d => {
-    const alert = getAlertStatus(d.nextAcDate);
+    const alert = getAlertStatus(d.nextAcDate, d.lastAcDate, d.stage);
     let hidden = false;
     if (filters.text) {
       const q = filters.text.toLowerCase();
@@ -1247,7 +1257,7 @@ function applyFilterManual() {
 function clearFilters() {
   filters = { text: '', type: '', staff: '', alertType: '', stage: '' };
   document.getElementById('searchInput').value = '';
-  document.getElementById('typeSelect').value  = '';
+  document.getElementById('typeSelect').value = '';
   document.getElementById('staffSelect').value = '';
   document.getElementById('alertSelect').value = '';
   document.getElementById('stageSelect').value = '';
@@ -1266,12 +1276,14 @@ function toggleCategory(header) {
   header.closest('.sidebar-category').classList.toggle('collapsed');
 }
 
-// ===== カード詳細（仮） =====
+// ===== カード詳細 =====
 function openDetail(id) {
   const item = allItems.find(d => d.id === id);
-  if (item) {
-    const typeName = item.type === 'lead' ? 'リード' : '商談';
-    alert(`[${typeName}]「${item.title}」\n会社: ${item.company}\n担当: ${item.staff}\n金額: ${item.amount?.toLocaleString()}円`);
+  if (!item) return;
+  if (item.type === 'lead') {
+    location.href = `../lead/SC-021_lead_detail.html?id=${id}`;
+  } else {
+    location.href = `../deal/SC-031_deal_detail.html?id=${id}`;
   }
 }
 

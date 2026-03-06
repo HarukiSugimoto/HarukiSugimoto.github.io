@@ -676,7 +676,7 @@
   <!-- 凡例バー -->
   <div class="legend-bar">
     <span class="filter-label">カード凡例</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span>次回AC日超過</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span>要対応</span>
     <span class="legend-item"><span class="legend-dot" style="background:#f39c12;"></span>3日以内</span>
     <span class="legend-item"><span class="legend-dot" style="background:#ecf0f1;border:1px solid #dce0e4;"></span>通常</span>
   </div>
@@ -1267,8 +1267,7 @@ function toggleCategory(header) {
 
 // ===== カード詳細（仮） =====
 function openDetail(id) {
-  const deal = deals.find(d => d.id === id);
-  if (deal) alert(`「${deal.title}」\n会社: ${deal.company}\n担当: ${deal.staff}\n金額: ${deal.amount?.toLocaleString()}円`);
+  window.location.href = `SC-031_deal_detail.html?id=${id}`;
 }
 
 // ===== 初期描画 =====

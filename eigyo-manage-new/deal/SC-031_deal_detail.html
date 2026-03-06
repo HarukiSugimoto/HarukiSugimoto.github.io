@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-031 商談詳細 | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== ヘッダー（SC-021準拠） ===== */
+    .header {
+      background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
+      color: #fff;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .menu-toggle { cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center; }
+    .menu-toggle:hover { background: rgba(255,255,255,0.15); }
+    .header-title { font-size: 18px; font-weight: 600; }
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+    .header-notification {
+      position: relative; cursor: pointer; padding: 4px;
+      display: flex; align-items: center; color: #fff; text-decoration: none;
+    }
+    .notification-badge {
+      position: absolute; top: 0; right: 0;
+      background: #e74c3c; color: #fff;
+      font-size: 10px; font-weight: 600;
+      min-width: 18px; height: 18px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; padding: 0 4px;
+    }
+    .header-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .header-user-icon {
+      width: 32px; height: 32px; background: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #2a5f41; font-size: 14px; font-weight: 700;
+    }
+
+    /* ===== サイドバー（SC-010準拠） ===== */
+    .sidebar {
+      position: fixed; top: 56px; left: 0;
+      width: 240px; height: calc(100vh - 56px);
+      background: #1e4530; overflow-y: auto; z-index: 999;
+      transition: transform 0.3s;
+    }
+    .sidebar.collapsed { transform: translateX(-240px); }
+    .sidebar-nav { padding: 16px 0; }
+    .sidebar-category { margin-bottom: 4px; }
+    .sidebar-category-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; color: #95a5a6;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; cursor: pointer; transition: color 0.2s;
+    }
+    .sidebar-category-header:hover { color: #ecf0f1; }
+    .sidebar-category-header .material-icons { font-size: 18px; transition: transform 0.2s; }
+    .sidebar-category.collapsed .sidebar-category-header .material-icons { transform: rotate(-90deg); }
+    .sidebar-category.collapsed .sidebar-items { display: none; }
+    .sidebar-items { display: flex; flex-direction: column; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px 10px 24px; color: #bdc3c7; text-decoration: none;
+      font-size: 13px; transition: all 0.2s; border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar-item.active { background: rgba(255, 255, 255, 0.15); color: #ffffff; border-left-color: #7de8a8; }
+    .sidebar-item .material-icons { font-size: 20px; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px; }
+
+    /* ===== メインレイアウト ===== */
+    .main-wrapper {
+      margin-left: 240px;
+      padding-top: 56px;
+      min-height: 100vh;
+      transition: margin-left 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-wrapper.expanded { margin-left: 0; }
+
+    /* ===== ページトップバー ===== */
+    .page-top-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .page-top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #1e4530; }
+    .page-subtitle { font-size: 13px; color: #7f8c8d; }
+    .page-top-bar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ===== ボタン ===== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 6px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn .material-icons { font-size: 18px; }
+    .btn-primary { background: #2a5f41; color: #fff; }
+    .btn-primary:hover { background: #1e4530; }
+    .btn-outline {
+      background: #fff; color: #1e4530;
+      border: 1px solid #dce0e4;
+    }
+    .btn-outline:hover { background: #f8f9fa; border-color: #b2bec3; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-success:hover { background: #219a52; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* ===== コンテンツエリア ===== */
+    .content-area { padding: 20px 24px; flex: 1; }
+
+    /* ===== シェブロンステージ ===== */
+    .chevron-stepper {
+      display: flex;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.08));
+    }
+    .chevron-step {
+      position: relative;
+      flex: 1;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #95a5a6;
+      background: #e8ecf0;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+      transition: all 0.2s;
+    }
+    .chevron-step:first-child {
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 0 50%);
+      border-radius: 6px 0 0 6px;
+    }
+    .chevron-step:last-child {
+      clip-path: polygon(0 0, 100% 0, 100% 50%, 100% 100%, 0 100%, 16px 50%);
+      border-radius: 0 6px 6px 0;
+    }
+    .chevron-step .material-icons { font-size: 16px; }
+    .chevron-step.completed {
+      background: #d5f5e3;
+      color: #1e8449;
+    }
+    .chevron-step.current {
+      background: #2a5f41;
+      color: #fff;
+    }
+    .chevron-step.current .material-icons { color: #7de8a8; }
+    .chevron-step.special {
+      background: #fef9e7;
+      color: #b7950b;
+    }
+    .chevron-step.ended {
+      background: #fadbd8;
+      color: #922b21;
+    }
+
+    /* ===== アラートバナー ===== */
+    .alert-banner {
+      background: #fdeaec; border: 1px solid #f5c6cb;
+      border-left: 4px solid #e74c3c; border-radius: 8px;
+      padding: 14px 20px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .alert-banner.warn {
+      background: #fef9e7; border-color: #f9e79f;
+      border-left-color: #f39c12;
+    }
+    .alert-banner-icon { font-size: 22px; color: #e74c3c; }
+    .alert-banner.warn .alert-banner-icon { color: #f39c12; }
+    .alert-banner-content { flex: 1; }
+    .alert-banner-title { font-weight: 600; color: #c0392b; font-size: 14px; margin-bottom: 2px; }
+    .alert-banner.warn .alert-banner-title { color: #e67e22; }
+    .alert-banner-desc { font-size: 13px; color: #721c24; }
+    .alert-banner.warn .alert-banner-desc { color: #7d6608; }
+
+    /* ===== カード ===== */
+    .card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 14px 20px; border-bottom: 1px solid #f0f2f5;
+      font-weight: 600; color: #1e4530; background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px;
+    }
+    .card-header .material-icons { font-size: 18px; margin-right: 6px; vertical-align: middle; color: #636e72; }
+    .card-body { padding: 0; }
+    .card-body.has-padding { padding: 16px 20px; }
+
+    /* ===== 基本情報テーブル ===== */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .info-table th {
+      background: #f8faf9;
+      color: #7f8c8d;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 8px 12px;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid #f0f2f5;
+      width: 120px;
+    }
+    .info-table td {
+      padding: 8px 12px;
+      color: #1e4530;
+      font-weight: 500;
+      border-bottom: 1px solid #f0f2f5;
+      border-right: 1px solid #f0f2f5;
+    }
+    .info-table td:last-child { border-right: none; }
+    .info-table td.full { border-right: none; }
+    .info-table a { color: #2a5f41; text-decoration: none; }
+    .info-table a:hover { text-decoration: underline; }
+
+    /* ===== 担当者タグ ===== */
+    .staff-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #eef5f0; border-radius: 20px; padding: 4px 12px 4px 4px;
+    }
+    .staff-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 11px; font-weight: 600;
+    }
+    .staff-name { font-size: 13px; color: #1e4530; font-weight: 500; }
+    .staff-role-label {
+      font-size: 9px; font-weight: 700; padding: 1px 5px;
+      border-radius: 3px; min-width: 22px; text-align: center;
+      background: #e8f0eb; color: #2a5f41; flex-shrink: 0;
+      letter-spacing: 0.3px;
+    }
+    .staff-role-label.delivery { background: #fef0e6; color: #c0612b; }
+
+    /* ===== 顧客タグ ===== */
+    .keyman-star { color: #f1c40f; font-size: 16px; }
+    .customer-more {
+      background: #ecf0f1; color: #7f8c8d;
+      padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 4px;
+    }
+
+    /* ===== ステージタグ ===== */
+    .stage-tag {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600;
+    }
+
+    /* ===== 受注予定フォーム ===== */
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .forecast-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .forecast-label {
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    .forecast-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e4530;
+    }
+    .forecast-value.amount {
+      color: #2a5f41;
+    }
+    .form-input {
+      padding: 8px 12px;
+      border: 1px solid #dce0e4;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #2a5f41;
+      box-shadow: 0 0 0 2px rgba(42, 95, 65, 0.1);
+    }
+
+    /* ===== テーブル ===== */
+    .table-container { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th {
+      background: #f8f9fa; padding: 10px 12px; text-align: left;
+      font-weight: 600; color: #1e4530; border-bottom: 2px solid #dce0e4;
+      white-space: nowrap; position: sticky; top: 0; z-index: 1;
+    }
+    .data-table td {
+      padding: 10px 12px; border-bottom: 1px solid #f0f2f5;
+      vertical-align: middle;
+    }
+    .data-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    .data-table tbody tr:hover { background: #f5f8f5; }
+
+    /* ===== 課題バッジ ===== */
+    .issue-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; font-weight: 500;
+    }
+    .issue-yes { background: #fdeaec; color: #c0392b; }
+    .issue-no { background: #ecf0f1; color: #7f8c8d; }
+
+    /* ===== 日付系 ===== */
+    .date-overdue { color: #e74c3c; font-weight: 600; }
+    .date-soon { color: #e67e22; font-weight: 600; }
+
+    /* ===== 内容プレビュー ===== */
+    .content-preview {
+      max-width: 240px; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* ===== ページネーション ===== */
+    .pagination {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; border-top: 1px solid #ecf0f1;
+    }
+    .pagination-info { color: #7f8c8d; font-size: 13px; }
+    .pagination-controls { display: flex; gap: 8px; align-items: center; }
+    .pagination-btn {
+      padding: 6px 12px; border: 1px solid #dce0e4; background: #fff;
+      border-radius: 4px; cursor: pointer; transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) { background: #f8f9fa; border-color: #2a5f41; }
+    .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination-current {
+      padding: 6px 12px; background: #2a5f41; color: #fff;
+      border-radius: 4px; font-weight: 500;
+    }
+    .page-size-select { padding: 6px 10px; border: 1px solid #dce0e4; border-radius: 4px; font-size: 13px; }
+    .sort-label { font-size: 12px; color: #7f8c8d; }
+
+    /* ===== モーダル ===== */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: 10px; width: 700px; max-width: 95vw;
+      max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid #f0f2f5;
+    }
+    .modal-header h3 { font-size: 16px; color: #1e4530; font-weight: 700; margin: 0; }
+    .modal-close {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      color: #95a5a6; display: flex; align-items: center; border-radius: 4px;
+    }
+    .modal-close:hover { background: #f0f2f5; color: #333; }
+    .modal-body { padding: 20px; }
+    .modal-footer {
+      padding: 16px 20px; border-top: 1px solid #f0f2f5;
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #7f8c8d; margin-bottom: 6px; }
+    .form-select {
+      width: 100%; padding: 8px 12px; border: 1px solid #dce0e4; border-radius: 6px;
+      font-size: 13px; font-family: inherit; color: #333; transition: border-color 0.2s;
+    }
+    .form-select:focus {
+      outline: none; border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1);
+    }
+    .form-textarea { resize: vertical; min-height: 80px; width: 100%; padding: 8px 12px; border: 1px solid #dce0e4; border-radius: 6px; font-size: 13px; font-family: inherit; }
+    .form-textarea:focus { outline: none; border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    /* 検索付き複数選択 */
+    .multi-select { position: relative; }
+    .multi-select-tags {
+      display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 10px;
+      border: 1px solid #dce0e4; border-radius: 6px; min-height: 38px;
+      align-items: center; cursor: text; transition: border-color 0.2s;
+    }
+    .multi-select-tags:focus-within { border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1); }
+    .multi-select-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #eef5f0; border: 1px solid #c8e0cf; border-radius: 14px;
+      padding: 2px 6px 2px 10px; font-size: 12px; color: #1e4530; font-weight: 500;
+    }
+    .multi-select-tag-remove {
+      background: none; border: none; cursor: pointer; padding: 0;
+      display: flex; align-items: center; color: #7f8c8d; border-radius: 50%;
+    }
+    .multi-select-tag-remove:hover { color: #e74c3c; }
+    .multi-select-tag-remove .material-icons { font-size: 14px; }
+    .multi-select-input {
+      border: none; outline: none; font-size: 13px; font-family: inherit;
+      flex: 1; min-width: 80px; padding: 2px 0; color: #333;
+    }
+    .multi-select-dropdown {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid #dce0e4; border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 10;
+      max-height: 180px; overflow-y: auto; margin-top: 4px;
+    }
+    .multi-select-dropdown.open { display: block; }
+    .multi-select-option {
+      padding: 8px 12px; font-size: 13px; cursor: pointer; transition: background 0.1s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .multi-select-option:hover { background: #f5f8f5; }
+    .multi-select-option.selected { background: #eef5f0; color: #1e4530; font-weight: 600; }
+    .multi-select-option .material-icons { font-size: 16px; color: #2a5f41; }
+    .multi-select-empty { padding: 12px; text-align: center; color: #95a5a6; font-size: 12px; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrapper { margin-left: 0 !important; }
+      .menu-toggle { display: flex !important; }
+      .info-table th, .info-table td { display: block; width: 100%; }
+      .chevron-step { font-size: 10px; height: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== ヘッダー ===== -->
+<header class="header">
+  <div class="header-left">
+    <div class="menu-toggle" onclick="toggleSidebar()">
+      <span class="material-icons" style="color:#fff">menu</span>
+    </div>
+    <div class="header-title">営業管理システム</div>
+  </div>
+  <div class="header-actions">
+    <a href="#" class="header-notification" title="通知">
+      <span class="material-icons">notifications</span>
+      <span class="notification-badge">3</span>
+    </a>
+    <div class="header-user">
+      <div class="header-user-icon">山</div>
+      <span>山田 ▼</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== サイドバー（SC-010準拠） ===== -->
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar-nav">
+    <a href="../dashboard/SC-010_dashboard.html" class="sidebar-item">
+      <span class="material-icons">dashboard</span><span>ダッシュボード</span>
+    </a>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>営業管理</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
+          <span class="material-icons">warning</span><span>要対応一覧</span>
+        </a>
+        <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
+          <span class="material-icons">person_search</span><span>リード一覧</span>
+        </a>
+        <a href="SC-030_deal_list.html" class="sidebar-item active">
+          <span class="material-icons">handshake</span><span>商談一覧</span>
+        </a>
+        <a href="../master/SC-064_customer_list.html" class="sidebar-item">
+          <span class="material-icons">people</span><span>顧客一覧</span>
+        </a>
+      </div>
+    </div>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>分析・年間計画</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../plan/SC-040_annual_plan_setting.html" class="sidebar-item">
+          <span class="material-icons">trending_up</span><span>年間計画</span>
+        </a>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>マスタ管理</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../master/SC-061_company_list.html" class="sidebar-item"><span class="material-icons">business</span><span>企業マスタ</span></a>
+        <a href="../master/SC-067_staff_list.html" class="sidebar-item"><span class="material-icons">badge</span><span>営業担当者マスタ</span></a>
+        <a href="../master/SC-070_department_list.html" class="sidebar-item"><span class="material-icons">account_tree</span><span>部署マスタ</span></a>
+        <a href="../master/SC-073_channel_list.html" class="sidebar-item"><span class="material-icons">hub</span><span>獲得チャネルマスタ</span></a>
+        <a href="../master/SC-076_rank_list.html" class="sidebar-item"><span class="material-icons">military_tech</span><span>ランクマスタ</span></a>
+        <a href="../master/SC-079_product_list.html" class="sidebar-item"><span class="material-icons">inventory_2</span><span>商材マスタ</span></a>
+        <a href="../master/SC-082_stage_list.html" class="sidebar-item"><span class="material-icons">linear_scale</span><span>ステージマスタ</span></a>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-category">
+      <div class="sidebar-category-header" onclick="toggleCategory(this)">
+        <span>設定</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="sidebar-items">
+        <a href="../master/SC-100_role_list.html" class="sidebar-item"><span class="material-icons">admin_panel_settings</span><span>ロール管理</span></a>
+        <a href="../master/SC-092_integration_settings.html" class="sidebar-item"><span class="material-icons">settings</span><span>連携設定</span></a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ===== メインコンテンツ ===== -->
+<div class="main-wrapper" id="mainWrapper">
+
+  <!-- ページトップバー -->
+  <div class="page-top-bar">
+    <div class="page-top-bar-left">
+      <a href="SC-030_deal_list.html" class="btn btn-outline btn-sm" title="一覧へ戻る" style="padding:4px 8px;">
+        <span class="material-icons" style="font-size:20px;">arrow_back</span>
+      </a>
+      <div>
+        <div class="page-title" id="pageTitle">商談詳細</div>
+        <div class="page-subtitle" id="pageSubtitle"></div>
+      </div>
+    </div>
+    <div class="page-top-bar-right">
+      <button class="btn btn-outline btn-sm" onclick="openEditModal()">
+        <span class="material-icons">edit</span>編集
+      </button>
+      <a href="SC-038_activity_register.html" class="btn btn-primary btn-sm" style="text-decoration:none;">
+        <span class="material-icons" style="color:#fff;">add</span>新規登録
+      </a>
+    </div>
+  </div>
+
+  <!-- コンテンツエリア -->
+  <div class="content-area">
+
+    <!-- シェブロンステージ -->
+    <div class="chevron-stepper" id="chevronStepper">
+      <!-- JSで描画 -->
+    </div>
+
+    <!-- アラートバナー -->
+    <div class="alert-banner" id="alertBanner" style="display:none;">
+      <span class="material-icons alert-banner-icon">error</span>
+      <div class="alert-banner-content">
+        <div class="alert-banner-title" id="alertTitle">要対応：この商談は停滞しています</div>
+        <div class="alert-banner-desc" id="alertDesc"></div>
+      </div>
+    </div>
+
+    <!-- 基本情報カード -->
+    <div class="card">
+      <div class="card-header">
+        <span><span class="material-icons">info</span>基本情報</span>
+      </div>
+      <div class="card-body">
+        <table class="info-table" id="basicInfo">
+          <!-- JSで描画 -->
+        </table>
+      </div>
+    </div>
+
+    <!-- 受注予定 / 提案情報 -->
+    <div class="card">
+      <div class="card-header">
+        <span><span class="material-icons">paid</span>受注予定 / 提案情報</span>
+      </div>
+      <div class="card-body has-padding">
+        <div class="forecast-grid" id="forecastGrid">
+          <!-- JSで描画 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- アクション履歴 -->
+    <div class="card">
+      <div class="card-header">
+        <span><span class="material-icons">history</span>アクション履歴</span>
+        <a href="SC-038_activity_register.html" class="btn btn-primary btn-sm" style="text-decoration:none;">
+          <span class="material-icons" style="font-size:16px;color:#fff;">add</span>新規登録
+        </a>
+      </div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>担当者</th>
+                <th>AC日</th>
+                <th>種別</th>
+                <th>相手先</th>
+                <th>内容</th>
+                <th>課題</th>
+                <th>次回AC日</th>
+                <th>ステージ</th>
+                <th>次回AC内容</th>
+              </tr>
+            </thead>
+            <tbody id="activityTableBody">
+              <!-- JSで描画 -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info" id="paginationInfo">全 0 件中 1〜0 件を表示</div>
+          <div class="pagination-controls">
+            <span class="sort-label">表示件数:</span>
+            <select class="page-size-select">
+              <option>50</option>
+              <option>100</option>
+              <option>200</option>
+            </select>
+            <button class="pagination-btn" disabled>＜</button>
+            <span class="pagination-current">1</span>
+            <button class="pagination-btn">＞</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== 編集モーダル ===== -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>商談情報の編集</h3>
+      <button class="modal-close" onclick="closeEditModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">アカウント担当（複数選択可）</label>
+        <div class="multi-select" id="msStaff">
+          <div class="multi-select-tags">
+            <input type="text" class="multi-select-input" placeholder="名前で検索...">
+          </div>
+          <div class="multi-select-dropdown"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">デリバリー担当（複数選択可）</label>
+        <div class="multi-select" id="msDeliveryStaff">
+          <div class="multi-select-tags">
+            <input type="text" class="multi-select-input" placeholder="名前で検索...">
+          </div>
+          <div class="multi-select-dropdown"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">顧客（複数選択可）</label>
+        <div class="multi-select" id="msCustomers">
+          <div class="multi-select-tags">
+            <input type="text" class="multi-select-input" placeholder="名前で検索...">
+          </div>
+          <div class="multi-select-dropdown"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">獲得チャネル</label>
+          <select class="form-select" id="modalChannel">
+            <option>展示会</option>
+            <option>アウトバウンド</option>
+            <option>知人</option>
+            <option>講演・イベント</option>
+            <option>レディクル</option>
+            <option>アイスマイリー</option>
+            <option>顧問バンク</option>
+            <option>社内横展開</option>
+            <option>インバウンド</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">部署カテゴリ</label>
+          <select class="form-select" id="modalDeptCategory">
+            <option>経営企画</option>
+            <option>DX</option>
+            <option>業務部門</option>
+            <option>情報システム</option>
+            <option>その他</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">提案予定商材</label>
+          <select class="form-select" id="modalProduct">
+            <option>戦略コンサル</option>
+            <option>DX伴走支援</option>
+            <option>システム開発</option>
+            <option>単発AI開発</option>
+            <option>タレントシェア</option>
+            <option>研修</option>
+            <option>AIプロダクト</option>
+            <option>小澤顧問サービス</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PJ種別</label>
+          <select class="form-select" id="modalPjType">
+            <option>ドアオープン</option>
+            <option>本丸</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">予算規模</label>
+          <input type="text" class="form-input" id="modalBudget" placeholder="例: 10,000,000" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ランク</label>
+          <select class="form-select" id="modalRank">
+            <option>松</option>
+            <option>竹</option>
+            <option>梅</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">提案額：PJ総額</label>
+          <input type="text" class="form-input" id="modalProposalTotal" placeholder="例: 9,500,000" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">提案額：月単価</label>
+          <input type="text" class="form-input" id="modalProposalMonthly" placeholder="例: 800,000" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">受注金額</label>
+          <input type="text" class="form-input" id="modalOrderAmount" placeholder="例: 8,000,000" style="width:100%;">
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">受注時期（開始月）</label>
+          <input type="month" class="form-input" id="modalOrderDate" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">クローズ目標月</label>
+          <input type="month" class="form-input" id="modalCloseTarget" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">初回面談日</label>
+          <input type="date" class="form-input" id="modalFirstMeetingDate" style="width:100%;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ニーズ・課題</label>
+        <textarea class="form-textarea" id="modalNeeds"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeEditModal()">キャンセル</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEdit()">
+        <span class="material-icons" style="font-size:16px;color:#fff;">save</span>保存
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 商談ステージ定義（SC-082準拠） =====
+const DEAL_STAGES = [
+  { id: 'appo',             name: 'アポ設定中',               icon: 'calendar_today' },
+  { id: 'needs',            name: '面談：ニーズ確認中',       icon: 'hearing' },
+  { id: 'solution',         name: '面談：ソリューション提示中', icon: 'lightbulb' },
+  { id: 'proposal',         name: '本提案中',                 icon: 'description' },
+  { id: 'negotiation',      name: '条件交渉中',               icon: 'handshake' },
+  { id: 'decision_support', name: '意思決定支援中',           icon: 'support_agent' },
+  { id: 'contract',         name: '契約完了',                 icon: 'verified' },
+  { id: 'pic_change',       name: 'PICチェンジ中',            icon: 'swap_horiz' },
+  { id: 'lost',             name: '見送り',                   icon: 'cancel' },
+];
+
+const STAFF_COLORS = {
+  '山田': '#2a5f41',
+  '佐藤': '#1a5276',
+  '田中': '#e67e22',
+  '鈴木': '#9b59b6',
+  '林':   '#c0612b',
+  '中村': '#16a085',
+};
+
+// ===== サンプルデータ =====
+const dealsDB = {
+  1: {
+    id: 1, stage: 'proposal',
+    title: 'AI導入支援プロジェクト',
+    dealTitle: 'AI伴走支援（初回）',
+    company: '○○株式会社', companyId: 1,
+    dept: 'DX推進室', deptCategory: 'DX',
+    pjType: 'ドアオープン',
+    staff: '山田', deliveryStaff: '林',
+    customers: [
+      { name: '佐藤 部長', isKeyman: true },
+      { name: '田中 課長', isKeyman: false },
+      { name: '山口 担当', isKeyman: false },
+    ],
+    channel: '展示会',
+    product: 'DX伴走支援',
+    needs: 'DX推進室との初回接触。AI導入に関心が高く、特に業務効率化に課題感あり。次回は具体的なソリューション提案を予定。',
+    acquiredDate: '2025-12-20',
+    firstMeetingDate: '2026-01-05',
+    lastActionDate: '2026-02-01',
+    nextActionDate: '2026-02-20',
+    budget: '10,000,000',
+    rank: '松',
+    proposalTotal: '9,500,000',
+    proposalMonthly: '800,000',
+    orderAmount: '',
+    orderDate: '',
+    closeTarget: '2026-04',
+    linkedLead: { id: 1, title: 'AI導入相談（リード）' },
+    linkedHonmaru: { id: 2, title: '全社DX推進プロジェクト' },
+    linkedDoorOpen: null,
+    activities: [
+      { staff: '山田', date: '2026-02-01', type: 'MTG', customer: '佐藤 部長', content: '要件整理の方向性について議論。次回は具体的なソリューション提案を予定。', hasIssue: true, nextDate: '2026-02-20', stage: '本提案中', nextAction: 'ソリューション提案資料の作成・提出' },
+      { staff: '山田', date: '2026-01-15', type: 'メール', customer: '田中 課長', content: '資料送付、次回日程調整の依頼を実施。', hasIssue: false, nextDate: '', stage: '面談：ソリューション提示中', nextAction: '' },
+      { staff: '山田', date: '2026-01-05', type: 'MTG', customer: '佐藤 部長', content: '初回ヒアリング。AI導入に関心あり、課題感をヒアリング。', hasIssue: false, nextDate: '2026-01-15', stage: '面談：ニーズ確認中', nextAction: '課題整理資料の送付' },
+      { staff: '佐藤', date: '2025-12-20', type: '展示会', customer: '佐藤 部長', content: '展示会にて名刺交換。DX推進について関心あり。', hasIssue: false, nextDate: '2026-01-05', stage: 'アポ設定中', nextAction: '初回ヒアリングの日程調整' },
+    ],
+  },
+  2: {
+    id: 2, stage: 'negotiation',
+    title: 'ERPシステム刷新プロジェクト',
+    dealTitle: 'ERP導入支援',
+    company: 'インターナショナル商事', companyId: 2,
+    dept: '経理部', deptCategory: '業務部門',
+    pjType: '本丸',
+    staff: '山田', deliveryStaff: '田中',
+    customers: [
+      { name: '木村 CFO', isKeyman: true },
+      { name: '西田 課長', isKeyman: false },
+    ],
+    channel: '社内横展開',
+    product: 'システム開発',
+    needs: 'ERP刷新による業務効率化。現行SAPの保守切れに伴い新規導入を検討。',
+    acquiredDate: '2026-01-10',
+    firstMeetingDate: '2026-01-20',
+    lastActionDate: '2026-03-02',
+    nextActionDate: '2026-03-06',
+    budget: '50,000,000',
+    rank: '松',
+    proposalTotal: '45,000,000',
+    proposalMonthly: '3,000,000',
+    orderAmount: '42,000,000',
+    orderDate: '2026-05',
+    closeTarget: '2026-04',
+    linkedLead: { id: 8, title: 'ERP導入相談（リード）' },
+    linkedHonmaru: null,
+    linkedDoorOpen: { id: 1, title: 'AI導入支援プロジェクト' },
+    activities: [
+      { staff: '山田', date: '2026-03-02', type: 'MTG', customer: '木村 CFO', content: '最終提案。見積内容の確認と契約スケジュールの協議。', hasIssue: false, nextDate: '2026-03-06', stage: '条件交渉中', nextAction: '契約書ドラフトの作成・送付' },
+      { staff: '田中', date: '2026-02-15', type: 'MTG', customer: '西田 課長', content: '要件定義の詳細ヒアリング。現行フローの洗い出し完了。', hasIssue: false, nextDate: '2026-03-02', stage: '本提案中', nextAction: '最終提案の実施' },
+      { staff: '山田', date: '2026-01-20', type: 'MTG', customer: '木村 CFO', content: '初回ヒアリング。ERP刷新の背景と要件をヒアリング。', hasIssue: false, nextDate: '2026-02-15', stage: '面談：ニーズ確認中', nextAction: '要件定義の詳細ヒアリング' },
+    ],
+  },
+};
+
+// ===== ユーティリティ =====
+const today = new Date('2026-03-04');
+
+function getAlertStatus(nextAcDate) {
+  if (!nextAcDate) return null;
+  const d = new Date(nextAcDate);
+  const diff = Math.floor((d - today) / 86400000);
+  if (diff < 0) return 'overdue';
+  if (diff <= 3) return 'soon';
+  return null;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function formatAmount(val) {
+  if (!val) return '—';
+  return val.toLocaleString ? val.toLocaleString() + '円' : val + '円';
+}
+
+// ===== URLからID取得 =====
+function getDealIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get('id')) || 1;
+}
+
+// ===== シェブロンステージ描画 =====
+function renderChevronStepper(currentStage) {
+  const container = document.getElementById('chevronStepper');
+  const currentIdx = DEAL_STAGES.findIndex(s => s.id === currentStage);
+
+  container.innerHTML = DEAL_STAGES.map((stage, i) => {
+    let cls = '';
+    // PICチェンジ中と見送りは特殊表示
+    if (stage.id === 'pic_change') {
+      cls = currentStage === 'pic_change' ? 'special' : '';
+    } else if (stage.id === 'lost') {
+      cls = currentStage === 'lost' ? 'ended' : '';
+    } else if (currentStage === 'pic_change' || currentStage === 'lost') {
+      // 特殊ステージの場合、通常ステージはそのまま
+      cls = '';
+    } else {
+      if (i < currentIdx) cls = 'completed';
+      else if (i === currentIdx) cls = 'current';
+    }
+
+    return `<div class="chevron-step ${cls}">
+      <span class="material-icons">${(cls === 'completed') ? 'check' : stage.icon}</span>
+      ${stage.name}
+    </div>`;
+  }).join('');
+}
+
+// ===== 基本情報描画 =====
+function renderBasicInfo(deal) {
+  const grid = document.getElementById('basicInfo');
+
+  // 顧客表示
+  const keyman = deal.customers.find(c => c.isKeyman);
+  const othersCount = deal.customers.length - 1;
+  let customerHTML = '';
+  if (keyman) {
+    customerHTML += `<span style="display:inline-flex;align-items:center;gap:4px;">
+      <span class="material-icons keyman-star">star</span>${keyman.name}
+    </span>`;
+  }
+  if (othersCount > 0) {
+    customerHTML += `<span class="customer-more">+${othersCount}</span>`;
+  }
+
+  // 担当者表示（アカウント担当 + デリバリー担当）
+  const staffColor = STAFF_COLORS[deal.staff] || '#7f8c8d';
+  let staffHTML = `
+    <span class="staff-tag">
+      <span class="staff-role-label">AC</span>
+      <span class="staff-avatar" style="background:${staffColor}">${deal.staff[0]}</span>
+      <span class="staff-name">${deal.staff}</span>
+    </span>`;
+  if (deal.deliveryStaff) {
+    const dlvColor = STAFF_COLORS[deal.deliveryStaff] || '#7f8c8d';
+    staffHTML += `
+    <span class="staff-tag" style="margin-left:6px;">
+      <span class="staff-role-label delivery">DL</span>
+      <span class="staff-avatar" style="background:${dlvColor}">${deal.deliveryStaff[0]}</span>
+      <span class="staff-name">${deal.deliveryStaff}</span>
+    </span>`;
+  }
+
+  // 日付アラート
+  const alertSt = getAlertStatus(deal.nextActionDate);
+  const nextAcClass = alertSt === 'overdue' ? 'date-overdue' : alertSt === 'soon' ? 'date-soon' : '';
+  const nextAcSuffix = alertSt === 'overdue' ? ' (超過)' : alertSt === 'soon' ? ' (近日)' : '';
+
+  grid.innerHTML = `
+    <tr>
+      <th>顧客</th>
+      <td>${customerHTML}</td>
+      <th>担当者</th>
+      <td>${staffHTML}</td>
+      <th>獲得チャネル</th>
+      <td>${deal.channel}</td>
+      <th>PJ種別</th>
+      <td style="border-right:none;">${deal.pjType}</td>
+    </tr>
+    <tr>
+      <th>商材</th>
+      <td>${deal.product}</td>
+      <th>部署</th>
+      <td>${deal.dept}（${deal.deptCategory}）</td>
+      <th>獲得日</th>
+      <td>${formatDate(deal.acquiredDate)}</td>
+      <th>初回面談日</th>
+      <td style="border-right:none;">${formatDate(deal.firstMeetingDate)}</td>
+    </tr>
+    <tr>
+      <th>最終AC日</th>
+      <td>${formatDate(deal.lastActionDate)}</td>
+      <th>次回AC日</th>
+      <td><span class="${nextAcClass}">${formatDate(deal.nextActionDate)}${nextAcSuffix}</span></td>
+      <th>予算規模</th>
+      <td>${deal.budget ? deal.budget + '円' : '—'}</td>
+      <th>ランク</th>
+      <td style="border-right:none;">${deal.rank || '—'}</td>
+    </tr>
+    <tr>
+      <th>ニーズ・課題</th>
+      <td colspan="7" class="full" style="border-right:none;">${deal.needs}</td>
+    </tr>
+  `;
+
+}
+
+// ===== 受注予定/提案情報 =====
+function renderForecast(deal) {
+  const grid = document.getElementById('forecastGrid');
+  grid.innerHTML = `
+    <div class="forecast-item">
+      <span class="forecast-label">提案額：PJ総額</span>
+      <span class="forecast-value amount">${deal.proposalTotal ? deal.proposalTotal + '円' : '—'}</span>
+    </div>
+    <div class="forecast-item">
+      <span class="forecast-label">提案額：月単価</span>
+      <span class="forecast-value amount">${deal.proposalMonthly ? deal.proposalMonthly + '円' : '—'}</span>
+    </div>
+    <div class="forecast-item">
+      <span class="forecast-label">受注金額</span>
+      <span class="forecast-value amount">${deal.orderAmount ? deal.orderAmount + '円' : '—'}</span>
+    </div>
+    <div class="forecast-item">
+      <span class="forecast-label">受注時期（開始月）</span>
+      <span class="forecast-value">${deal.orderDate || '—'}</span>
+    </div>
+    <div class="forecast-item">
+      <span class="forecast-label">クローズ目標月</span>
+      <span class="forecast-value">${deal.closeTarget || '—'}</span>
+    </div>
+  `;
+}
+
+// ===== アクション一覧描画 =====
+function renderActivities(activities) {
+  const tbody = document.getElementById('activityTableBody');
+
+  if (!activities || activities.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:#95a5a6;">アクション履歴がありません</td></tr>';
+    document.getElementById('paginationInfo').textContent = '全 0 件中 0〜0 件を表示';
+    return;
+  }
+
+  tbody.innerHTML = activities.map(a => {
+    const dateAlert = getAlertStatus(a.nextDate);
+    const nextAcClass = dateAlert === 'overdue' ? 'date-overdue' : dateAlert === 'soon' ? 'date-soon' : '';
+    return `
+      <tr onclick="window.location.href='SC-038_activity_register.html'">
+        <td>${a.staff}</td>
+        <td>${formatDate(a.date)}</td>
+        <td>${a.type}</td>
+        <td>${a.customer}</td>
+        <td class="content-preview">${a.content}</td>
+        <td><span class="issue-badge ${a.hasIssue ? 'issue-yes' : 'issue-no'}">${a.hasIssue ? '有' : '無'}</span></td>
+        <td class="${nextAcClass}">${formatDate(a.nextDate)}</td>
+        <td>${a.stage}</td>
+        <td class="content-preview">${a.nextAction || ''}</td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('paginationInfo').textContent = `全 ${activities.length} 件中 1〜${activities.length} 件を表示`;
+}
+
+// ===== アラートバナー =====
+function renderAlert(deal) {
+  const alertSt = getAlertStatus(deal.nextActionDate);
+  const banner = document.getElementById('alertBanner');
+  if (alertSt === 'overdue') {
+    banner.style.display = 'flex';
+    banner.classList.remove('warn');
+    document.getElementById('alertTitle').textContent = '要対応：この商談は停滞しています';
+    document.getElementById('alertDesc').textContent =
+      `次回アクション日（${formatDate(deal.nextActionDate)}）を超過しています。アクションを登録してください。`;
+  } else if (alertSt === 'soon') {
+    banner.style.display = 'flex';
+    banner.classList.add('warn');
+    document.getElementById('alertTitle').textContent = '注意：次回アクション日が近づいています';
+    document.getElementById('alertDesc').textContent =
+      `次回アクション日（${formatDate(deal.nextActionDate)}）が3日以内です。`;
+  }
+}
+
+// ===== マスタデータ =====
+const STAFF_MASTER = ['山田', '佐藤', '田中', '鈴木', '林', '中村', '石井', '渡辺', '小林', '加藤', '吉田', '松本', '井上', '木村', '清水'];
+const CUSTOMER_MASTER = [
+  '佐藤 部長', '田中 課長', '山口 担当', '木村 CFO', '西田 課長',
+  '鈴木 部長', '高橋 主任', '高橋 課長', '伊藤 室長',
+  '佐々木 主任', '佐々木 取締役', '岡田 部長',
+  '中山 部長', '藤田 課長', '大野 主任', '前田 係長', '小川 担当',
+  '村田 取締役', '長谷川 部長', '森 課長', '池田 主任', '原田 担当'
+];
+
+let currentDeal = null;
+
+// ===== 検索付き複数選択コンポーネント =====
+class MultiSelect {
+  constructor(containerId, allOptions) {
+    this.container = document.getElementById(containerId);
+    this.allOptions = allOptions;
+    this.selected = [];
+    this.tagsEl = this.container.querySelector('.multi-select-tags');
+    this.input = this.container.querySelector('.multi-select-input');
+    this.dropdown = this.container.querySelector('.multi-select-dropdown');
+    this._bind();
+  }
+
+  _bind() {
+    this.input.addEventListener('focus', () => this._showDropdown());
+    this.input.addEventListener('input', () => this._showDropdown());
+    this.tagsEl.addEventListener('click', () => this.input.focus());
+    document.addEventListener('click', (e) => {
+      if (!this.container.contains(e.target)) this.dropdown.classList.remove('open');
+    });
+  }
+
+  setSelected(values) {
+    this.selected = [...values];
+    this._renderTags();
+  }
+
+  getSelected() { return [...this.selected]; }
+
+  _showDropdown() {
+    const q = this.input.value.trim().toLowerCase();
+    const filtered = this.allOptions.filter(o => o.toLowerCase().includes(q));
+    if (filtered.length === 0) {
+      this.dropdown.innerHTML = '<div class="multi-select-empty">該当なし</div>';
+    } else {
+      this.dropdown.innerHTML = filtered.map(name => {
+        const isSel = this.selected.includes(name);
+        return `<div class="multi-select-option ${isSel ? 'selected' : ''}" data-value="${name}">
+          ${isSel ? '<span class="material-icons">check</span>' : '<span style="width:16px"></span>'}
+          ${name}
+        </div>`;
+      }).join('');
+      this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
+        opt.addEventListener('click', () => this._toggle(opt.dataset.value));
+      });
+    }
+    this.dropdown.classList.add('open');
+  }
+
+  _toggle(value) {
+    const idx = this.selected.indexOf(value);
+    if (idx >= 0) this.selected.splice(idx, 1);
+    else this.selected.push(value);
+    this._renderTags();
+    this._showDropdown();
+    this.input.focus();
+  }
+
+  _renderTags() {
+    const existing = this.tagsEl.querySelectorAll('.multi-select-tag');
+    existing.forEach(el => el.remove());
+    this.selected.forEach(name => {
+      const tag = document.createElement('span');
+      tag.className = 'multi-select-tag';
+      tag.innerHTML = `${name}<button class="multi-select-tag-remove" type="button"><span class="material-icons">close</span></button>`;
+      tag.querySelector('button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggle(name);
+      });
+      this.tagsEl.insertBefore(tag, this.input);
+    });
+    this.input.value = '';
+  }
+}
+
+let msStaff, msDeliveryStaff, msCustomers;
+
+// ===== モーダル開閉 =====
+function openEditModal() {
+  if (!currentDeal) return;
+  const deal = currentDeal;
+
+  if (!msStaff) msStaff = new MultiSelect('msStaff', STAFF_MASTER);
+  if (!msDeliveryStaff) msDeliveryStaff = new MultiSelect('msDeliveryStaff', STAFF_MASTER);
+  if (!msCustomers) msCustomers = new MultiSelect('msCustomers', CUSTOMER_MASTER);
+
+  msStaff.setSelected([deal.staff]);
+  msDeliveryStaff.setSelected(deal.deliveryStaff ? [deal.deliveryStaff] : []);
+  msCustomers.setSelected(deal.customers.map(c => c.name));
+
+  document.getElementById('modalChannel').value = deal.channel;
+  document.getElementById('modalDeptCategory').value = deal.deptCategory;
+  document.getElementById('modalProduct').value = deal.product;
+  document.getElementById('modalPjType').value = deal.pjType;
+  document.getElementById('modalBudget').value = deal.budget || '';
+  document.getElementById('modalRank').value = deal.rank || '';
+  document.getElementById('modalProposalTotal').value = deal.proposalTotal || '';
+  document.getElementById('modalProposalMonthly').value = deal.proposalMonthly || '';
+  document.getElementById('modalOrderAmount').value = deal.orderAmount || '';
+  document.getElementById('modalOrderDate').value = deal.orderDate || '';
+  document.getElementById('modalCloseTarget').value = deal.closeTarget || '';
+  document.getElementById('modalFirstMeetingDate').value = deal.firstMeetingDate || '';
+  document.getElementById('modalNeeds').value = deal.needs;
+
+  document.getElementById('editModal').classList.add('active');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('active');
+}
+
+function saveEdit() {
+  alert('保存しました（デモ）');
+  closeEditModal();
+  renderPage();
+}
+
+// ===== ページ描画 =====
+function renderPage() {
+  const dealId = getDealIdFromURL();
+  currentDeal = dealsDB[dealId] || dealsDB[1];
+  const deal = currentDeal;
+
+  // ページタイトル更新
+  document.getElementById('pageTitle').textContent = deal.title;
+  document.getElementById('pageSubtitle').textContent = `${deal.company} / ${deal.dept}`;
+  document.title = `${deal.title} | 商談詳細 | 営業管理システム`;
+
+  renderChevronStepper(deal.stage);
+  renderAlert(deal);
+  renderBasicInfo(deal);
+  renderForecast(deal);
+  renderActivities(deal.activities);
+}
+
+// ===== サイドバー =====
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const main = document.getElementById('mainWrapper');
+  sidebar.classList.toggle('collapsed');
+  main.classList.toggle('expanded');
+}
+
+function toggleCategory(header) {
+  header.parentElement.classList.toggle('collapsed');
+}
+
+// ===== 初期化 =====
+renderPage();
+</script>
+</body>
+</html>

@@ -94,22 +94,12 @@
       justify-content: center;
       padding: 0 4px;
     }
-    .main-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
     .page-title {
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 700;
       color: #1e4530;
     }
+    .page-subtitle { font-size: 13px; color: #7f8c8d; }
     .btn {
       padding: 8px 16px;
       border-radius: 6px;
@@ -138,10 +128,12 @@
     .btn-secondary:hover {
       background: #d5dbdb;
     }
-    .btn-sm {
-      padding: 4px 10px;
-      font-size: 12px;
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-outline {
+      background: #fff; color: #1e4530;
+      border: 1px solid #dce0e4;
     }
+    .btn-outline:hover { background: #f8f9fa; border-color: #b2bec3; }
     .card {
       background: #fff;
       border-radius: 8px;
@@ -201,26 +193,41 @@
       border-collapse: collapse;
       font-size: 13px;
     }
+    .list-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
     .data-table th {
       background: #f8f9fa;
-      padding: 12px 10px;
+      padding: 10px 12px;
       text-align: left;
       font-weight: 600;
       color: #1e4530;
-      border-bottom: 2px solid #ecf0f1;
+      border-bottom: 2px solid #dce0e4;
       white-space: nowrap;
+      position: sticky; top: 0; z-index: 1;
     }
+    .data-table th.sortable { cursor: pointer; user-select: none; padding-right: 22px; position: relative; }
+    .data-table th.sortable:hover { background: #edf1f4; }
+    .data-table th.sortable::after { content: "↕"; position: absolute; right: 6px; color: #b2bec3; font-size: 10px; }
     .data-table td {
-      padding: 12px 10px;
-      border-bottom: 1px solid #ecf0f1;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f2f5;
       vertical-align: middle;
     }
-    .data-table tbody tr:hover {
-      background: #f8f9fa;
+    .data-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    .data-table tbody tr:hover { background: #f5f8f5; }
+    .tbl-name { font-weight: 600; color: #1e4530; }
+    .tbl-company { font-weight: 600; color: #2d3436; }
+    .tbl-sub { font-size: 11px; color: #95a5a6; margin-top: 2px; }
+    .meishi-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;
     }
-    .data-table tbody tr.clickable {
-      cursor: pointer;
-    }
+    .meishi-badge.has { background: #e8f4fd; color: #1a6fa8; }
+    .meishi-badge.none { background: #f0f2f5; color: #95a5a6; }
     .link {
       color: #2a5f41;
       text-decoration: none;
@@ -254,8 +261,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 0;
-      margin-top: 16px;
+      padding: 12px 16px;
+      border-top: 1px solid #f0f2f5;
     }
     .pagination-info {
       color: #7f8c8d;
@@ -385,6 +392,76 @@
       margin-left: 240px;
       padding-top: 56px;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== ページトップバー ===== */
+    .page-top-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .page-top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .page-top-bar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ===== フィルターバー ===== */
+    .filter-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .filter-label { font-size: 12px; color: #7f8c8d; font-weight: 600; white-space: nowrap; }
+    .filter-select-bar {
+      border: 1px solid #dce0e4; border-radius: 6px;
+      padding: 5px 10px; font-size: 13px; color: #1e4530;
+      background: #f8f9fa; cursor: pointer; outline: none;
+    }
+    .filter-select-bar:focus { border-color: #2a5f41; background: #fff; }
+    .filter-search-bar {
+      display: flex; align-items: center; gap: 4px;
+      border: 1px solid #dce0e4; border-radius: 6px;
+      padding: 4px 10px; background: #f8f9fa;
+    }
+    .filter-search-bar input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: #1e4530; width: 200px;
+    }
+    .filter-search-bar .material-icons { font-size: 18px; color: #95a5a6; }
+    .filter-actions {
+      display: flex; align-items: center; gap: 8px;
+      margin-left: auto;
+    }
+    .btn-filter-search {
+      background: #2a5f41; color: #fff;
+      border: none; border-radius: 6px;
+      padding: 5px 14px; font-size: 13px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 4px;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .btn-filter-search:hover { background: #1e4530; }
+    .btn-filter-search .material-icons { font-size: 16px; }
+    .btn-filter-clear {
+      background: #fff; color: #636e72;
+      border: 1px solid #dce0e4; border-radius: 6px;
+      padding: 5px 12px; font-size: 13px; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .btn-filter-clear:hover { background: #f8f9fa; border-color: #b2bec3; }
+
+    /* ===== コンテンツエリア ===== */
+    .content-area {
+      padding: 20px 24px;
+      flex: 1;
     }
     /* レスポンシブ */
     @media (max-width: 768px) {
@@ -739,92 +816,89 @@
   </aside>
 
   <!-- メインコンテンツ -->
-  <div class="main-wrapper">
-  <main class="main-container">
-    <div class="page-header">
-      <div class="page-header-left">
-        <h1 class="page-title">顧客マスタ一覧</h1>
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- ページトップバー -->
+    <div class="page-top-bar">
+      <div class="page-top-bar-left">
+        <div>
+          <div class="page-title">顧客一覧</div>
+          <div class="page-subtitle">全 <strong>80</strong> 件</div>
+        </div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn btn-outline" onclick="openOcrModal()">
-          <span class="material-icons" style="font-size:18px">document_scanner</span>名刺OCR
+      <div class="page-top-bar-right">
+        <button class="btn btn-outline btn-sm" onclick="openOcrModal()">
+          <span class="material-icons">document_scanner</span>名刺OCR
         </button>
-        <button class="btn btn-primary" onclick="openCreateModal()">＋ 新規作成</button>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+          <span class="material-icons">add</span>新規作成
+        </button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">検索・フィルタ</div>
-      <div class="card-body">
-        <div class="search-section">
-          <div class="form-group">
-            <label class="form-label">顧客名</label>
-            <input type="text" class="form-input" placeholder="部分一致で検索">
-          </div>
-          <div class="form-group">
-            <label class="form-label">企業名</label>
-            <input type="text" class="form-input" placeholder="部分一致で検索">
-          </div>
-          <div class="form-group">
-            <label class="form-label">役職</label>
-            <input type="text" class="form-input" placeholder="部分一致で検索" style="min-width: 120px;">
-          </div>
-        </div>
-        <div class="search-actions">
-          <button class="btn btn-primary">検索</button>
-          <button class="btn btn-secondary">クリア</button>
-        </div>
+    <!-- フィルターバー -->
+    <div class="filter-bar">
+      <span class="filter-label">絞り込み</span>
+      <div class="filter-search-bar">
+        <span class="material-icons">search</span>
+        <input type="text" id="searchInput" placeholder="顧客名・企業名で検索">
+      </div>
+      <input type="text" class="filter-select-bar" id="positionInput" placeholder="役職">
+      <div class="filter-actions">
+        <button class="btn-filter-search">
+          <span class="material-icons">search</span>検索
+        </button>
+        <button class="btn-filter-clear">クリア</button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">顧客一覧（80件）</div>
-      <div class="card-body">
-        <div class="table-container">
+    <div class="content-area">
+      <div class="list-card">
+        <div style="overflow-x:auto;">
           <table class="data-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>顧客名</th>
-                <th>所属企業</th>
+                <th class="sortable">顧客名</th>
+                <th class="sortable">所属企業</th>
                 <th>役職</th>
-                <th>最終更新日</th>
+                <th>名刺</th>
+                <th class="sortable">最終更新日</th>
               </tr>
             </thead>
             <tbody>
-              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
-                <td>P-001</td>
-                <td><a href="SC-065_customer_detail.html" class="link">山田 太郎</a></td>
-                <td><a href="SC-062_company_detail.html" class="link">○○株式会社</a></td>
+              <tr onclick="location.href='SC-065_customer_detail.html'">
+                <td><span class="tbl-name">山田 太郎</span></td>
+                <td><span class="tbl-company">○○株式会社</span></td>
                 <td>部長</td>
+                <td><span class="meishi-badge has">有り</span></td>
                 <td>2026/02/18</td>
               </tr>
-              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
-                <td>P-002</td>
-                <td><a href="SC-065_customer_detail.html" class="link">佐藤 花子</a></td>
-                <td><a href="SC-062_company_detail.html" class="link">△△合同会社</a></td>
+              <tr onclick="location.href='SC-065_customer_detail.html'">
+                <td><span class="tbl-name">佐藤 花子</span></td>
+                <td><span class="tbl-company">△△合同会社</span></td>
                 <td>Mgr</td>
+                <td><span class="meishi-badge none">無し</span></td>
                 <td>2026/02/10</td>
               </tr>
-              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
-                <td>P-003</td>
-                <td><a href="SC-065_customer_detail.html" class="link">田中 一郎</a></td>
-                <td><a href="SC-062_company_detail.html" class="link">□□コーポレーション</a></td>
+              <tr onclick="location.href='SC-065_customer_detail.html'">
+                <td><span class="tbl-name">田中 一郎</span></td>
+                <td><span class="tbl-company">□□コーポレーション</span></td>
                 <td>課長</td>
+                <td><span class="meishi-badge has">有り</span></td>
                 <td>2026/02/08</td>
               </tr>
-              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
-                <td>P-004</td>
-                <td><a href="SC-065_customer_detail.html" class="link">高橋 次郎</a></td>
-                <td><a href="SC-062_company_detail.html" class="link">××ホールディングス</a></td>
+              <tr onclick="location.href='SC-065_customer_detail.html'">
+                <td><span class="tbl-name">高橋 次郎</span></td>
+                <td><span class="tbl-company">××ホールディングス</span></td>
                 <td>担当者</td>
+                <td><span class="meishi-badge none">無し</span></td>
                 <td>2026/02/05</td>
               </tr>
-              <tr class="clickable" onclick="location.href='SC-065_customer_detail.html'">
-                <td>P-005</td>
-                <td><a href="SC-065_customer_detail.html" class="link">伊藤 三郎</a></td>
-                <td><a href="SC-062_company_detail.html" class="link">◇◇テクノロジー</a></td>
-                <td>-</td>
+              <tr onclick="location.href='SC-065_customer_detail.html'">
+                <td><span class="tbl-name">伊藤 三郎</span></td>
+                <td><span class="tbl-company">◇◇テクノロジー</span></td>
+                <td>—</td>
+                <td><span class="meishi-badge has">有り</span></td>
                 <td>2026/02/01</td>
               </tr>
             </tbody>
@@ -832,9 +906,7 @@
         </div>
 
         <div class="pagination">
-          <div class="pagination-info">
-            全 80 件中 1 - 5 件を表示
-          </div>
+          <div class="pagination-info">全 80 件中 1〜5 件を表示</div>
           <div class="pagination-controls">
             <span class="sort-label">表示件数:</span>
             <select class="page-size-select">
@@ -850,9 +922,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </main>
-  </div>
+    </div><!-- /.content-area -->
+  </div><!-- /.main-wrapper -->
 
   <!-- 名刺OCRモーダル -->
   <div class="modal-overlay" id="ocrModal">

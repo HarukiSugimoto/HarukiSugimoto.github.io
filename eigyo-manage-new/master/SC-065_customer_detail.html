@@ -94,31 +94,8 @@
       color: #2a5f41;
       font-size: 16px;
     }
-    .main-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .page-header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .page-header-right {
-      display: flex;
-      gap: 8px;
-    }
-    .page-title {
-      font-size: 24px;
-      font-weight: 600;
-      color: #1e4530;
-    }
+    .page-title { font-size: 20px; font-weight: 700; color: #1e4530; }
+    .page-subtitle { font-size: 13px; color: #7f8c8d; }
     .btn {
       padding: 8px 16px;
       border-radius: 6px;
@@ -259,62 +236,51 @@
     }
     .data-table th {
       background: #f8f9fa;
-      padding: 12px 10px;
+      padding: 10px 12px;
       text-align: left;
       font-weight: 600;
       color: #1e4530;
-      border-bottom: 2px solid #ecf0f1;
+      border-bottom: 2px solid #dce0e4;
       white-space: nowrap;
+      position: sticky; top: 0; z-index: 1;
     }
     .data-table td {
-      padding: 12px 10px;
-      border-bottom: 1px solid #ecf0f1;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f2f5;
       vertical-align: middle;
     }
-    .data-table tbody tr:hover {
-      background: #f8f9fa;
+    .data-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    .data-table tbody tr:hover { background: #f5f8f5; }
+    .data-table tbody tr.row-alert-overdue { background: #fff5f5; }
+    .data-table tbody tr.row-alert-overdue:hover { background: #fee; }
+    .data-table tbody tr.row-alert-soon { background: #fffbf0; }
+    .data-table tbody tr.row-alert-soon:hover { background: #fff3d0; }
+    .tbl-alert-icon { color: #e74c3c; font-size: 17px; vertical-align: middle; }
+    .alert-tag {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: 10px;
+      font-size: 10px; font-weight: 700; white-space: nowrap;
     }
-    .badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 500;
+    .alert-tag.overdue { background: #fdecea; color: #c0392b; }
+    .alert-tag.soon    { background: #fef3e2; color: #d35400; }
+    .type-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
     }
-    .badge-lead {
-      background: #eaf5ee;
-      color: #2a5f41;
+    .type-badge.lead { background: #eaf5ee; color: #2a5f41; }
+    .type-badge.deal { background: #e8f4fd; color: #1a6fa8; }
+    .stage-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+      background: #ecf0f1; color: #636e72;
     }
-    .badge-deal {
-      background: #eafaf1;
-      color: #27ae60;
-    }
-    .stage-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    .stage-proposing {
-      background: #fff3cd;
-      color: #856404;
-    }
-    .stage-contact-before {
-      background: #e8f4fd;
-      color: #1e4530;
-    }
-    .note {
-      font-size: 12px;
-      color: #7f8c8d;
-      margin-bottom: 12px;
-    }
+    .keyman-star { color: #f1c40f; font-size: 16px; }
     .pagination {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 0;
-      margin-top: 16px;
+      padding: 12px 16px;
+      border-top: 1px solid #f0f2f5;
     }
     .pagination-info {
       color: #7f8c8d;
@@ -458,6 +424,45 @@
       margin-left: 240px;
       padding-top: 56px;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== ページトップバー ===== */
+    .page-top-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .page-top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .page-top-bar-right { display: flex; align-items: center; gap: 10px; }
+    .btn-outline {
+      background: #fff; color: #1e4530;
+      border: 1px solid #dce0e4;
+    }
+    .btn-outline:hover { background: #f8f9fa; border-color: #b2bec3; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* ===== コンテンツエリア ===== */
+    .content-area { padding: 20px 24px; flex: 1; }
+
+    /* ===== リストカード（アカウント一覧用） ===== */
+    .list-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .list-card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f2f5;
+      font-weight: 600; font-size: 14px; color: #1e4530;
+      background: #f8f9fa;
     }
     /* レスポンシブ */
     @media (max-width: 768px) {
@@ -835,104 +840,117 @@
   </aside>
 
   <!-- メインコンテンツ -->
-  <div class="main-wrapper">
-  <main class="main-container">
-    <div class="page-header">
-      <div class="page-header-left">
-        <a href="SC-064_customer_list.html" class="btn btn-secondary">← 一覧へ戻る</a>
-        <h1 class="page-title">顧客マスタ詳細</h1>
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- ページトップバー -->
+    <div class="page-top-bar">
+      <div class="page-top-bar-left">
+        <a href="SC-064_customer_list.html" class="btn btn-outline btn-sm" title="一覧へ戻る" style="padding:4px 8px;">
+          <span class="material-icons" style="font-size:20px;">arrow_back</span>
+        </a>
+        <div>
+          <div class="page-title">山田 太郎</div>
+          <div class="page-subtitle">○○株式会社 / 部長</div>
+        </div>
       </div>
-      <div class="page-header-right">
-        <button class="btn btn-secondary" onclick="openOcrModal()">
-          <span class="material-icons" style="font-size:18px">document_scanner</span>名刺追加
+      <div class="page-top-bar-right">
+        <button class="btn btn-outline btn-sm" onclick="openOcrModal()">
+          <span class="material-icons">document_scanner</span>名刺追加
         </button>
-        <button class="btn btn-secondary" onclick="openEditModal()">編集</button>
+        <button class="btn btn-primary btn-sm" onclick="openEditModal()">編集</button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">顧客情報</div>
-      <div class="card-body">
-        <div class="detail-grid">
-          <div class="meishi-preview">
-            <div class="meishi-image">名刺画像プレビュー（JPEG/PNG）</div>
-            <span class="meishi-format">対応形式: JPEG, PNG</span>
-          </div>
-          <div class="info-section">
-            <div class="info-item">
-              <span class="info-label">顧客ID</span>
-              <span class="info-value">P-001</span>
+    <div class="content-area">
+
+      <!-- 顧客情報 -->
+      <div class="card">
+        <div class="card-header">顧客情報</div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="meishi-preview">
+              <div class="meishi-image">名刺画像プレビュー（JPEG/PNG）</div>
+              <span class="meishi-format">対応形式: JPEG, PNG</span>
             </div>
-            <div class="info-item">
-              <span class="info-label">氏名</span>
-              <span class="info-value">山田 太郎</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">所属企業名</span>
-              <span class="info-value"><a href="SC-062_company_detail.html" class="link">○○株式会社</a></span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">役職</span>
-              <span class="info-value">部長</span>
+            <div class="info-section">
+              <div class="info-item">
+                <span class="info-label">顧客ID</span>
+                <span class="info-value">P-001</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">氏名</span>
+                <span class="info-value">山田 太郎</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">所属企業名</span>
+                <span class="info-value"><a href="SC-062_company_detail.html" class="link">○○株式会社</a></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">役職</span>
+                <span class="info-value">部長</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header">アカウント一覧</div>
-      <div class="card-body">
-        <p class="note">※顧客×商談ユニットの中間でキーマン等を持つ想定</p>
-        <div class="table-container">
+      <!-- アカウント一覧 -->
+      <div class="list-card">
+        <div class="list-card-header">アカウント一覧</div>
+        <div style="overflow-x:auto;">
           <table class="data-table">
             <thead>
               <tr>
-                <th>アラート</th>
-                <th>キーマン</th>
-                <th>アカウントID</th>
-                <th>案件名/タイトル</th>
+                <th>要対応</th>
+                <th>KM</th>
+                <th>タイトル</th>
                 <th>種別</th>
                 <th>ステージ</th>
+                <th>次回AC日</th>
                 <th>最終アクション日</th>
               </tr>
             </thead>
             <tbody>
-              <tr class="clickable has-alert" onclick="location.href='../deal/SC-031_deal_detail.html'">
-                <td><span class="alert-icon">!</span></td>
+              <tr class="row-alert-overdue" onclick="location.href='../deal/SC-031_deal_detail.html'">
+                <td>
+                  <span class="alert-tag overdue">
+                    <span class="material-icons" style="font-size:12px;">error</span>AC日超過
+                  </span>
+                </td>
                 <td><span class="keyman-star">★</span></td>
-                <td>D-123</td>
                 <td>PoC提案</td>
-                <td>商談（ドアオープン）</td>
-                <td>提案中</td>
+                <td><span class="type-badge deal">商談</span></td>
+                <td><span class="stage-tag">本提案中</span></td>
+                <td style="color:#e74c3c;font-weight:600;">2026/02/10 ⚠️</td>
                 <td>2026/02/15</td>
               </tr>
-              <tr class="clickable" onclick="location.href='../lead/SC-021_lead_detail.html'">
+              <tr class="row-alert-soon" onclick="location.href='../lead/SC-021_lead_detail.html'">
+                <td>
+                  <span class="alert-tag soon">
+                    <span class="material-icons" style="font-size:12px;">schedule</span>3日以内
+                  </span>
+                </td>
                 <td></td>
-                <td></td>
-                <td>L-456</td>
                 <td>初回接触</td>
-                <td>リード</td>
-                <td>接触前</td>
+                <td><span class="type-badge lead">リード</span></td>
+                <td><span class="stage-tag">接触前</span></td>
+                <td style="color:#e67e22;font-weight:600;">2026/03/07</td>
                 <td>2026/02/01</td>
               </tr>
-              <tr class="clickable" onclick="location.href='../deal/SC-031_deal_detail.html'">
+              <tr onclick="location.href='../deal/SC-031_deal_detail.html'">
                 <td></td>
                 <td><span class="keyman-star">★</span></td>
-                <td>D-089</td>
                 <td>DX支援プロジェクト</td>
-                <td>商談（本丸）</td>
-                <td>受注済</td>
+                <td><span class="type-badge deal">商談</span></td>
+                <td><span class="stage-tag">契約完了</span></td>
+                <td>—</td>
                 <td>2025/12/20</td>
               </tr>
             </tbody>
           </table>
         </div>
-
         <div class="pagination">
-          <div class="pagination-info">
-            全 3 件中 1 - 3 件を表示
-          </div>
+          <div class="pagination-info">全 3 件中 1〜3 件を表示</div>
           <div class="pagination-controls">
             <span class="sort-label">表示件数:</span>
             <select class="page-size-select">
@@ -942,13 +960,13 @@
             </select>
             <button class="pagination-btn" disabled>＜</button>
             <span class="pagination-current">1</span>
-            <button class="pagination-btn">＞</button>
+            <button class="pagination-btn" disabled>＞</button>
           </div>
         </div>
       </div>
-    </div>
-  </main>
-  </div>
+
+    </div><!-- /.content-area -->
+  </div><!-- /.main-wrapper -->
 
   <!-- 名刺OCRモーダル -->
   <div class="modal-overlay" id="ocrModal">

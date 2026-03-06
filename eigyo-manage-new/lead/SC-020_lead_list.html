@@ -512,6 +512,94 @@
     .legend-dot {
       width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0;
     }
+
+    /* ===== モーダル ===== */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: 10px; width: 600px; max-width: 95vw;
+      max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid #f0f2f5;
+    }
+    .modal-header h3 { font-size: 16px; color: #1e4530; font-weight: 700; margin: 0; }
+    .modal-close {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      color: #95a5a6; display: flex; align-items: center; border-radius: 4px;
+    }
+    .modal-close:hover { background: #f0f2f5; color: #333; }
+    .modal-body { padding: 20px; }
+    .modal-footer {
+      padding: 16px 20px; border-top: 1px solid #f0f2f5;
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #7f8c8d; margin-bottom: 6px; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid #dce0e4; border-radius: 6px;
+      font-size: 13px; font-family: inherit; color: #333; transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none; border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1);
+    }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .company-row { display: flex; gap: 8px; align-items: flex-end; }
+    .company-row .form-select { flex: 1; }
+    .btn-add-company {
+      display: inline-flex; align-items: center; gap: 2px;
+      padding: 8px 12px; border: 1px solid #2a5f41; border-radius: 6px;
+      background: #fff; color: #2a5f41; font-size: 12px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: all 0.2s;
+    }
+    .btn-add-company:hover { background: #eef5f0; }
+    .btn-add-company .material-icons { font-size: 16px; }
+
+    /* ===== MultiSelect ===== */
+    .multi-select { position: relative; }
+    .multi-select-tags {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      padding: 6px 8px; border: 1px solid #dce0e4; border-radius: 6px;
+      min-height: 38px; cursor: text; transition: border-color 0.2s;
+    }
+    .multi-select-tags:focus-within { border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1); }
+    .multi-select-input {
+      border: none; outline: none; font-size: 13px; flex: 1; min-width: 80px;
+      padding: 2px 4px; font-family: inherit;
+    }
+    .multi-select-tag {
+      display: inline-flex; align-items: center; gap: 2px;
+      background: #eef5f0; color: #1e4530; border-radius: 4px;
+      padding: 2px 6px; font-size: 12px; font-weight: 500;
+    }
+    .multi-select-tag-remove {
+      background: none; border: none; cursor: pointer; padding: 0; display: flex;
+      color: #7f8c8d; transition: color 0.2s;
+    }
+    .multi-select-tag-remove .material-icons { font-size: 14px; }
+    .multi-select-tag-remove:hover { color: #e74c3c; }
+    .multi-select-dropdown {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid #dce0e4; border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 180px; overflow-y: auto; z-index: 10;
+    }
+    .multi-select-dropdown.open { display: block; }
+    .multi-select-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; font-size: 13px; cursor: pointer; transition: background 0.15s;
+    }
+    .multi-select-option:hover { background: #f0f2f5; }
+    .multi-select-option.selected { color: #2a5f41; font-weight: 600; }
+    .multi-select-option .material-icons { font-size: 16px; color: #2a5f41; }
+    .multi-select-empty { padding: 12px; font-size: 12px; color: #95a5a6; text-align: center; }
   </style>
 </head>
 <body>
@@ -626,7 +714,7 @@
       <button class="btn btn-outline btn-sm" onclick="alert('名刺OCR登録')">
         <span class="material-icons">document_scanner</span>名刺OCR
       </button>
-      <button class="btn btn-primary btn-sm" onclick="alert('新規リード登録')">
+      <button class="btn btn-primary btn-sm" onclick="openNewModal()">
         <span class="material-icons">add</span>新規登録
       </button>
     </div>
@@ -1191,8 +1279,210 @@ function openDetail(id) {
   location.href = `SC-021_lead_detail.html?id=${id}`;
 }
 
+// ===== 検索付き複数選択コンポーネント =====
+class MultiSelect {
+  constructor(containerId, allOptions) {
+    this.container = document.getElementById(containerId);
+    this.allOptions = allOptions;
+    this.selected = [];
+    this.tagsEl = this.container.querySelector('.multi-select-tags');
+    this.input = this.container.querySelector('.multi-select-input');
+    this.dropdown = this.container.querySelector('.multi-select-dropdown');
+    this._bind();
+  }
+  _bind() {
+    this.input.addEventListener('focus', () => this._showDropdown());
+    this.input.addEventListener('input', () => this._showDropdown());
+    this.tagsEl.addEventListener('click', () => this.input.focus());
+    document.addEventListener('click', (e) => {
+      if (!this.container.contains(e.target)) this.dropdown.classList.remove('open');
+    });
+  }
+  setSelected(values) { this.selected = [...values]; this._renderTags(); }
+  getSelected() { return [...this.selected]; }
+  _showDropdown() {
+    const q = this.input.value.trim().toLowerCase();
+    const filtered = this.allOptions.filter(o => o.toLowerCase().includes(q));
+    if (filtered.length === 0) {
+      this.dropdown.innerHTML = '<div class="multi-select-empty">該当なし</div>';
+    } else {
+      this.dropdown.innerHTML = filtered.map(name => {
+        const isSel = this.selected.includes(name);
+        return `<div class="multi-select-option ${isSel ? 'selected' : ''}" data-value="${name}">
+          ${isSel ? '<span class="material-icons">check</span>' : '<span style="width:16px"></span>'}
+          ${name}
+        </div>`;
+      }).join('');
+      this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
+        opt.addEventListener('click', () => this._toggle(opt.dataset.value));
+      });
+    }
+    this.dropdown.classList.add('open');
+  }
+  _toggle(value) {
+    const idx = this.selected.indexOf(value);
+    if (idx >= 0) this.selected.splice(idx, 1);
+    else this.selected.push(value);
+    this._renderTags();
+    this._showDropdown();
+    this.input.focus();
+  }
+  _renderTags() {
+    this.tagsEl.querySelectorAll('.multi-select-tag').forEach(el => el.remove());
+    this.selected.forEach(name => {
+      const tag = document.createElement('span');
+      tag.className = 'multi-select-tag';
+      tag.innerHTML = `${name}<button class="multi-select-tag-remove" type="button"><span class="material-icons">close</span></button>`;
+      tag.querySelector('button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggle(name);
+      });
+      this.tagsEl.insertBefore(tag, this.input);
+    });
+    this.input.value = '';
+  }
+}
+
+// ===== マスタデータ（モーダル用） =====
+const STAFF_MASTER = ['山田', '佐藤', '田中', '鈴木', '林', '中村', '石井', '渡辺', '小林', '加藤', '吉田', '松本', '井上', '木村', '清水'];
+const COMPANY_MASTER = [...new Set(leads.map(l => l.company))].sort((a, b) => a.localeCompare(b, 'ja'));
+
+// ===== 新規登録モーダル =====
+let msNewStaff;
+
+function openNewModal() {
+  if (!msNewStaff) msNewStaff = new MultiSelect('msNewStaff', STAFF_MASTER);
+  msNewStaff.setSelected([]);
+
+  // 企業名セレクトを動的生成
+  const companySelect = document.getElementById('newCompany');
+  companySelect.innerHTML = '<option value="">選択してください</option>' +
+    COMPANY_MASTER.map(c => `<option value="${c}">${c}</option>`).join('');
+
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newDept').value = '';
+  document.getElementById('newChannel').value = '展示会';
+  document.getElementById('newProduct').value = '戦略コンサル';
+  document.getElementById('newAcquiredDate').value = '';
+  document.getElementById('newFirstMeetingDate').value = '';
+  document.getElementById('newNeeds').value = '';
+
+  document.getElementById('newLeadModal').classList.add('active');
+}
+
+function closeNewModal() {
+  document.getElementById('newLeadModal').classList.remove('active');
+}
+
+function saveNewLead() {
+  alert('新規リードを登録しました（モック）');
+  closeNewModal();
+}
+
+function addNewCompany() {
+  const name = prompt('新しい企業名を入力してください');
+  if (!name || !name.trim()) return;
+  const trimmed = name.trim();
+  if (!COMPANY_MASTER.includes(trimmed)) {
+    COMPANY_MASTER.push(trimmed);
+    COMPANY_MASTER.sort((a, b) => a.localeCompare(b, 'ja'));
+  }
+  const companySelect = document.getElementById('newCompany');
+  companySelect.innerHTML = '<option value="">選択してください</option>' +
+    COMPANY_MASTER.map(c => `<option value="${c}">${c}</option>`).join('');
+  companySelect.value = trimmed;
+}
+
 // ===== 初期描画 =====
 renderBoard(leads);
 </script>
+
+<!-- ===== 新規登録モーダル ===== -->
+<div class="modal-overlay" id="newLeadModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>新規リード登録</h3>
+      <button class="modal-close" onclick="closeNewModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">タイトル</label>
+        <input type="text" class="form-input" id="newTitle" placeholder="リードのタイトルを入力">
+      </div>
+      <div class="form-group">
+        <label class="form-label">企業名</label>
+        <div class="company-row">
+          <select class="form-select" id="newCompany">
+            <option value="">選択してください</option>
+          </select>
+          <button type="button" class="btn-add-company" onclick="addNewCompany()">
+            <span class="material-icons">add</span>新規追加
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">部署名</label>
+        <input type="text" class="form-input" id="newDept" placeholder="部署名を入力">
+      </div>
+      <div class="form-group">
+        <label class="form-label">アカウント担当（複数選択可）</label>
+        <div class="multi-select" id="msNewStaff">
+          <div class="multi-select-tags">
+            <input type="text" class="multi-select-input" placeholder="名前で検索...">
+          </div>
+          <div class="multi-select-dropdown"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">獲得チャネル</label>
+          <select class="form-select" id="newChannel">
+            <option>展示会</option>
+            <option>アウトバウンド</option>
+            <option>知人</option>
+            <option>講演・イベント</option>
+            <option>レディクル</option>
+            <option>アイスマイリー</option>
+            <option>顧問バンク</option>
+            <option>社内横展開</option>
+            <option>インバウンド</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">提案予定商材</label>
+          <select class="form-select" id="newProduct">
+            <option>戦略コンサル</option>
+            <option>DX伴走支援</option>
+            <option>システム開発</option>
+            <option>データ分析</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">獲得日</label>
+          <input type="date" class="form-input" id="newAcquiredDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">初回面談日</label>
+          <input type="date" class="form-input" id="newFirstMeetingDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ニーズ・課題</label>
+        <textarea class="form-textarea" id="newNeeds" placeholder="ニーズや課題を入力"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeNewModal()">キャンセル</button>
+      <button class="btn btn-primary btn-sm" onclick="saveNewLead()">
+        <span class="material-icons" style="font-size:16px;color:#fff;">save</span>登録
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -619,6 +619,10 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
+        <label class="form-label">タイトル</label>
+        <input type="text" class="form-input" id="modalTitle">
+      </div>
+      <div class="form-group">
         <label class="form-label">アカウント担当（複数選択可）</label>
         <div class="multi-select" id="msStaff">
           <div class="multi-select-tags">
@@ -897,25 +901,20 @@ function renderBasicInfo(lead) {
 
   grid.innerHTML = `
     <tr>
-      <th>企業名</th>
-      <td><a href="../master/SC-062_company_detail.html?id=${lead.companyId}">${lead.company}</a></td>
-      <th>部署</th>
-      <td>${lead.dept}（${lead.deptCategory}）</td>
+      <th>顧客</th>
+      <td>${customerHTML}</td>
+      <th>担当者</th>
+      <td>${staffHTML}</td>
       <th>獲得チャネル</th>
       <td>${lead.channel}</td>
       <th>商材</th>
       <td style="border-right:none;">${lead.product}</td>
     </tr>
     <tr>
-      <th>顧客</th>
-      <td>${customerHTML}</td>
-      <th>担当者</th>
-      <td>${staffHTML}</td>
       <th>獲得日</th>
       <td>${formatDate(lead.acquiredDate)}</td>
       <th>初回面談日</th>
-      <td style="border-right:none;">${formatDate(lead.firstMeetingDate)}</td>
-    </tr>
+      <td>${formatDate(lead.firstMeetingDate)}</td>
     <tr>
       <th>最終AC日</th>
       <td>${formatDate(lead.lastActionDate)}</td>
@@ -1073,6 +1072,7 @@ function openEditModal() {
   if (!msStaff) msStaff = new MultiSelect('msStaff', STAFF_MASTER);
   if (!msCustomers) msCustomers = new MultiSelect('msCustomers', CUSTOMER_MASTER);
 
+  document.getElementById('modalTitle').value = lead.title;
   msStaff.setSelected([lead.staff]);
   msCustomers.setSelected(lead.customers.map(c => c.name));
 

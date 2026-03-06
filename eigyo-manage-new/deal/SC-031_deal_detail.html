@@ -674,6 +674,10 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
+        <label class="form-label">タイトル</label>
+        <input type="text" class="form-input" id="modalTitle">
+      </div>
+      <div class="form-group">
         <label class="form-label">アカウント担当（複数選択可）</label>
         <div class="multi-select" id="msStaff">
           <div class="multi-select-tags">
@@ -1013,12 +1017,10 @@ function renderBasicInfo(deal) {
     <tr>
       <th>商材</th>
       <td>${deal.product}</td>
-      <th>部署</th>
-      <td>${deal.dept}（${deal.deptCategory}）</td>
       <th>獲得日</th>
       <td>${formatDate(deal.acquiredDate)}</td>
       <th>初回面談日</th>
-      <td style="border-right:none;">${formatDate(deal.firstMeetingDate)}</td>
+      <td colspan="3" style="border-right:none;">${formatDate(deal.firstMeetingDate)}</td>
     </tr>
     <tr>
       <th>最終AC日</th>
@@ -1211,6 +1213,7 @@ function openEditModal() {
   if (!msDeliveryStaff) msDeliveryStaff = new MultiSelect('msDeliveryStaff', STAFF_MASTER);
   if (!msCustomers) msCustomers = new MultiSelect('msCustomers', CUSTOMER_MASTER);
 
+  document.getElementById('modalTitle').value = deal.title;
   msStaff.setSelected([deal.staff]);
   msDeliveryStaff.setSelected(deal.deliveryStaff ? [deal.deliveryStaff] : []);
   msCustomers.setSelected(deal.customers.map(c => c.name));

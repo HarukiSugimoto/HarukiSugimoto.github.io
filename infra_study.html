@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>infra_study.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E5%AE%8C%E5%85%A8%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%AC%E3%82%A4%E3%83%89--terraform-%C3%97-aws">インフラ完全マスターガイド — Terraform × AWS</h1>
+<blockquote>
+<p><strong>対象</strong>: このプロジェクト (Digital Arts) のインフラ構成を理解しながら、Terraform と AWS の基礎から実践までを一気に学ぶための完全ガイド。</p>
+</blockquote>
+<hr>
+<h2 id="%E7%9B%AE%E6%AC%A1">目次</h2>
+<ol>
+<li><a href="#%E7%AC%AC1%E7%AB%A0-%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%AE%E5%85%A8%E4%BD%93%E5%83%8F--%E3%81%AA%E3%81%9C%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%8C%E5%BF%85%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B">第1章: インフラの全体像 — なぜインフラが必要なのか</a></li>
+<li><a href="#%E7%AC%AC2%E7%AB%A0-terraform-%E3%81%A8%E3%81%AF%E4%BD%95%E3%81%8B--%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B">第2章: Terraform とは何か — ゼロから理解する</a></li>
+<li><a href="#%E7%AC%AC3%E7%AB%A0-terraform-%E3%81%AE%E6%9B%B8%E3%81%8D%E6%96%B9--%E5%9F%BA%E6%9C%AC%E6%96%87%E6%B3%95">第3章: Terraform の書き方 — 基本文法</a></li>
+<li><a href="#%E7%AC%AC4%E7%AB%A0-%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE-aws-%E6%A7%8B%E6%88%90%E3%82%92%E5%AE%8C%E5%85%A8%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B">第4章: このプロジェクトの AWS 構成を完全理解する</a></li>
+<li><a href="#%E7%AC%AC5%E7%AB%A0-%E5%90%84%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%AE%E8%A9%B3%E7%B4%B0%E8%A7%A3%E8%AA%AC">第5章: 各スタックの詳細解説</a></li>
+<li><a href="#%E7%AC%AC6%E7%AB%A0-%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E8%A8%AD%E8%A8%88--%E5%86%8D%E5%88%A9%E7%94%A8%E3%81%AE%E4%BB%95%E7%B5%84%E3%81%BF">第6章: モジュール設計 — 再利用の仕組み</a></li>
+<li><a href="#%E7%AC%AC7%E7%AB%A0-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88--%E3%81%AA%E3%81%9C%E3%81%93%E3%81%86%E3%81%AA%E3%81%A3%E3%81%A6%E3%81%84%E3%82%8B%E3%81%AE%E3%81%8B">第7章: セキュリティ設計 — なぜこうなっているのか</a></li>
+<li><a href="#%E7%AC%AC8%E7%AB%A0-terraform-%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9">第8章: Terraform ベストプラクティス</a></li>
+<li><a href="#%E7%AC%AC9%E7%AB%A0-aws-%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E6%97%A9%E8%A6%8B%E8%A1%A8--%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%A7%E4%BD%BF%E3%81%86%E3%82%82%E3%81%AE%E5%85%A8%E9%83%A8">第9章: AWS サービス早見表 — このプロジェクトで使うもの全部</a></li>
+<li><a href="#%E7%AC%AC10%E7%AB%A0-%E9%81%8B%E7%94%A8%E3%82%AC%E3%82%A4%E3%83%89--tf%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9">第10章: 運用ガイド — tfファイルの使い方</a></li>
+<li><a href="#%E7%AC%AC11%E7%AB%A0-%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0">第11章: トラブルシューティング</a></li>
+<li><a href="#%E7%AC%AC12%E7%AB%A0-%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97--%E3%81%95%E3%82%89%E3%81%AB%E5%AD%A6%E3%81%B6%E3%81%9F%E3%82%81%E3%81%AB">第12章: 次のステップ — さらに学ぶために</a></li>
+</ol>
+<hr>
+<h2 id="%E7%AC%AC1%E7%AB%A0-%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%AE%E5%85%A8%E4%BD%93%E5%83%8F--%E3%81%AA%E3%81%9C%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%8C%E5%BF%85%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B">第1章: インフラの全体像 — なぜインフラが必要なのか</h2>
+<h3 id="11-%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%A8%E3%81%AF">1.1 「インフラ」とは</h3>
+<p>ソフトウェアが動くための <strong>基盤</strong> のこと。具体的には：</p>
+<table>
+<thead>
+<tr>
+<th>レイヤー</th>
+<th>例</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ネットワーク</strong></td>
+<td>VPC, サブネット, ルーティング</td>
+<td>通信経路の確保</td>
+</tr>
+<tr>
+<td><strong>コンピュート</strong></td>
+<td>EC2, ECS, Lambda</td>
+<td>アプリケーションの実行</td>
+</tr>
+<tr>
+<td><strong>ストレージ</strong></td>
+<td>S3, EBS, EFS</td>
+<td>データの保存</td>
+</tr>
+<tr>
+<td><strong>データベース</strong></td>
+<td>RDS, DynamoDB</td>
+<td>構造化データの管理</td>
+</tr>
+<tr>
+<td><strong>CDN/エッジ</strong></td>
+<td>CloudFront</td>
+<td>高速配信・キャッシュ</td>
+</tr>
+<tr>
+<td><strong>セキュリティ</strong></td>
+<td>IAM, SG, WAF</td>
+<td>アクセス制御</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>GitHub Actions, CodePipeline</td>
+<td>自動デプロイ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-%E3%81%AA%E3%81%9C-infrastructure-as-code-iac-%E3%81%8C%E5%BF%85%E8%A6%81%E3%81%8B">1.2 なぜ Infrastructure as Code (IaC) が必要か</h3>
+<p><strong>手動構築の問題点</strong>:</p>
+<ul>
+<li>手作業のミス（ポートを開け忘れた、SGのルールが違うなど）</li>
+<li>再現性がない（「前と同じ設定で作って」が難しい）</li>
+<li>変更履歴が追えない</li>
+<li>環境差異（開発と本番で設定が違う）</li>
+</ul>
+<p><strong>IaCで解決されること</strong>:</p>
+<ul>
+<li><strong>コードレビュー可能</strong> → インフラの変更もPRでレビューできる</li>
+<li><strong>バージョン管理</strong> → Git で変更履歴を追跡</li>
+<li><strong>再現性</strong> → 同じコードで何度でも同じ環境を構築</li>
+<li><strong>自動化</strong> → CI/CD でインフラの変更もデプロイ</li>
+</ul>
+<h3 id="13-%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E6%A6%82%E8%A6%81">1.3 このプロジェクトのアーキテクチャ概要</h3>
+<pre class="hljs"><code><div>ユーザー (ブラウザ)
+    │
+    ▼
+┌─────────────────────────────────────────────────┐
+│  CloudFront (CDN)                               │
+│  ├─ CloudFront Functions (IP制限)               │
+│  ├─ /       → S3 (React SPA)                   │
+│  └─ /api/*  → ALB → ECS Fargate (backend)      │
+│              X-Origin-Verify ヘッダで検証        │
+└─────────────────────────────────────────────────┘
+                    │
+        ┌───────────┼────────────┐
+        ▼           ▼            ▼
+   ┌────────┐  ┌────────┐  ┌─────────────────┐
+   │  RDS   │  │   S3   │  │  FinalCode      │
+   │ MySQL  │  │ Buckets│  │  Server          │
+   │        │  │        │  │  (Private APIGW) │
+   └────────┘  └────────┘  └─────────────────┘
+                                │
+                          ┌─────┴──────┐
+                          │ NLB → ECS  │
+                          │ (private)  │
+                          └────────────┘
+</div></code></pre>
+<p><strong>なぜこの構成なのか？</strong></p>
+<ul>
+<li><strong>CloudFront を前面に置く理由</strong>: グローバルキャッシュ、DDoS緩和、IP制限、SSL終端を一箇所で処理</li>
+<li><strong>ALB + ECS Fargate の理由</strong>: コンテナベースでスケーラブル、サーバー管理不要</li>
+<li><strong>Fargate Spot の理由</strong>: 開発環境では最大70%コスト削減</li>
+<li><strong>FinalCode を Private にする理由</strong>: セキュリティ要件（暗号化サーバーは外部アクセス不可）</li>
+<li><strong>S3 を複数バケットに分ける理由</strong>: 用途別のアクセス制御（raw/encrypted/vcf）</li>
+</ul>
+<hr>
+<h2 id="%E7%AC%AC2%E7%AB%A0-terraform-%E3%81%A8%E3%81%AF%E4%BD%95%E3%81%8B--%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B">第2章: Terraform とは何か — ゼロから理解する</h2>
+<h3 id="21-terraform-%E3%81%AE%E6%AD%A3%E4%BD%93">2.1 Terraform の正体</h3>
+<p><strong>Terraform</strong> = HashiCorp が開発した IaC ツール。</p>
+<pre class="hljs"><code><div>あなたが書く .tf ファイル
+        │
+        ▼
+   Terraform CLI (terraform plan/apply)
+        │
+        ▼
+   AWS API を呼び出してリソースを作成/更新/削除
+</div></code></pre>
+<p><strong>Terraform がやること</strong>:</p>
+<ol>
+<li><code>.tf</code> ファイルを読み取る（<strong>宣言的</strong> = 「こうなっていてほしい」を書く）</li>
+<li>現在の状態（State）と比較する</li>
+<li>差分を計算して実行計画（Plan）を出す</li>
+<li>承認後、AWS API を呼んで実際にリソースを操作する</li>
+</ol>
+<h3 id="22-%E4%BB%96%E3%81%AE%E3%83%84%E3%83%BC%E3%83%AB%E3%81%A8%E3%81%AE%E6%AF%94%E8%BC%83">2.2 他のツールとの比較</h3>
+<table>
+<thead>
+<tr>
+<th>ツール</th>
+<th>タイプ</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terraform</strong></td>
+<td>宣言的</td>
+<td>マルチクラウド対応、状態管理あり</td>
+</tr>
+<tr>
+<td><strong>CloudFormation</strong></td>
+<td>宣言的</td>
+<td>AWS専用、YAML/JSON</td>
+</tr>
+<tr>
+<td><strong>Ansible</strong></td>
+<td>手続き的</td>
+<td>サーバー構成管理に強い</td>
+</tr>
+<tr>
+<td><strong>Pulumi</strong></td>
+<td>宣言的</td>
+<td>汎用プログラミング言語で書ける</td>
+</tr>
+<tr>
+<td><strong>AWS CDK</strong></td>
+<td>宣言的</td>
+<td>TypeScript/Python でCloudFormation生成</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Terraform を選ぶ理由</strong>:</p>
+<ul>
+<li>AWS以外（GCP, Azure）にも対応</li>
+<li>コミュニティが大きく、学習リソースが豊富</li>
+<li>HCL（HashiCorp Configuration Language）が読みやすい</li>
+<li><code>plan</code> で事前に変更内容を確認できる安心感</li>
+</ul>
+<h3 id="23-terraform-%E3%81%AE%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5">2.3 Terraform の核心概念</h3>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────┐
+│                   Terraform の動作原理               │
+│                                                     │
+│   .tf ファイル ──→ terraform plan ──→ 差分表示      │
+│       (理想)         (比較)          (確認)         │
+│                       │                             │
+│                       ▼                             │
+│   State ファイル ←── terraform apply ──→ AWS API    │
+│     (現在の状態)      (実行)            (実際の操作) │
+└─────────────────────────────────────────────────────┘
+</div></code></pre>
+<p><strong>State（状態ファイル）が最も重要な概念</strong>:</p>
+<ul>
+<li>Terraform は <code>.tf</code> ファイルと <strong>State</strong> を比較して差分を算出する</li>
+<li>State = 「Terraform が管理しているリソースの現在の状態」を記録したJSON</li>
+<li>State がないと、Terraform はどのリソースを管理しているか分からない</li>
+<li>このプロジェクトでは S3 (<code>digital-arts-dev-tfstate</code>) に保存している</li>
+</ul>
+<h3 id="24-terraform-%E3%81%AE%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%95%E3%83%AD%E3%83%BC">2.4 Terraform のワークフロー</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># 1. 初期化: プロバイダー（AWS等）のプラグインをダウンロード</span>
+terraform init
+
+<span class="hljs-comment"># 2. 計画: 何が変わるかを事前確認（実際には何もしない）</span>
+terraform plan
+
+<span class="hljs-comment"># 3. 適用: 実際にAWSリソースを作成/変更</span>
+terraform apply
+
+<span class="hljs-comment"># 4. 破棄: 全リソースを削除（本番では絶対にやらない！）</span>
+terraform destroy
+</div></code></pre>
+<h3 id="25-hcl-hashicorp-configuration-language">2.5 HCL (HashiCorp Configuration Language)</h3>
+<p>Terraform 専用の設定言語。JSON に似ているが、もっと人間が読みやすい。</p>
+<pre class="hljs"><code><div># これがHCL
+resource &quot;aws_s3_bucket&quot; &quot;my_bucket&quot; {
+  bucket = &quot;my-unique-bucket-name&quot;
+
+  tags = {
+    Name = &quot;My Bucket&quot;
+  }
+}
+
+# 参考: 同じことをJSON (CloudFormation) で書くと...
+# {
+#   &quot;Type&quot;: &quot;AWS::S3::Bucket&quot;,
+#   &quot;Properties&quot;: {
+#     &quot;BucketName&quot;: &quot;my-unique-bucket-name&quot;,
+#     &quot;Tags&quot;: [{&quot;Key&quot;: &quot;Name&quot;, &quot;Value&quot;: &quot;My Bucket&quot;}]
+#   }
+# }
+</div></code></pre>
+<hr>
+<h2 id="%E7%AC%AC3%E7%AB%A0-terraform-%E3%81%AE%E6%9B%B8%E3%81%8D%E6%96%B9--%E5%9F%BA%E6%9C%AC%E6%96%87%E6%B3%95">第3章: Terraform の書き方 — 基本文法</h2>
+<h3 id="31-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%A7%8B%E6%88%90%E3%81%AE%E5%9F%BA%E6%9C%AC">3.1 ファイル構成の基本</h3>
+<p>Terraform は <strong>同じディレクトリの <code>.tf</code> ファイルを全て読み込む</strong>。ファイル名に特別な意味はないが、慣習がある：</p>
+<table>
+<thead>
+<tr>
+<th>ファイル名</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>main.tf</code></td>
+<td>メインのリソース定義</td>
+</tr>
+<tr>
+<td><code>variables.tf</code></td>
+<td>入力変数の宣言</td>
+</tr>
+<tr>
+<td><code>outputs.tf</code></td>
+<td>出力値の定義</td>
+</tr>
+<tr>
+<td><code>providers.tf</code></td>
+<td>プロバイダー設定（AWS等）とバックエンド設定</td>
+</tr>
+<tr>
+<td><code>terraform.tfvars</code></td>
+<td>変数の値（環境固有の値）</td>
+</tr>
+<tr>
+<td><code>locals.tf</code></td>
+<td>ローカル変数（計算結果のキャッシュ等）</td>
+</tr>
+<tr>
+<td><code>data.tf</code></td>
+<td>データソース（既存リソースの参照）</td>
+</tr>
+<tr>
+<td><code>versions.tf</code></td>
+<td>Terraform とプロバイダーのバージョン制約</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-provider%E3%83%97%E3%83%AD%E3%83%90%E3%82%A4%E3%83%80%E3%83%BC">3.2 Provider（プロバイダー）</h3>
+<p>「どのクラウドを使うか」を宣言する。</p>
+<pre class="hljs"><code><div># providers.tf — このプロジェクトの実際のコード
+terraform {
+  required_version = &quot;&gt;= 1.6.0&quot;
+
+  required_providers {
+    aws = {
+      source  = &quot;hashicorp/aws&quot;    # AWS プロバイダーを使う
+      version = &quot;6.28.0&quot;           # バージョン固定
+    }
+  }
+
+  # State の保存先
+  backend &quot;s3&quot; {
+    bucket = &quot;digital-arts-dev-tfstate&quot;
+    region = &quot;ap-northeast-1&quot;
+    key    = &quot;develop/network/terraform.tfstate&quot;
+  }
+}
+
+provider &quot;aws&quot; {
+  region = var.aws_region    # 変数で東京リージョンを指定
+
+  default_tags {
+    tags = {
+      Project     = var.project       # 全リソースに自動タグ付け
+      Environment = var.environment
+    }
+  }
+}
+</div></code></pre>
+<p><strong>解説</strong>:</p>
+<ul>
+<li><code>required_version</code>: Terraform CLI のバージョン制約</li>
+<li><code>required_providers</code>: 使用するプロバイダーとバージョン</li>
+<li><code>backend &quot;s3&quot;</code>: State ファイルを S3 に保存（チーム共有のため）</li>
+<li><code>default_tags</code>: 全リソースに自動でタグを付与（コスト管理やリソース識別に必須）</li>
+</ul>
+<h3 id="33-resource%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9">3.3 Resource（リソース）</h3>
+<p><strong>最も基本的な構文</strong> — AWS リソースを作る。</p>
+<pre class="hljs"><code><div>resource &quot;リソースタイプ&quot; &quot;ローカル名&quot; {
+  属性1 = &quot;値1&quot;
+  属性2 = &quot;値2&quot;
+}
+</div></code></pre>
+<p><strong>実例: VPC を作る</strong></p>
+<pre class="hljs"><code><div>resource &quot;aws_vpc&quot; &quot;main&quot; {
+  cidr_block           = &quot;10.20.0.0/16&quot;   # IPアドレス範囲
+  enable_dns_support   = true              # DNS有効化
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = &quot;digital-arts-develop-vpc&quot;
+  }
+}
+</div></code></pre>
+<p><strong>実例: サブネットを作る（VPC に依存）</strong></p>
+<pre class="hljs"><code><div>resource &quot;aws_subnet&quot; &quot;public&quot; {
+  vpc_id                  = aws_vpc.main.id    # 上の VPC を参照！
+  cidr_block              = &quot;10.20.0.0/24&quot;
+  availability_zone       = &quot;ap-northeast-1a&quot;
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = &quot;digital-arts-develop-public-1a&quot;
+  }
+}
+</div></code></pre>
+<p><strong>ポイント</strong>: <code>aws_vpc.main.id</code> という形で <strong>他のリソースの属性を参照</strong> できる。
+Terraform はこの参照関係から自動的に <strong>依存関係を解決</strong> し、VPC → サブネット の順で作成する。</p>
+<h3 id="34-variable%E5%A4%89%E6%95%B0">3.4 Variable（変数）</h3>
+<p>外部から値を注入するための仕組み。</p>
+<pre class="hljs"><code><div># variables.tf — 変数の宣言
+variable &quot;aws_region&quot; {
+  description = &quot;AWS リージョン&quot;
+  type        = string
+  default     = &quot;ap-northeast-1&quot;
+}
+
+variable &quot;vpc_cidr&quot; {
+  description = &quot;VPC の CIDR ブロック&quot;
+  type        = string
+  # default がないので、必ず指定が必要
+}
+
+variable &quot;public_subnets&quot; {
+  description = &quot;パブリックサブネットの CIDR リスト&quot;
+  type        = list(string)    # 文字列のリスト
+}
+
+variable &quot;enable_nat_gateway&quot; {
+  description = &quot;NAT Gateway を作成するかどうか&quot;
+  type        = bool
+  default     = false
+}
+
+variable &quot;tags&quot; {
+  description = &quot;追加タグのマップ&quot;
+  type        = map(string)
+  default     = {}
+}
+</div></code></pre>
+<p><strong>変数の型一覧</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>型</th>
+<th>例</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>string</code></td>
+<td><code>&quot;hello&quot;</code></td>
+<td>文字列</td>
+</tr>
+<tr>
+<td><code>number</code></td>
+<td><code>42</code></td>
+<td>数値</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td>真偽値</td>
+</tr>
+<tr>
+<td><code>list(string)</code></td>
+<td><code>[&quot;a&quot;, &quot;b&quot;]</code></td>
+<td>文字列のリスト</td>
+</tr>
+<tr>
+<td><code>map(string)</code></td>
+<td><code>{key = &quot;val&quot;}</code></td>
+<td>文字列のマップ</td>
+</tr>
+<tr>
+<td><code>object({...})</code></td>
+<td>構造体</td>
+<td>複合型</td>
+</tr>
+</tbody>
+</table>
+<p><strong>変数の値を渡す方法</strong>（優先順位順）:</p>
+<pre class="hljs"><code><div># 1. terraform.tfvars（最も一般的）
+vpc_cidr = &quot;10.20.0.0/16&quot;
+public_subnets = [&quot;10.20.0.0/24&quot;, &quot;10.20.1.0/24&quot;]
+enable_nat_gateway = true
+
+# 2. コマンドラインフラグ
+# terraform apply -var=&quot;vpc_cidr=10.20.0.0/16&quot;
+
+# 3. 環境変数
+# export TF_VAR_vpc_cidr=&quot;10.20.0.0/16&quot;
+
+# 4. default 値（variables.tf 内）
+</div></code></pre>
+<h3 id="35-output%E5%87%BA%E5%8A%9B">3.5 Output（出力）</h3>
+<p>他のスタックやユーザーに値を公開する。</p>
+<pre class="hljs"><code><div># outputs.tf
+output &quot;vpc_id&quot; {
+  description = &quot;作成した VPC の ID&quot;
+  value       = module.network.vpc_id
+}
+
+output &quot;alb_origin_header_value&quot; {
+  description = &quot;CloudFront → ALB 検証用ヘッダの値&quot;
+  value       = random_password.origin_verify.result
+  sensitive   = true    # terraform output で隠す
+}
+</div></code></pre>
+<p><strong>重要</strong>: <code>sensitive = true</code> にすると、<code>terraform output</code> でマスクされる。シークレットに使う。</p>
+<h3 id="36-data-source%E3%83%87%E3%83%BC%E3%82%BF%E3%82%BD%E3%83%BC%E3%82%B9">3.6 Data Source（データソース）</h3>
+<p><strong>既存の</strong> リソースや外部情報を参照する（作成はしない）。</p>
+<pre class="hljs"><code><div># 現在のAWSリージョンの情報を取得
+data &quot;aws_region&quot; &quot;current&quot; {}
+
+# 現在のAWSアカウントIDを取得
+data &quot;aws_caller_identity&quot; &quot;current&quot; {}
+
+# 利用可能なAZを取得
+data &quot;aws_availability_zones&quot; &quot;available&quot; {
+  state = &quot;available&quot;
+}
+
+# CloudFrontのマネージドプレフィックスリスト（IPリスト）を取得
+data &quot;aws_ec2_managed_prefix_list&quot; &quot;cloudfront&quot; {
+  name = &quot;com.amazonaws.global.cloudfront.origin-facing&quot;
+}
+
+# 使い方
+resource &quot;aws_security_group_rule&quot; &quot;alb_from_cloudfront&quot; {
+  # CloudFront の IP レンジからのみ ALB へのアクセスを許可
+  prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
+}
+</div></code></pre>
+<h3 id="37-local%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E5%A4%89%E6%95%B0">3.7 Local（ローカル変数）</h3>
+<p>計算結果やよく使う値をキャッシュする。</p>
+<pre class="hljs"><code><div>locals {
+  prefix = &quot;${var.project}-${var.environment}&quot;
+  # → &quot;digital-arts-develop&quot;
+
+  common_tags = {
+    Project     = var.project
+    Environment = var.environment
+    ManagedBy   = &quot;terraform&quot;
+  }
+}
+
+# 使い方
+resource &quot;aws_s3_bucket&quot; &quot;example&quot; {
+  bucket = &quot;${local.prefix}-my-bucket&quot;
+  tags   = local.common_tags
+}
+</div></code></pre>
+<h3 id="38-count-%E3%81%A8-foreach--%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97">3.8 count と for_each — 繰り返し</h3>
+<p><strong>count</strong>: 同じリソースを N 個作る</p>
+<pre class="hljs"><code><div># 2つのパブリックサブネットを作る
+resource &quot;aws_subnet&quot; &quot;public&quot; {
+  count = length(var.public_subnets)    # リストの長さ分ループ
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.public_subnets[count.index]    # 0, 1, ...
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+
+  tags = {
+    Name = &quot;${local.prefix}-public-${count.index}&quot;
+  }
+}
+
+# 参照: aws_subnet.public[0].id, aws_subnet.public[1].id
+# 全IDのリスト: aws_subnet.public[*].id
+</div></code></pre>
+<p><strong>for_each</strong>: マップやセットでループ</p>
+<pre class="hljs"><code><div># 複数のS3バケットを作る
+variable &quot;buckets&quot; {
+  default = {
+    raw       = { versioning = true }
+    encrypted = { versioning = true }
+    vcf       = { versioning = false }
+  }
+}
+
+resource &quot;aws_s3_bucket&quot; &quot;this&quot; {
+  for_each = var.buckets
+  bucket   = &quot;${local.prefix}-${each.key}&quot;    # each.key = &quot;raw&quot;, &quot;encrypted&quot;, &quot;vcf&quot;
+}
+
+# 参照: aws_s3_bucket.this[&quot;raw&quot;].id
+</div></code></pre>
+<p><strong>使い分け</strong>:</p>
+<ul>
+<li><code>count</code>: 単純な数のループ or 条件分岐（<code>count = var.enabled ? 1 : 0</code>）</li>
+<li><code>for_each</code>: 名前付きリソースの管理（追加・削除時に他のリソースに影響しない）</li>
+</ul>
+<h3 id="39-%E6%9D%A1%E4%BB%B6%E5%88%86%E5%B2%90">3.9 条件分岐</h3>
+<pre class="hljs"><code><div># count を使った条件分岐（最も一般的）
+resource &quot;aws_nat_gateway&quot; &quot;main&quot; {
+  count = var.enable_nat_gateway ? 1 : 0    # true なら1個、false なら0個
+
+  allocation_id = aws_eip.nat[0].id
+  subnet_id     = aws_subnet.public[0].id
+}
+
+# 三項演算子
+locals {
+  instance_type = var.environment == &quot;production&quot; ? &quot;db.r6g.large&quot; : &quot;db.t4g.micro&quot;
+}
+</div></code></pre>
+<h3 id="310-%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB">3.10 テンプレートファイル</h3>
+<pre class="hljs"><code><div># templatefile() 関数で外部ファイルにTerraform変数を埋め込む
+resource &quot;aws_cloudfront_function&quot; &quot;ip_allowlist&quot; {
+  name    = &quot;${local.prefix}-ip-allowlist&quot;
+  runtime = &quot;cloudfront-js-2.0&quot;
+
+  # JavaScript テンプレートに変数を注入
+  code = templatefile(&quot;${path.module}/function.js.tftpl&quot;, {
+    allowed_ips   = jsonencode({ for ip in var.allowed_ips : ip =&gt; true })
+    allowed_cidrs = jsonencode(var.allowed_cidrs)
+  })
+}
+</div></code></pre>
+<p>実際のテンプレート (<code>function.js.tftpl</code>) の中では <code>${allowed_ips}</code> のように参照される。
+このプロジェクトでは CloudFront Functions の IP 制限ロジックをこの方法で動的生成している。</p>
+<h3 id="311-remote-state%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%B9%E3%83%86%E3%83%BC%E3%83%88%E5%8F%82%E7%85%A7">3.11 Remote State（リモートステート参照）</h3>
+<p><strong>異なるスタック間でデータを共有する仕組み</strong>。このプロジェクトの最重要パターン。</p>
+<pre class="hljs"><code><div># stacks/services/data.tf
+# → network スタックの出力値を参照する
+data &quot;terraform_remote_state&quot; &quot;network&quot; {
+  backend = &quot;s3&quot;
+  config = {
+    bucket = &quot;digital-arts-dev-tfstate&quot;
+    key    = &quot;develop/network/terraform.tfstate&quot;
+    region = &quot;ap-northeast-1&quot;
+  }
+}
+
+# 使い方
+resource &quot;aws_lb&quot; &quot;backend&quot; {
+  subnets = data.terraform_remote_state.network.outputs.public_subnet_ids
+  security_groups = [
+    data.terraform_remote_state.network.outputs.alb_sg_id
+  ]
+}
+</div></code></pre>
+<p><strong>なぜ Remote State が必要か？</strong></p>
+<ul>
+<li>スタックを分割すると、各スタックは独立した State を持つ</li>
+<li>network で作った VPC ID を services で使いたい → Remote State で参照</li>
+<li>疎結合にしつつ、必要な値だけ共有できる</li>
+</ul>
+<hr>
+<h2 id="%E7%AC%AC4%E7%AB%A0-%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE-aws-%E6%A7%8B%E6%88%90%E3%82%92%E5%AE%8C%E5%85%A8%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B">第4章: このプロジェクトの AWS 構成を完全理解する</h2>
+<h3 id="41-%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E6%A7%8B%E6%88%90">4.1 ディレクトリ構成</h3>
+<pre class="hljs"><code><div>infra/
+├── README.md                    ← ドキュメント
+│
+├── stacks/                      ← 各スタック（独立したState）
+│   ├── network/                 ← Step 1: ネットワーク基盤
+│   │   ├── providers.tf         ← backend + provider 設定
+│   │   ├── variables.tf         ← 入力変数の宣言
+│   │   ├── main.tf              ← module 呼び出し
+│   │   ├── outputs.tf           ← 他スタックへの公開値
+│   │   └── terraform.tfvars     ← 環境固有の値
+│   │
+│   ├── data/                    ← Step 2: データ層
+│   ├── services/                ← Step 3: アプリケーション層
+│   ├── edge/                    ← Step 4: CDN + CI/CD
+│   ├── sftp/                    ← (任意) SFTP サーバー
+│   ├── build/                   ← (任意) ビルド成果物
+│   └── finalcode/               ← (任意) FinalCode サーバー
+│
+├── modules/                     ← 再利用可能なモジュール
+│   ├── network/                 ← VPC/Subnet/SG
+│   ├── rds/                     ← RDS MySQL
+│   ├── s3/                      ← S3 バケット
+│   ├── edge/                    ← CloudFront
+│   ├── services/                ← ALB + ECS
+│   └── batch_job/               ← EventBridge + ECS バッチ
+│
+└── sandbox/                     ← 開発用 EC2 環境
+</div></code></pre>
+<h3 id="42-%E3%81%AA%E3%81%9C%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E5%88%86%E5%89%B2%E3%81%99%E3%82%8B%E3%81%AE%E3%81%8B">4.2 なぜスタック分割するのか？</h3>
+<p><strong>1つの巨大な <code>main.tf</code> にしない理由</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>問題</th>
+<th>スタック分割で解決</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>apply が遅い（全リソース計算）</td>
+<td>変更したスタックだけ apply</td>
+</tr>
+<tr>
+<td>影響範囲が大きい</td>
+<td>ネットワーク変更がDBに影響しない</td>
+</tr>
+<tr>
+<td>チームでの競合</td>
+<td>担当スタックだけ触る</td>
+</tr>
+<tr>
+<td>障害の局所化</td>
+<td>edge が壊れても data は無事</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分割の基準</strong> = <strong>変更頻度</strong> と <strong>影響範囲</strong>:</p>
+<ul>
+<li><code>network</code>: めったに変わらない（VPC は最初に作ったら基本そのまま）</li>
+<li><code>services</code>: アプリのデプロイ設定変更で頻繁に触る</li>
+<li><code>edge</code>: CloudFront の IP 制限追加で時々変更</li>
+</ul>
+<h3 id="43-%E4%BE%9D%E5%AD%98%E9%96%A2%E4%BF%82%E3%83%81%E3%82%A7%E3%83%BC%E3%83%B3apply-%E9%A0%86%E5%BA%8F">4.3 依存関係チェーン（apply 順序）</h3>
+<pre class="hljs"><code><div>stacks/network ─────────────────────────────────────┐
+    │                                                │
+    ▼                                                │
+stacks/data ────────────────────────────┐            │
+    │                                   │            │
+    ▼                                   ▼            │
+stacks/services ──────────► stacks/finalcode         │
+    │                           │                    │
+    ▼                           │                    │
+stacks/edge ◄───────────────────┘                    │
+    │                                                │
+stacks/sftp ◄───────── stacks/data                   │
+stacks/build ◄──────── stacks/edge (OIDC provider)   │
+</div></code></pre>
+<p><strong>なぜこの順序か？</strong></p>
+<ol>
+<li><strong>network</strong> が最初: 全てのリソースは VPC 内に配置される</li>
+<li><strong>data</strong> が次: RDS はサブネットとSGが必要</li>
+<li><strong>services</strong> が次: ALB はサブネットが必要、ECS は RDS エンドポイントが必要</li>
+<li><strong>edge</strong> が最後: CloudFront は ALB の DNS 名が必要</li>
+</ol>
+<h3 id="44-%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AD%E3%83%BC%E5%9B%B3">4.4 データフロー図</h3>
+<pre class="hljs"><code><div>[ユーザー]
+    │
+    │ HTTPS
+    ▼
+[CloudFront] ← CloudFront Functions (IP制限)
+    │
+    ├── / → [S3: frontend] React SPAを配信
+    │       (OAC: CloudFront経由のみアクセス可能)
+    │
+    └── /api/* → [ALB]
+                   │  X-Origin-Verify ヘッダ検証
+                   │  (直接ALBへのアクセスを拒否)
+                   ▼
+               [ECS Fargate: backend]
+                   │
+         ┌─────────┼──────────┐
+         ▼         ▼          ▼
+     [RDS MySQL]  [S3: raw]  [API Gateway (Private)]
+                  [S3: enc]       │
+                              [NLB (internal)]
+                                  │
+                              [ECS: FinalCode]
+                                  │
+                              [S3: raw] → [S3: encrypted]
+
+[EventBridge Scheduler (毎時)]
+    │
+    ▼
+[ECS Fargate: VCF Import バッチ]
+    │
+    ▼
+[S3: vcf] → [RDS MySQL]
+
+[SFTP (AWS Transfer Family)]
+    │
+    ▼
+[S3: vcf]
+</div></code></pre>
+<hr>
+<h2 id="%E7%AC%AC5%E7%AB%A0-%E5%90%84%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%AE%E8%A9%B3%E7%B4%B0%E8%A7%A3%E8%AA%AC">第5章: 各スタックの詳細解説</h2>
+<h3 id="51-stacksnetwork--%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E5%9F%BA%E7%9B%A4">5.1 stacks/network — ネットワーク基盤</h3>
+<p><strong>作るもの</strong>: VPC, サブネット, NAT Gateway, セキュリティグループ</p>
+<pre class="hljs"><code><div>VPC: 10.20.0.0/16 (65,536 IPs)
+├── Public Subnets (インターネットアクセス可能)
+│   ├── 10.20.0.0/24  (ap-northeast-1a) ← ALB, NAT Gateway
+│   └── 10.20.1.0/24  (ap-northeast-1c) ← ALB (冗長性)
+│
+├── Private Subnets (インターネットから直接アクセス不可)
+│   ├── 10.20.10.0/24 (ap-northeast-1a) ← ECS, RDS
+│   └── 10.20.11.0/24 (ap-northeast-1c) ← ECS, RDS (冗長性)
+│
+├── Internet Gateway ← Public Subnet のインターネット出口
+└── NAT Gateway ← Private Subnet からの外向き通信
+</div></code></pre>
+<p><strong>なぜ Public/Private に分けるか？</strong></p>
+<ul>
+<li><strong>Public Subnet</strong>: ALB など、インターネットからアクセスが必要なもの</li>
+<li><strong>Private Subnet</strong>: RDS, ECS など、外部から直接アクセスさせたくないもの</li>
+<li>NAT Gateway 経由で Private → インターネットへの通信は可能（パッケージダウンロード等）</li>
+</ul>
+<p><strong>セキュリティグループ（ファイアウォール）設計</strong>:</p>
+<pre class="hljs"><code><div>[CloudFront IP] ──→ [ALB SG: HTTP/80許可]
+                         │
+                    [Backend SG: Port 8000許可（ALB SGからのみ）]
+                         │
+                    [RDS SG: Port 3306許可（Backend SGからのみ）]
+</div></code></pre>
+<p>これが <strong>多層防御</strong> — 各レイヤーで許可する通信を最小限に制限している。</p>
+<h3 id="52-stacksdata--%E3%83%87%E3%83%BC%E3%82%BF%E5%B1%A4">5.2 stacks/data — データ層</h3>
+<p><strong>作るもの</strong>: RDS MySQL, S3 バケット ×3, Secrets Manager</p>
+<p><strong>RDS 設定の論理的根拠</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>値</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>インスタンスクラス</td>
+<td>db.t4g.micro</td>
+<td>開発環境なのでコスト最小</td>
+</tr>
+<tr>
+<td>エンジン</td>
+<td>MySQL 8.0.44</td>
+<td>アプリの要件</td>
+</tr>
+<tr>
+<td>マルチAZ</td>
+<td>false</td>
+<td>開発環境では不要（本番では true にすべき）</td>
+</tr>
+<tr>
+<td>バックアップ保持</td>
+<td>1日</td>
+<td>開発環境の最小限</td>
+</tr>
+<tr>
+<td>削除保護</td>
+<td>false</td>
+<td>開発環境なので気軽に削除可能（本番では true）</td>
+</tr>
+<tr>
+<td>マスターシークレット</td>
+<td>AWS管理</td>
+<td>パスワードを手動管理しない</td>
+</tr>
+</tbody>
+</table>
+<p><strong>S3 バケット設計</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>バケット</th>
+<th>用途</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>raw-files</code></td>
+<td>ユーザーアップロードファイル</td>
+<td>バージョニング有効</td>
+</tr>
+<tr>
+<td><code>encrypted-files</code></td>
+<td>FinalCode 暗号化済みファイル</td>
+<td>CORS設定あり（ブラウザからダウンロード）</td>
+</tr>
+<tr>
+<td><code>vcf</code></td>
+<td>SFTP経由のVCFファイル</td>
+<td>ライフサイクルポリシーあり</td>
+</tr>
+</tbody>
+</table>
+<p><strong>なぜバケットを分けるか？</strong></p>
+<ul>
+<li><strong>IAMポリシーの最小権限</strong>: バッチジョブは <code>vcf</code> だけ読めればいい</li>
+<li><strong>CORS設定</strong>: <code>encrypted-files</code> だけブラウザからのアクセスが必要</li>
+<li><strong>ライフサイクル</strong>: バケットごとに異なる保持期間を設定</li>
+</ul>
+<p><strong>Secrets Manager</strong>:</p>
+<pre class="hljs"><code><div>backend シークレット:
+├── DB_NAME         ← データベース名
+├── SECRET_KEY      ← アプリのシークレットキー
+├── GEMINI_API_KEY  ← AI API キー
+├── TM_BASE_URL     ← Transit Manager接続先
+├── TM_USER_NAME
+└── TM_PASSWORD
+
+finalcode シークレット:
+├── FINALCODE_ENCRYPT_USER
+├── FINALCODE_LICENSE_B64
+└── FINALCODE_USER_B64
+</div></code></pre>
+<p><strong>なぜ Secrets Manager？</strong></p>
+<ul>
+<li>環境変数にハードコードしない（セキュリティ）</li>
+<li>ECS がネイティブに対応（<code>secrets</code> ブロックで自動注入）</li>
+<li>ローテーション機能あり</li>
+</ul>
+<h3 id="53-stacksservices--%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%B1%A4">5.3 stacks/services — アプリケーション層</h3>
+<p><strong>作るもの</strong>: ALB, ECS Cluster, ECS Service (backend), ECR, バッチジョブ</p>
+<p><strong>ALB（Application Load Balancer）の設計</strong>:</p>
+<pre class="hljs"><code><div># デフォルトアクション: 403 Forbidden（直接アクセスを拒否）
+default_action {
+  type = &quot;fixed-response&quot;
+  fixed_response {
+    content_type = &quot;text/plain&quot;
+    message_body = &quot;Forbidden&quot;
+    status_code  = &quot;403&quot;
+  }
+}
+
+# CloudFront からの正規リクエストのみ転送
+condition {
+  http_header {
+    http_header_name = var.origin_header_name
+    values           = [var.origin_header_value]   # ランダム生成されたシークレット
+  }
+}
+</div></code></pre>
+<p><strong>なぜこの設計か？</strong></p>
+<ul>
+<li>ALB は Public Subnet にあるので、直接 URL を叩けてしまう</li>
+<li>CloudFront → ALB に秘密のヘッダ (<code>X-Origin-Verify</code>) を付与</li>
+<li>ALB はそのヘッダがない or 値が違うリクエストを 403 で拒否</li>
+<li>→ CloudFront を迂回できないセキュリティを実現</li>
+</ul>
+<p><strong>ECS Fargate の構成</strong>:</p>
+<pre class="hljs"><code><div>ECS Cluster (Container Insights 有効)
+└── Service: backend
+    ├── Capacity Provider: FARGATE_SPOT (開発環境)
+    ├── Task Definition:
+    │   ├── CPU: 512 (0.5 vCPU)
+    │   ├── Memory: 1024 (1 GB)
+    │   ├── Container: backend
+    │   │   ├── Image: ECR から取得
+    │   │   ├── Port: 8000
+    │   │   ├── 環境変数: ENVIRONMENT, DB_HOST, S3_BUCKET_NAME, ...
+    │   │   └── シークレット: DB_USER, DB_PASSWORD, SECRET_KEY, ...
+    │   │
+    │   ├── Execution Role: ECRプル + シークレット取得
+    │   └── Task Role: S3 読み書き
+    │
+    └── ネットワーク: Private Subnet, Backend SG
+</div></code></pre>
+<p><strong>ECR ライフサイクルポリシー</strong>:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"rules"</span>: [{
+    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Keep last 5 images"</span>,
+    <span class="hljs-attr">"selection"</span>: {
+      <span class="hljs-attr">"countType"</span>: <span class="hljs-string">"imageCountMoreThan"</span>,
+      <span class="hljs-attr">"countNumber"</span>: <span class="hljs-number">5</span>
+    },
+    <span class="hljs-attr">"action"</span>: { <span class="hljs-attr">"type"</span>: <span class="hljs-string">"expire"</span> }
+  }]
+}
+</div></code></pre>
+<p>→ 古いイメージが溜まるのを防ぐ（コスト削減 + クリーンな状態維持）</p>
+<p><strong>バッチジョブ（VCF Import）</strong>:</p>
+<pre class="hljs"><code><div>EventBridge Scheduler (毎時)
+    │
+    ▼
+ECS Task (ワンショット実行)
+    ├── コマンド: uv run batch vcf-import
+    ├── S3: vcf バケットから読み取り
+    └── RDS: インポート結果を書き込み
+</div></code></pre>
+<h3 id="54-stacksedge--cdn--%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89%E9%85%8D%E4%BF%A1">5.4 stacks/edge — CDN + フロントエンド配信</h3>
+<p><strong>作るもの</strong>: CloudFront, S3 (frontend), GitHub Actions OIDC</p>
+<p><strong>CloudFront 構成</strong>:</p>
+<pre class="hljs"><code><div>CloudFront Distribution
+├── Origin 1: S3 (frontend)
+│   └── OAC (Origin Access Control) でアクセス制御
+│
+├── Origin 2: ALB (backend API)
+│   └── Custom Header (X-Origin-Verify) 付与
+│
+├── Behavior: / → S3 (SPA)
+├── Behavior: /api/* → ALB
+│
+├── CloudFront Functions (Viewer Request)
+│   └── IP Allowlist (許可IPからのみアクセス)
+│
+├── Error Pages: 403, 404 → /index.html (SPA ルーティング)
+│
+└── Price Class: PriceClass_200 (北米+欧州+アジア)
+</div></code></pre>
+<p><strong>IP制限の仕組み（CloudFront Functions）</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// function.js.tftpl — Terraform がIPリストを注入</span>
+<span class="hljs-keyword">var</span> ALLOWED_IPS = {<span class="hljs-string">"121.2.39.118"</span>: <span class="hljs-literal">true</span>, <span class="hljs-string">"39.110.206.140"</span>: <span class="hljs-literal">true</span>, ...};
+<span class="hljs-keyword">var</span> ALLOWED_RANGES = buildRanges([<span class="hljs-string">"182.248.130.128/26"</span>, ...]);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handler</span>(<span class="hljs-params">event</span>) </span>{
+  <span class="hljs-keyword">if</span> (isAllowed(event.viewer.ip)) {
+    <span class="hljs-keyword">return</span> event.request;     <span class="hljs-comment">// 許可 → 通常処理</span>
+  }
+  <span class="hljs-keyword">return</span> { <span class="hljs-attr">statusCode</span>: <span class="hljs-number">403</span> }; <span class="hljs-comment">// 拒否</span>
+}
+</div></code></pre>
+<p><strong>なぜ CloudFront Functions で IP 制限？</strong></p>
+<ul>
+<li>WAF より安い（WAF は月額固定 + リクエスト課金）</li>
+<li>CloudFront Functions は無料枠が大きい</li>
+<li>JavaScript で柔軟なロジックが書ける</li>
+<li>Terraform の <code>templatefile()</code> で IP リストを動的注入</li>
+</ul>
+<p><strong>GitHub Actions OIDC</strong>:</p>
+<pre class="hljs"><code><div>GitHub Actions ワークフロー
+    │ OIDC トークン発行
+    ▼
+AWS IAM (OIDC Provider 信頼)
+    │ 一時認証情報を発行
+    ▼
+├── gha-frontend-deploy ロール → S3 にデプロイ
+└── gha-backend-deploy ロール  → ECR にプッシュ + ECS 更新
+</div></code></pre>
+<p><strong>なぜ OIDC？</strong></p>
+<ul>
+<li>AWS アクセスキーを GitHub Secrets に保存しなくていい</li>
+<li>一時認証情報で安全</li>
+<li>ブランチ制限（<code>master</code> からのみデプロイ可能）</li>
+</ul>
+<h3 id="55-stacksfinalcode--finalcode-%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC">5.5 stacks/finalcode — FinalCode サーバー</h3>
+<p><strong>最もセキュリティが厳しいコンポーネント</strong>。</p>
+<pre class="hljs"><code><div>[Backend ECS] → [VPC Endpoint] → [API Gateway (PRIVATE)] → [NLB] → [FinalCode ECS]
+</div></code></pre>
+<p><strong>なぜこんな複雑な構成か？</strong></p>
+<ol>
+<li>FinalCode はファイル暗号化サーバー → 外部からアクセスさせてはならない</li>
+<li>API Gateway を <code>PRIVATE</code> にすることで、VPC 内からしか到達不可</li>
+<li>NLB (Network Load Balancer) を internal にして、Private Subnet 内のみ</li>
+<li>VPC Endpoint でインターネットを経由せずに API Gateway に到達</li>
+</ol>
+<pre class="hljs"><code><div>Public Internet ──X──→ API Gateway (PRIVATE)  ← アクセス不可
+VPC 内 Backend   ──→ VPC Endpoint ──→ API Gateway ──→ NLB ──→ FinalCode  ← OK
+</div></code></pre>
+<h3 id="56-stackssftp--sftp-%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC">5.6 stacks/sftp — SFTP サーバー</h3>
+<pre class="hljs"><code><div># 条件付きリソース作成
+resource &quot;aws_transfer_server&quot; &quot;this&quot; {
+  count = var.enable_sftp ? 1 : 0    # フラグで有効/無効を切替
+  # ...
+}
+</div></code></pre>
+<p><strong>用途</strong>: 外部パートナーが VCF ファイルを SFTP でアップロード → S3 に保存 → バッチで処理</p>
+<h3 id="57-sandbox--%E9%96%8B%E7%99%BA%E7%94%A8-ec2">5.7 sandbox — 開発用 EC2</h3>
+<p>チーム開発用のリモート開発環境。EC2 Instance Connect Endpoint (EICE) を使い、SSH ポートを公開せずに接続。</p>
+<hr>
+<h2 id="%E7%AC%AC6%E7%AB%A0-%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E8%A8%AD%E8%A8%88--%E5%86%8D%E5%88%A9%E7%94%A8%E3%81%AE%E4%BB%95%E7%B5%84%E3%81%BF">第6章: モジュール設計 — 再利用の仕組み</h2>
+<h3 id="61-%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%81%A8%E3%81%AF">6.1 モジュールとは</h3>
+<p><strong>関数のようなもの</strong> — 引数を受け取り、リソースを作り、結果を返す。</p>
+<pre class="hljs"><code><div>┌──────────────────────────────────┐
+│          Module: s3              │
+│                                  │
+│  Input:                          │
+│    bucket_name = &quot;my-bucket&quot;     │
+│    versioning  = true            │
+│                                  │
+│  Creates:                        │
+│    aws_s3_bucket                 │
+│    aws_s3_bucket_versioning      │
+│    aws_s3_bucket_encryption      │
+│    aws_s3_bucket_public_access   │
+│                                  │
+│  Output:                         │
+│    bucket_name                   │
+│    bucket_arn                    │
+└──────────────────────────────────┘
+</div></code></pre>
+<h3 id="62-%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%81%AE%E6%9B%B8%E3%81%8D%E6%96%B9">6.2 モジュールの書き方</h3>
+<p><strong>定義側</strong> (<code>modules/s3/</code>):</p>
+<pre class="hljs"><code><div># modules/s3/variables.tf — 入力
+variable &quot;bucket_name&quot; {
+  type = string
+}
+variable &quot;versioning&quot; {
+  type    = bool
+  default = true
+}
+
+# modules/s3/main.tf — リソース定義
+resource &quot;aws_s3_bucket&quot; &quot;this&quot; {
+  bucket = var.bucket_name
+}
+
+resource &quot;aws_s3_bucket_versioning&quot; &quot;this&quot; {
+  bucket = aws_s3_bucket.this.id
+  versioning_configuration {
+    status = var.versioning ? &quot;Enabled&quot; : &quot;Suspended&quot;
+  }
+}
+
+# modules/s3/outputs.tf — 出力
+output &quot;bucket_name&quot; {
+  value = aws_s3_bucket.this.bucket
+}
+output &quot;bucket_arn&quot; {
+  value = aws_s3_bucket.this.arn
+}
+</div></code></pre>
+<p><strong>呼び出し側</strong> (<code>stacks/data/main.tf</code>):</p>
+<pre class="hljs"><code><div>module &quot;raw_files&quot; {
+  source      = &quot;../../modules/s3&quot;
+  bucket_name = &quot;${local.prefix}-raw-files&quot;
+  versioning  = true
+}
+
+module &quot;encrypted_files&quot; {
+  source      = &quot;../../modules/s3&quot;
+  bucket_name = &quot;${local.prefix}-encrypted-files&quot;
+  versioning  = true
+  cors_rules  = [{ allowed_origins = var.cors_allowed_origins }]
+}
+</div></code></pre>
+<h3 id="63-%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E4%B8%80%E8%A6%A7">6.3 このプロジェクトのモジュール一覧</h3>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>責務</th>
+<th>入力例</th>
+<th>出力例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>network</code></td>
+<td>VPC/Subnet/SG</td>
+<td>vpc_cidr, public_subnets</td>
+<td>vpc_id, sg_ids</td>
+</tr>
+<tr>
+<td><code>rds</code></td>
+<td>RDS MySQL</td>
+<td>instance_class, db_name</td>
+<td>endpoint, secret_arn</td>
+</tr>
+<tr>
+<td><code>s3</code></td>
+<td>S3 バケット</td>
+<td>bucket_name, cors_rules</td>
+<td>bucket_arn</td>
+</tr>
+<tr>
+<td><code>edge</code></td>
+<td>CloudFront</td>
+<td>allowed_ips, alb_dns</td>
+<td>domain_name</td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td>ALB + ECS</td>
+<td>container_image, cpu</td>
+<td>alb_dns, ecr_url</td>
+</tr>
+<tr>
+<td><code>batch_job</code></td>
+<td>定期バッチ</td>
+<td>command, schedule</td>
+<td>task_definition_arn</td>
+</tr>
+</tbody>
+</table>
+<h3 id="64-%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E8%A8%AD%E8%A8%88%E3%81%AE%E3%82%B3%E3%83%84">6.4 モジュール設計のコツ</h3>
+<pre class="hljs"><code><div>良い設計:
+├── 1つのモジュール = 1つの責務
+├── 入力は明示的（暗黙の依存を避ける）
+├── 出力は必要最小限
+└── 環境固有の値はモジュール内に書かない
+
+悪い設計:
+├── 1つのモジュールに全部入り
+├── ハードコードされた値がモジュール内に
+├── モジュール同士が直接参照し合う
+└── 出力が多すぎて何が重要か分からない
+</div></code></pre>
+<hr>
+<h2 id="%E7%AC%AC7%E7%AB%A0-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88--%E3%81%AA%E3%81%9C%E3%81%93%E3%81%86%E3%81%AA%E3%81%A3%E3%81%A6%E3%81%84%E3%82%8B%E3%81%AE%E3%81%8B">第7章: セキュリティ設計 — なぜこうなっているのか</h2>
+<h3 id="71-%E5%A4%9A%E5%B1%A4%E9%98%B2%E5%BE%A1-defense-in-depth">7.1 多層防御 (Defense in Depth)</h3>
+<pre class="hljs"><code><div>Layer 1: CloudFront Functions ← IP制限（許可IPのみ通過）
+    │
+Layer 2: CloudFront           ← DDoS緩和（AWS Shield Standard）
+    │
+Layer 3: ALB                  ← X-Origin-Verify ヘッダ検証
+    │
+Layer 4: Security Group       ← ポート + ソース制限
+    │
+Layer 5: Private Subnet       ← インターネットから直接到達不可
+    │
+Layer 6: IAM Role             ← 最小権限の原則
+    │
+Layer 7: Secrets Manager      ← シークレットの安全な管理
+</div></code></pre>
+<h3 id="72-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E5%88%86%E9%9B%A2">7.2 ネットワーク分離</h3>
+<pre class="hljs"><code><div>Internet
+    │
+    ▼
+[Public Subnet]
+├── ALB (HTTP/80)           ← CloudFront からのみ
+├── NAT Gateway             ← Private → Internet の出口
+│
+[Private Subnet]
+├── ECS Fargate (backend)   ← ALB からのみ
+├── ECS Fargate (finalcode) ← NLB からのみ
+├── RDS MySQL               ← Backend からのみ
+├── NLB (internal)          ← API Gateway からのみ
+└── VPC Endpoint            ← API Gateway への入口
+</div></code></pre>
+<h3 id="73-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%AE%E6%9C%80%E5%B0%8F%E6%A8%A9%E9%99%90">7.3 セキュリティグループの最小権限</h3>
+<pre class="hljs"><code><div># ALB: CloudFront の IP レンジからのみ
+resource &quot;aws_security_group_rule&quot; &quot;alb_http&quot; {
+  type              = &quot;ingress&quot;
+  from_port         = 80
+  to_port           = 80
+  protocol          = &quot;tcp&quot;
+  prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
+  security_group_id = aws_security_group.alb.id
+}
+
+# Backend: ALB からのみ
+resource &quot;aws_security_group_rule&quot; &quot;backend_from_alb&quot; {
+  type                     = &quot;ingress&quot;
+  from_port                = var.backend_container_port
+  to_port                  = var.backend_container_port
+  protocol                 = &quot;tcp&quot;
+  source_security_group_id = aws_security_group.alb.id      # ALB の SG を指定
+  security_group_id        = aws_security_group.backend.id
+}
+
+# RDS: Backend からのみ
+resource &quot;aws_security_group_rule&quot; &quot;rds_from_backend&quot; {
+  type                     = &quot;ingress&quot;
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = &quot;tcp&quot;
+  source_security_group_id = aws_security_group.backend.id   # Backend の SG を指定
+  security_group_id        = aws_security_group.rds.id
+}
+</div></code></pre>
+<p><strong>チェーン構造</strong>: CloudFront IP → ALB SG → Backend SG → RDS SG
+各 SG は <strong>直前のレイヤーからのみ</strong> アクセスを許可。</p>
+<h3 id="74-iam-%E3%83%AD%E3%83%BC%E3%83%AB%E8%A8%AD%E8%A8%88">7.4 IAM ロール設計</h3>
+<pre class="hljs"><code><div>ECS Task Execution Role (Terraform が管理)
+├── ecr:GetAuthorizationToken     ← ECR からイメージ取得
+├── ecr:BatchGetImage
+├── logs:CreateLogStream          ← CloudWatch Logs 書き込み
+├── logs:PutLogEvents
+├── secretsmanager:GetSecretValue ← シークレット取得（特定ARNのみ）
+└── kms:Decrypt                   ← 暗号化キー復号
+
+ECS Task Role (アプリケーションが使う権限)
+├── s3:GetObject (raw-files)      ← ファイル読み取り
+├── s3:PutObject (raw-files)      ← ファイルアップロード
+├── s3:GetObject (encrypted-files)← 暗号化ファイル読み取り
+└── execute-api:Invoke            ← FinalCode API Gateway 呼び出し
+</div></code></pre>
+<p><strong>Execution Role vs Task Role の違い</strong>:</p>
+<ul>
+<li><strong>Execution Role</strong>: ECS の基盤が使う（コンテナ起動前の準備）</li>
+<li><strong>Task Role</strong>: コンテナ内のアプリが使う（実行時の権限）</li>
+</ul>
+<h3 id="75-%E3%82%B7%E3%83%BC%E3%82%AF%E3%83%AC%E3%83%83%E3%83%88%E7%AE%A1%E7%90%86">7.5 シークレット管理</h3>
+<pre class="hljs"><code><div>❌ 悪い例: 環境変数にハードコード
+environment = [{
+  name  = &quot;DB_PASSWORD&quot;
+  value = &quot;my-password-123&quot;    # State ファイルに平文で保存される！
+}]
+
+✅ このプロジェクトの方式: Secrets Manager 経由
+secrets = [{
+  name      = &quot;DB_PASSWORD&quot;
+  valueFrom = &quot;${rds_master_secret_arn}:password::&quot;   # ARN で参照
+}]
+</div></code></pre>
+<h3 id="76-s3-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3">7.6 S3 セキュリティ</h3>
+<pre class="hljs"><code><div># 全バケット共通: パブリックアクセス完全ブロック
+resource &quot;aws_s3_bucket_public_access_block&quot; &quot;this&quot; {
+  bucket = aws_s3_bucket.this.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# 全バケット共通: サーバーサイド暗号化
+resource &quot;aws_s3_bucket_server_side_encryption_configuration&quot; &quot;this&quot; {
+  bucket = aws_s3_bucket.this.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = &quot;AES256&quot;
+    }
+  }
+}
+</div></code></pre>
+<hr>
+<h2 id="%E7%AC%AC8%E7%AB%A0-terraform-%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9">第8章: Terraform ベストプラクティス</h2>
+<h3 id="81-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%A7%8B%E6%88%90">8.1 ファイル構成</h3>
+<pre class="hljs"><code><div># ✅ 推奨: 関心ごとにファイルを分割
+stacks/services/
+├── providers.tf       ← provider, backend, required_providers
+├── variables.tf       ← variable ブロック全部
+├── main.tf            ← module 呼び出し、主要リソース
+├── iam.tf             ← IAM 関連リソース
+├── data.tf            ← data ソース、remote_state
+├── outputs.tf         ← output ブロック全部
+└── terraform.tfvars   ← 変数の値
+
+# ❌ 非推奨: 全部1ファイル
+main.tf (500行以上)
+</div></code></pre>
+<h3 id="82-%E5%91%BD%E5%90%8D%E8%A6%8F%E5%89%87">8.2 命名規則</h3>
+<pre class="hljs"><code><div># ✅ リソースが1つの場合: &quot;this&quot; を使う
+resource &quot;aws_vpc&quot; &quot;this&quot; { ... }
+
+# ✅ 目的が明確な場合: 目的を名前にする
+resource &quot;aws_security_group&quot; &quot;alb&quot; { ... }
+resource &quot;aws_security_group&quot; &quot;backend&quot; { ... }
+
+# ✅ プレフィックスを統一
+locals {
+  prefix = &quot;${var.project}-${var.environment}&quot;  # &quot;digital-arts-develop&quot;
+}
+resource &quot;aws_s3_bucket&quot; &quot;raw&quot; {
+  bucket = &quot;${local.prefix}-raw-files&quot;
+}
+
+# ❌ 意味のない名前
+resource &quot;aws_security_group&quot; &quot;sg1&quot; { ... }
+resource &quot;aws_security_group&quot; &quot;sg2&quot; { ... }
+</div></code></pre>
+<h3 id="83-state-%E7%AE%A1%E7%90%86">8.3 State 管理</h3>
+<pre class="hljs"><code><div># ✅ S3 バックエンド（チーム開発の基本）
+terraform {
+  backend &quot;s3&quot; {
+    bucket = &quot;digital-arts-dev-tfstate&quot;
+    key    = &quot;develop/network/terraform.tfstate&quot;
+    region = &quot;ap-northeast-1&quot;
+  }
+}
+
+# ✅ State バケットのキー設計
+# {environment}/{stack}/terraform.tfstate
+# → develop/network/terraform.tfstate
+# → develop/data/terraform.tfstate
+# → production/network/terraform.tfstate
+</div></code></pre>
+<p><strong>State 管理の鉄則</strong>:</p>
+<ol>
+<li><strong>State を手動編集しない</strong> → <code>terraform state mv</code> や <code>terraform import</code> を使う</li>
+<li><strong>State をGitにコミットしない</strong> → シークレットが含まれる</li>
+<li><strong>同時 apply を避ける</strong> → DynamoDB Lock を使うか、運用で回避</li>
+<li><strong>State を消さない</strong> → Terraform が全リソースを「新規」と認識して再作成してしまう</li>
+</ol>
+<h3 id="84-%E5%A4%89%E6%95%B0%E3%81%AE%E8%A8%AD%E8%A8%88">8.4 変数の設計</h3>
+<pre class="hljs"><code><div># ✅ description は必ず書く
+variable &quot;vpc_cidr&quot; {
+  description = &quot;VPC の CIDR ブロック&quot;
+  type        = string
+}
+
+# ✅ validation でバリデーション
+variable &quot;environment&quot; {
+  description = &quot;環境名&quot;
+  type        = string
+  validation {
+    condition     = contains([&quot;develop&quot;, &quot;staging&quot;, &quot;production&quot;], var.environment)
+    error_message = &quot;environment は develop/staging/production のいずれか&quot;
+  }
+}
+
+# ✅ sensitive で機密値を保護
+variable &quot;db_password&quot; {
+  description = &quot;DB パスワード&quot;
+  type        = string
+  sensitive   = true
+}
+
+# ❌ default で機密値を設定しない
+variable &quot;api_key&quot; {
+  default = &quot;sk-12345&quot;    # これは絶対NG
+}
+</div></code></pre>
+<h3 id="85-%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E8%A8%AD%E8%A8%88">8.5 モジュール設計</h3>
+<pre class="hljs"><code><div># ✅ モジュールの source はバージョン固定
+module &quot;vpc&quot; {
+  source  = &quot;terraform-aws-modules/vpc/aws&quot;
+  version = &quot;5.1.0&quot;    # バージョンを固定
+}
+
+# ✅ ローカルモジュールは相対パス
+module &quot;network&quot; {
+  source = &quot;../../modules/network&quot;
+}
+
+# ✅ モジュールの出力は必要最小限
+output &quot;vpc_id&quot; {
+  value = aws_vpc.this.id
+}
+# 内部のリソースIDを全部公開するのではなく、
+# 他のスタックが本当に必要なものだけ
+</div></code></pre>
+<h3 id="86-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E3%81%AE%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9">8.6 セキュリティのベストプラクティス</h3>
+<pre class="hljs"><code><div># ✅ terraform.tfvars は .gitignore に入れるか、機密値を含めない
+# このプロジェクトでは tfvars を Git 管理している（機密値は Secrets Manager に分離）
+
+# ✅ provider のバージョンをロックする
+required_providers {
+  aws = {
+    source  = &quot;hashicorp/aws&quot;
+    version = &quot;6.28.0&quot;    # 6.x を使うなら正確なバージョン
+  }
+}
+
+# ✅ .terraform.lock.hcl を Git にコミットする
+# → チーム全員が同じバージョンのプロバイダーを使う
+
+# ✅ sensitive 属性を使う
+output &quot;db_password&quot; {
+  value     = aws_rds_cluster.this.master_password
+  sensitive = true
+}
+</div></code></pre>
+<h3 id="87-%E3%82%B3%E3%83%BC%E3%83%89%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB">8.7 コードスタイル</h3>
+<pre class="hljs"><code><div># ✅ terraform fmt で自動フォーマット
+# terraform fmt -recursive
+
+# ✅ セクションコメントで区切る（このプロジェクトのスタイル）
+################################################################################
+# ECS Task Definition
+################################################################################
+
+resource &quot;aws_ecs_task_definition&quot; &quot;this&quot; {
+  # ...
+}
+
+################################################################################
+# EventBridge Scheduler
+################################################################################
+
+resource &quot;aws_scheduler_schedule&quot; &quot;this&quot; {
+  # ...
+}
+
+# ✅ タグは default_tags で統一
+provider &quot;aws&quot; {
+  default_tags {
+    tags = {
+      Project     = var.project
+      Environment = var.environment
+    }
+  }
+}
+</div></code></pre>
+<h3 id="88-%E3%82%84%E3%81%A3%E3%81%A6%E3%81%AF%E3%81%84%E3%81%91%E3%81%AA%E3%81%84%E3%81%93%E3%81%A8">8.8 やってはいけないこと</h3>
+<pre class="hljs"><code><div># ❌ ハードコードされた値
+resource &quot;aws_instance&quot; &quot;web&quot; {
+  ami           = &quot;ami-0c55b159cbfafe1f0&quot;  # 変数にすべき
+  instance_type = &quot;t3.micro&quot;                # 変数にすべき
+}
+
+# ❌ * (ワイルドカード) の IAM ポリシー
+policy = jsonencode({
+  Statement = [{
+    Effect   = &quot;Allow&quot;
+    Action   = &quot;s3:*&quot;           # 権限が広すぎる
+    Resource = &quot;*&quot;              # 対象が広すぎる
+  }]
+})
+
+# ✅ 最小権限のポリシー
+policy = jsonencode({
+  Statement = [{
+    Effect   = &quot;Allow&quot;
+    Action   = [&quot;s3:GetObject&quot;, &quot;s3:PutObject&quot;]   # 必要な操作のみ
+    Resource = &quot;${aws_s3_bucket.raw.arn}/*&quot;         # 特定バケットのみ
+  }]
+})
+
+# ❌ depends_on の乱用
+resource &quot;aws_ecs_service&quot; &quot;backend&quot; {
+  depends_on = [aws_lb.backend]    # 暗黙の依存で十分な場合は不要
+  # load_balancer ブロックで ALB を参照していれば自動的に依存する
+}
+
+# ❌ State ファイルの手動削除
+# rm terraform.tfstate    ← 絶対にやらない！
+
+# ❌ terraform destroy を本番で実行
+# terraform destroy        ← 全リソース削除！
+</div></code></pre>
+<hr>
+<h2 id="%E7%AC%AC9%E7%AB%A0-aws-%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E6%97%A9%E8%A6%8B%E8%A1%A8--%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%A7%E4%BD%BF%E3%81%86%E3%82%82%E3%81%AE%E5%85%A8%E9%83%A8">第9章: AWS サービス早見表 — このプロジェクトで使うもの全部</h2>
+<h3 id="91-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E7%B3%BB">9.1 ネットワーク系</h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>用途</th>
+<th>このプロジェクトでの使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>VPC</strong></td>
+<td>仮想ネットワーク</td>
+<td>10.20.0.0/16 の専用ネットワーク空間</td>
+</tr>
+<tr>
+<td><strong>Subnet</strong></td>
+<td>VPC内のネットワーク分割</td>
+<td>Public×2 + Private×2 (Multi-AZ)</td>
+</tr>
+<tr>
+<td><strong>Internet Gateway</strong></td>
+<td>VPC のインターネット出口</td>
+<td>Public Subnet 用</td>
+</tr>
+<tr>
+<td><strong>NAT Gateway</strong></td>
+<td>Private Subnet からの外向き通信</td>
+<td>ECS がインターネットアクセスする際に使用</td>
+</tr>
+<tr>
+<td><strong>Route Table</strong></td>
+<td>ルーティングルール</td>
+<td>Public→IGW, Private→NAT</td>
+</tr>
+<tr>
+<td><strong>Security Group</strong></td>
+<td>インスタンスレベルのファイアウォール</td>
+<td>ALB, Backend, RDS, FinalCode 用</td>
+</tr>
+<tr>
+<td><strong>VPC Endpoint</strong></td>
+<td>AWSサービスへのプライベート接続</td>
+<td>API Gateway (execute-api)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%83%88%E7%B3%BB">9.2 コンピュート系</h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>用途</th>
+<th>このプロジェクトでの使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ECS (Elastic Container Service)</strong></td>
+<td>コンテナオーケストレーション</td>
+<td>backend + finalcode + batch</td>
+</tr>
+<tr>
+<td><strong>Fargate</strong></td>
+<td>サーバーレスコンテナ実行</td>
+<td>EC2管理不要でコンテナを実行</td>
+</tr>
+<tr>
+<td><strong>Fargate Spot</strong></td>
+<td>割引価格のFargate</td>
+<td>開発環境で最大70%コスト削減</td>
+</tr>
+<tr>
+<td><strong>ECR (Elastic Container Registry)</strong></td>
+<td>Dockerイメージ保管</td>
+<td>backend + finalcode のイメージ保管</td>
+</tr>
+<tr>
+<td><strong>EC2</strong></td>
+<td>仮想サーバー</td>
+<td>sandbox（開発環境）のみ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%83%BBdb%E7%B3%BB">9.3 ストレージ・DB系</h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>用途</th>
+<th>このプロジェクトでの使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S3</strong></td>
+<td>オブジェクトストレージ</td>
+<td>frontend配信, raw/encrypted/vcf ファイル</td>
+</tr>
+<tr>
+<td><strong>RDS</strong></td>
+<td>マネージドDB</td>
+<td>MySQL 8.0 (backend のデータベース)</td>
+</tr>
+<tr>
+<td><strong>Secrets Manager</strong></td>
+<td>シークレット管理</td>
+<td>DB認証情報, APIキー, ライセンス</td>
+</tr>
+</tbody>
+</table>
+<h3 id="94-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AD%E3%83%B3%E3%82%B0%E3%83%BBcdn%E7%B3%BB">9.4 ネットワーキング・CDN系</h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>用途</th>
+<th>このプロジェクトでの使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CloudFront</strong></td>
+<td>CDN (Content Delivery Network)</td>
+<td>フロントエンド配信 + API プロキシ</td>
+</tr>
+<tr>
+<td><strong>CloudFront Functions</strong></td>
+<td>エッジでのJS実行</td>
+<td>IP制限 (allowlist)</td>
+</tr>
+<tr>
+<td><strong>ALB</strong></td>
+<td>L7 ロードバランサー</td>
+<td>backend ECS へのトラフィック分散</td>
+</tr>
+<tr>
+<td><strong>NLB</strong></td>
+<td>L4 ロードバランサー</td>
+<td>FinalCode ECS へのTCP転送</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>APIマネジメント</td>
+<td>FinalCode の Private API エンドポイント</td>
+</tr>
+</tbody>
+</table>
+<h3 id="95-cicd%E3%83%BB%E9%81%8B%E7%94%A8%E7%B3%BB">9.5 CI/CD・運用系</h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>用途</th>
+<th>このプロジェクトでの使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IAM</strong></td>
+<td>認証・認可</td>
+<td>OIDC, Task Role, Execution Role</td>
+</tr>
+<tr>
+<td><strong>CloudWatch Logs</strong></td>
+<td>ログ収集</td>
+<td>ECS タスクログ, API Gateway ログ</td>
+</tr>
+<tr>
+<td><strong>EventBridge Scheduler</strong></td>
+<td>スケジュール実行</td>
+<td>VCF Import バッチ (毎時)</td>
+</tr>
+<tr>
+<td><strong>AWS Transfer Family</strong></td>
+<td>SFTP/FTPS サーバー</td>
+<td>VCF ファイルの受信</td>
+</tr>
+<tr>
+<td><strong>EC2 Instance Connect Endpoint</strong></td>
+<td>セキュアな SSH 接続</td>
+<td>sandbox へのアクセス</td>
+</tr>
+</tbody>
+</table>
+<h3 id="96-%E3%82%B3%E3%82%B9%E3%83%88%E6%A7%8B%E9%80%A0%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AE%E6%A6%82%E7%AE%97">9.6 コスト構造（開発環境の概算）</h3>
+<table>
+<thead>
+<tr>
+<th>リソース</th>
+<th>月額概算 (USD)</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NAT Gateway</td>
+<td>~$35</td>
+<td>固定費 + データ転送</td>
+</tr>
+<tr>
+<td>RDS db.t4g.micro</td>
+<td>~$12</td>
+<td>開発環境の最小構成</td>
+</tr>
+<tr>
+<td>ALB</td>
+<td>~$18</td>
+<td>固定費 + LCU</td>
+</tr>
+<tr>
+<td>ECS Fargate Spot</td>
+<td>~$5-10</td>
+<td>0.5 vCPU / 1GB × Spot</td>
+</tr>
+<tr>
+<td>CloudFront</td>
+<td>~$1-5</td>
+<td>開発環境なのでトラフィック少</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>~$1</td>
+<td>ストレージ量次第</td>
+</tr>
+<tr>
+<td>Secrets Manager</td>
+<td>~$2</td>
+<td>シークレット数 × $0.40</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td><strong>~$75-85</strong></td>
+<td>開発環境の概算</td>
+</tr>
+</tbody>
+</table>
+<p><strong>コスト最適化のポイント</strong>:</p>
+<ul>
+<li><code>FARGATE_SPOT</code> で最大 70% 削減</li>
+<li><code>db.t4g.micro</code> (Graviton) で ARM ベースの低コスト</li>
+<li>ECR ライフサイクルで古いイメージを自動削除</li>
+<li>CloudWatch Logs の保持期間を短く設定 (14-30日)</li>
+</ul>
+<hr>
+<h2 id="%E7%AC%AC10%E7%AB%A0-%E9%81%8B%E7%94%A8%E3%82%AC%E3%82%A4%E3%83%89--tf%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9">第10章: 運用ガイド — tfファイルの使い方</h2>
+<h3 id="101-%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%E5%88%9D%E5%9B%9E%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">10.1 環境構築（初回セットアップ）</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># 1. AWS CLI の設定</span>
+aws configure
+<span class="hljs-comment"># AWS Access Key ID: [your-key]</span>
+<span class="hljs-comment"># AWS Secret Access Key: [your-secret]</span>
+<span class="hljs-comment"># Default region name: ap-northeast-1</span>
+<span class="hljs-comment"># Default output format: json</span>
+
+<span class="hljs-comment"># 2. Terraform のインストール</span>
+<span class="hljs-comment"># macOS (Homebrew)</span>
+brew install terraform
+
+<span class="hljs-comment"># バージョン確認</span>
+terraform version
+<span class="hljs-comment"># Terraform v1.6.x</span>
+</div></code></pre>
+<h3 id="102-%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%AE%E6%93%8D%E4%BD%9C%E5%9F%BA%E6%9C%AC%E3%83%95%E3%83%AD%E3%83%BC">10.2 スタックの操作（基本フロー）</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># ===== スタックディレクトリに移動 =====</span>
+<span class="hljs-built_in">cd</span> infra/stacks/network
+
+<span class="hljs-comment"># ===== 1. 初期化（初回のみ、またはprovider変更時） =====</span>
+terraform init
+<span class="hljs-comment"># → .terraform/ ディレクトリが作成される</span>
+<span class="hljs-comment"># → AWS provider プラグインがダウンロードされる</span>
+<span class="hljs-comment"># → S3 backend に接続</span>
+
+<span class="hljs-comment"># ===== 2. フォーマット確認 =====</span>
+terraform fmt -check
+<span class="hljs-comment"># → フォーマットが崩れていないか確認</span>
+
+<span class="hljs-comment"># ===== 3. バリデーション =====</span>
+terraform validate
+<span class="hljs-comment"># → 構文エラーがないか確認</span>
+
+<span class="hljs-comment"># ===== 4. Plan（差分確認） =====</span>
+terraform plan
+<span class="hljs-comment"># → 何が作成/変更/削除されるか表示</span>
+<span class="hljs-comment"># 出力例:</span>
+<span class="hljs-comment">#   + aws_vpc.this will be created</span>
+<span class="hljs-comment">#   ~ aws_security_group.alb will be updated</span>
+<span class="hljs-comment">#   - aws_subnet.old will be destroyed</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># + = 作成, ~ = 変更, - = 削除</span>
+
+<span class="hljs-comment"># ===== 5. Apply（実行） =====</span>
+terraform apply
+<span class="hljs-comment"># → Plan を表示した後、"yes" と入力すると実行</span>
+
+<span class="hljs-comment"># ===== 6. 状態確認 =====</span>
+terraform show
+<span class="hljs-comment"># → 現在の State の内容を表示</span>
+</div></code></pre>
+<h3 id="103-%E3%82%88%E3%81%8F%E4%BD%BF%E3%81%86%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89">10.3 よく使うコマンド</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># State 内のリソース一覧</span>
+terraform state list
+
+<span class="hljs-comment"># 特定リソースの詳細</span>
+terraform state show aws_vpc.this
+
+<span class="hljs-comment"># 出力値の確認</span>
+terraform output
+terraform output vpc_id
+
+<span class="hljs-comment"># リソースのインポート（手動作成したリソースをTerraform管理下に）</span>
+terraform import aws_s3_bucket.my_bucket my-bucket-name
+
+<span class="hljs-comment"># リソース名の変更（State 内のリネーム）</span>
+terraform state mv aws_s3_bucket.old aws_s3_bucket.new
+
+<span class="hljs-comment"># 特定リソースだけ plan/apply</span>
+terraform plan -target=module.network
+terraform apply -target=aws_security_group.alb
+
+<span class="hljs-comment"># Plan をファイルに保存して apply</span>
+terraform plan -out=tfplan
+terraform apply tfplan
+</div></code></pre>
+<h3 id="104-%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE-apply-%E6%89%8B%E9%A0%86">10.4 このプロジェクトの apply 手順</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># ===== 全スタックの初回構築 =====</span>
+
+<span class="hljs-comment"># Step 1: Network</span>
+<span class="hljs-built_in">cd</span> infra/stacks/network
+terraform init
+terraform apply
+
+<span class="hljs-comment"># Step 2: Data (Network の後)</span>
+<span class="hljs-built_in">cd</span> ../data
+terraform init
+terraform apply
+
+<span class="hljs-comment"># Step 3: Services (Network + Data の後)</span>
+<span class="hljs-built_in">cd</span> ../services
+terraform init
+terraform apply
+
+<span class="hljs-comment"># Step 4: FinalCode (Network + Data + Services の後)</span>
+<span class="hljs-built_in">cd</span> ../finalcode
+terraform init
+terraform apply
+
+<span class="hljs-comment"># Step 5: Edge (Services の後)</span>
+<span class="hljs-built_in">cd</span> ../edge
+terraform init
+terraform apply
+
+<span class="hljs-comment"># Step 6: SFTP (Data の後、任意)</span>
+<span class="hljs-built_in">cd</span> ../sftp
+terraform init
+terraform apply
+
+<span class="hljs-comment"># Step 7: Build (Edge の後、任意)</span>
+<span class="hljs-built_in">cd</span> ../build
+terraform init
+terraform apply
+</div></code></pre>
+<h3 id="105-%E5%A4%89%E6%9B%B4%E3%81%AE%E9%81%A9%E7%94%A8%E3%83%95%E3%83%AD%E3%83%BC%E6%97%A5%E5%B8%B8%E9%81%8B%E7%94%A8">10.5 変更の適用フロー（日常運用）</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># 例: IP制限リストに新しいIPを追加</span>
+
+<span class="hljs-comment"># 1. tfvars を編集</span>
+<span class="hljs-comment"># infra/stacks/edge/terraform.tfvars</span>
+cloudfront_allowed_ips = [
+  <span class="hljs-string">"121.2.39.118"</span>,
+  <span class="hljs-string">"39.110.206.140"</span>,
+  <span class="hljs-string">"新しいIP.ここ.に.追加"</span>,    <span class="hljs-comment"># ← 追加</span>
+]
+
+<span class="hljs-comment"># 2. Plan で差分確認</span>
+<span class="hljs-built_in">cd</span> infra/stacks/edge
+terraform plan
+<span class="hljs-comment"># → CloudFront Function のコードが更新されることを確認</span>
+
+<span class="hljs-comment"># 3. PR を作成してレビュー</span>
+
+<span class="hljs-comment"># 4. マージ後に Apply</span>
+terraform apply
+</div></code></pre>
+<h3 id="106-terraformlockhcl">10.6 .terraform.lock.hcl</h3>
+<pre class="hljs"><code><div>infra/stacks/network/
+├── .terraform/              ← git ignore（ダウンロードしたプラグイン）
+├── .terraform.lock.hcl      ← git commit（プラグインのバージョンロック）
+├── terraform.tfvars         ← git commit（環境固有の値）
+└── *.tf                     ← git commit（インフラ定義）
+</div></code></pre>
+<p><code>.terraform.lock.hcl</code> は <strong>package-lock.json</strong> のようなもの。
+チーム全員が同じバージョンのプロバイダーを使うことを保証する。</p>
+<hr>
+<h2 id="%E7%AC%AC11%E7%AB%A0-%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0">第11章: トラブルシューティング</h2>
+<h3 id="111-%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%A8%E5%AF%BE%E5%87%A6%E6%B3%95">11.1 よくあるエラーと対処法</h3>
+<p><strong>1. State Lock エラー</strong></p>
+<pre class="hljs"><code><div>Error: Error acquiring the state lock
+</div></code></pre>
+<p>→ 他の人が <code>terraform apply</code> 中。終わるまで待つか、手動ロック解除:</p>
+<pre class="hljs"><code><div>terraform force-unlock &lt;LOCK_ID&gt;
+</div></code></pre>
+<p><strong>2. リソースが既に存在する</strong></p>
+<pre class="hljs"><code><div>Error: Creating S3 Bucket: BucketAlreadyExists
+</div></code></pre>
+<p>→ 手動作成されたリソースを import:</p>
+<pre class="hljs"><code><div>terraform import aws_s3_bucket.this my-existing-bucket
+</div></code></pre>
+<p><strong>3. 依存関係エラー</strong></p>
+<pre class="hljs"><code><div>Error: Reference to undeclared resource
+</div></code></pre>
+<p>→ <code>data &quot;terraform_remote_state&quot;</code> が正しく設定されているか確認。
+依存元のスタックが先に apply されているか確認。</p>
+<p><strong>4. Provider バージョンの不一致</strong></p>
+<pre class="hljs"><code><div>Error: Failed to query available provider packages
+</div></code></pre>
+<p>→ <code>terraform init -upgrade</code> でプロバイダーを更新</p>
+<p><strong>5. 権限エラー</strong></p>
+<pre class="hljs"><code><div>Error: AccessDenied
+</div></code></pre>
+<p>→ AWS CLI の認証情報を確認: <code>aws sts get-caller-identity</code></p>
+<h3 id="112-state-%E3%81%AE%E5%BE%A9%E6%97%A7">11.2 State の復旧</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># State のバックアップ確認（S3 バージョニングが有効なら）</span>
+aws s3api list-object-versions \
+  --bucket digital-arts-dev-tfstate \
+  --prefix develop/network/terraform.tfstate
+
+<span class="hljs-comment"># 特定バージョンのダウンロード</span>
+aws s3api get-object \
+  --bucket digital-arts-dev-tfstate \
+  --key develop/network/terraform.tfstate \
+  --version-id &lt;VERSION_ID&gt; \
+  terraform.tfstate.backup
+</div></code></pre>
+<h3 id="113-%E5%AE%89%E5%85%A8%E3%81%AA%E5%A4%89%E6%9B%B4%E3%81%AE%E9%80%B2%E3%82%81%E6%96%B9">11.3 安全な変更の進め方</h3>
+<pre class="hljs"><code><div><span class="hljs-comment"># 1. 必ず plan を先に見る</span>
+terraform plan
+
+<span class="hljs-comment"># 2. destroy が含まれていないか確認</span>
+<span class="hljs-comment"># "will be destroyed" が出たら要注意！</span>
+
+<span class="hljs-comment"># 3. 変更が少ないことを確認</span>
+<span class="hljs-comment"># Plan: 1 to add, 0 to change, 0 to destroy.  ← 安心</span>
+<span class="hljs-comment"># Plan: 0 to add, 0 to change, 15 to destroy. ← 危険！確認が必要</span>
+
+<span class="hljs-comment"># 4. 不安なら target で1つずつ</span>
+terraform apply -target=aws_security_group_rule.new_rule
+</div></code></pre>
+<hr>
+<h2 id="%E7%AC%AC12%E7%AB%A0-%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97--%E3%81%95%E3%82%89%E3%81%AB%E5%AD%A6%E3%81%B6%E3%81%9F%E3%82%81%E3%81%AB">第12章: 次のステップ — さらに学ぶために</h2>
+<h3 id="121-%E5%AD%A6%E7%BF%92%E3%83%AD%E3%83%BC%E3%83%89%E3%83%9E%E3%83%83%E3%83%97">12.1 学習ロードマップ</h3>
+<pre class="hljs"><code><div>Phase 1: 基礎（今ここ）
+├── Terraform の基本構文を理解する ✓
+├── このプロジェクトの構成を読み解く ✓
+├── terraform plan/apply を実行してみる
+└── 小さな変更を加えて PR を出す
+
+Phase 2: 応用
+├── 新しいリソースを追加する（例: SES, SNS）
+├── 新しいモジュールを作る
+├── 本番環境用の tfvars を設計する
+└── CI/CD で terraform plan を自動実行
+
+Phase 3: 発展
+├── Terraform Cloud / Spacelift の導入
+├── DynamoDB による State Lock
+├── Sentinel / OPA によるポリシー管理
+├── マルチアカウント戦略（AWS Organizations）
+└── コスト最適化（Savings Plans, Reserved Instances）
+</div></code></pre>
+<h3 id="122-%E6%9C%AC%E7%95%AA%E7%92%B0%E5%A2%83%E3%81%AB%E5%90%91%E3%81%91%E3%81%A6%E5%A4%89%E6%9B%B4%E3%81%99%E3%81%B9%E3%81%8D%E7%82%B9">12.2 本番環境に向けて変更すべき点</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>開発 (現在)</th>
+<th>本番 (推奨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RDS インスタンス</td>
+<td>db.t4g.micro</td>
+<td>db.r6g.large 以上</td>
+</tr>
+<tr>
+<td>RDS マルチAZ</td>
+<td>false</td>
+<td>true</td>
+</tr>
+<tr>
+<td>RDS バックアップ</td>
+<td>1日</td>
+<td>7-35日</td>
+</tr>
+<tr>
+<td>RDS 削除保護</td>
+<td>false</td>
+<td>true</td>
+</tr>
+<tr>
+<td>ECS Capacity</td>
+<td>FARGATE_SPOT</td>
+<td>FARGATE</td>
+</tr>
+<tr>
+<td>ECS タスク数</td>
+<td>1</td>
+<td>2以上 (Auto Scaling)</td>
+</tr>
+<tr>
+<td>S3 Object Lock</td>
+<td>なし</td>
+<td>Compliance/Governance</td>
+</tr>
+<tr>
+<td>CloudWatch Logs</td>
+<td>14日</td>
+<td>90-365日</td>
+</tr>
+<tr>
+<td>State Lock</td>
+<td>なし</td>
+<td>DynamoDB</td>
+</tr>
+<tr>
+<td>監視</td>
+<td>なし</td>
+<td>CloudWatch Alarms + SNS</td>
+</tr>
+<tr>
+<td>WAF</td>
+<td>なし</td>
+<td>CloudFront に WAF 追加</td>
+</tr>
+</tbody>
+</table>
+<h3 id="123-%E8%BF%BD%E5%8A%A0%E3%81%A7%E5%AD%A6%E3%81%B6%E3%81%B9%E3%81%8D-aws-%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9">12.3 追加で学ぶべき AWS サービス</h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>用途</th>
+<th>いつ必要になるか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Route 53</strong></td>
+<td>DNS 管理</td>
+<td>独自ドメイン設定時</td>
+</tr>
+<tr>
+<td><strong>ACM</strong></td>
+<td>SSL 証明書</td>
+<td>HTTPS + 独自ドメイン</td>
+</tr>
+<tr>
+<td><strong>WAF</strong></td>
+<td>Webファイアウォール</td>
+<td>本番のセキュリティ強化</td>
+</tr>
+<tr>
+<td><strong>SES</strong></td>
+<td>メール送信</td>
+<td>ユーザー通知機能</td>
+</tr>
+<tr>
+<td><strong>SNS</strong></td>
+<td>通知</td>
+<td>アラート通知</td>
+</tr>
+<tr>
+<td><strong>CloudWatch Alarms</strong></td>
+<td>監視</td>
+<td>本番の死活監視</td>
+</tr>
+<tr>
+<td><strong>Auto Scaling</strong></td>
+<td>自動スケーリング</td>
+<td>トラフィック増加対応</td>
+</tr>
+<tr>
+<td><strong>AWS Organizations</strong></td>
+<td>マルチアカウント</td>
+<td>開発/本番の完全分離</td>
+</tr>
+</tbody>
+</table>
+<h3 id="124-%E6%8E%A8%E5%A5%A8%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9">12.4 推奨リソース</h3>
+<p><strong>公式ドキュメント</strong>:</p>
+<ul>
+<li>Terraform Registry: https://registry.terraform.io/providers/hashicorp/aws/latest/docs</li>
+<li>AWS Well-Architected Framework: https://aws.amazon.com/architecture/well-architected/</li>
+<li>Terraform Best Practices: https://www.terraform-best-practices.com/</li>
+</ul>
+<p><strong>実践練習</strong>:</p>
+<ol>
+<li>このプロジェクトの <code>terraform plan</code> を実行して出力を読む</li>
+<li><code>terraform.tfvars</code> の値を変えて差分を確認する</li>
+<li>新しい Security Group Rule を追加する PR を出す</li>
+<li>sandbox 環境を <code>terraform apply</code> で構築してみる</li>
+</ol>
+<hr>
+<h2 id="%E4%BB%98%E9%8C%B2a-terraform-%E3%83%81%E3%83%BC%E3%83%88%E3%82%B7%E3%83%BC%E3%83%88">付録A: Terraform チートシート</h2>
+<pre class="hljs"><code><div><span class="hljs-comment"># ===== 基本コマンド =====</span>
+terraform init          <span class="hljs-comment"># 初期化</span>
+terraform plan          <span class="hljs-comment"># 差分確認</span>
+terraform apply         <span class="hljs-comment"># 適用</span>
+terraform destroy       <span class="hljs-comment"># 全削除（危険！）</span>
+terraform fmt           <span class="hljs-comment"># フォーマット</span>
+terraform validate      <span class="hljs-comment"># 構文チェック</span>
+
+<span class="hljs-comment"># ===== State 操作 =====</span>
+terraform state list                    <span class="hljs-comment"># リソース一覧</span>
+terraform state show &lt;resource&gt;         <span class="hljs-comment"># 詳細表示</span>
+terraform state mv &lt;old&gt; &lt;new&gt;          <span class="hljs-comment"># リネーム</span>
+terraform state rm &lt;resource&gt;           <span class="hljs-comment"># State から除外（AWS上は残る）</span>
+terraform import &lt;resource&gt; &lt;id&gt;        <span class="hljs-comment"># 既存リソースを取り込み</span>
+
+<span class="hljs-comment"># ===== 出力 =====</span>
+terraform output                        <span class="hljs-comment"># 全出力</span>
+terraform output &lt;name&gt;                 <span class="hljs-comment"># 特定出力</span>
+terraform output -json                  <span class="hljs-comment"># JSON形式</span>
+
+<span class="hljs-comment"># ===== デバッグ =====</span>
+TF_LOG=DEBUG terraform plan             <span class="hljs-comment"># 詳細ログ</span>
+terraform plan -out=plan.tfplan         <span class="hljs-comment"># Plan保存</span>
+terraform show plan.tfplan              <span class="hljs-comment"># 保存したPlan表示</span>
+
+<span class="hljs-comment"># ===== その他 =====</span>
+terraform workspace list                <span class="hljs-comment"># ワークスペース一覧</span>
+terraform workspace new staging         <span class="hljs-comment"># 新規ワークスペース</span>
+terraform graph | dot -Tpng &gt; graph.png <span class="hljs-comment"># 依存グラフの可視化</span>
+</div></code></pre>
+<h2 id="%E4%BB%98%E9%8C%B2b-hcl-%E6%A7%8B%E6%96%87%E6%97%A9%E8%A6%8B%E8%A1%A8">付録B: HCL 構文早見表</h2>
+<pre class="hljs"><code><div># ===== 基本型 =====
+string_var  = &quot;hello&quot;
+number_var  = 42
+bool_var    = true
+list_var    = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+map_var     = { key1 = &quot;val1&quot;, key2 = &quot;val2&quot; }
+
+# ===== 文字列補間 =====
+name = &quot;${var.project}-${var.environment}&quot;
+
+# ===== 条件式 =====
+instance_type = var.env == &quot;prod&quot; ? &quot;r6g.large&quot; : &quot;t4g.micro&quot;
+
+# ===== for 式 =====
+upper_list = [for s in var.names : upper(s)]
+filtered   = [for s in var.names : s if s != &quot;&quot;]
+name_map   = { for s in var.names : s =&gt; upper(s) }
+
+# ===== 動的ブロック =====
+dynamic &quot;ingress&quot; {
+  for_each = var.ingress_rules
+  content {
+    from_port   = ingress.value.from_port
+    to_port     = ingress.value.to_port
+    protocol    = ingress.value.protocol
+    cidr_blocks = ingress.value.cidr_blocks
+  }
+}
+
+# ===== よく使う関数 =====
+length(var.list)                    # リストの長さ
+join(&quot;,&quot;, var.list)                 # リストを文字列に結合
+split(&quot;,&quot;, var.string)              # 文字列をリストに分割
+lookup(var.map, &quot;key&quot;, &quot;default&quot;)   # マップの値取得
+merge(map1, map2)                   # マップの結合
+file(&quot;path/to/file&quot;)               # ファイル読み込み
+templatefile(&quot;tpl.tftpl&quot;, { k = v })# テンプレート展開
+jsonencode(var.obj)                 # JSON エンコード
+cidrsubnet(&quot;10.0.0.0/16&quot;, 8, 1)    # CIDR 計算
+format(&quot;%s-%s&quot;, var.a, var.b)       # フォーマット文字列
+try(var.obj.key, &quot;default&quot;)         # エラー時のフォールバック
+</div></code></pre>
+<h2 id="%E4%BB%98%E9%8C%B2c-%E3%81%93%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E5%85%A8%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97">付録C: このプロジェクトの全リソースマップ</h2>
+<pre class="hljs"><code><div>stacks/network:
+├── module.network
+│   ├── aws_vpc.this
+│   ├── aws_internet_gateway.this
+│   ├── aws_subnet.public[0,1]
+│   ├── aws_subnet.private[0,1]
+│   ├── aws_eip.nat[0]
+│   ├── aws_nat_gateway.this[0]
+│   ├── aws_route_table.public
+│   ├── aws_route_table.private
+│   ├── aws_route.public_internet
+│   ├── aws_route.private_nat[0]
+│   ├── aws_route_table_association.public[0,1]
+│   ├── aws_route_table_association.private[0,1]
+│   ├── aws_security_group.alb
+│   ├── aws_security_group.backend
+│   ├── aws_security_group.rds
+│   ├── aws_security_group.finalcode_nlb
+│   └── aws_security_group.finalcode_ecs
+
+stacks/data:
+├── module.rds
+│   ├── aws_db_subnet_group.this
+│   ├── aws_db_parameter_group.this
+│   └── aws_db_instance.this
+├── module.raw_files (s3)
+├── module.encrypted_files (s3)
+├── module.vcf_files (s3)
+├── aws_secretsmanager_secret.backend
+├── aws_secretsmanager_secret_version.backend
+├── aws_secretsmanager_secret.finalcode
+└── aws_secretsmanager_secret_version.finalcode
+
+stacks/services:
+├── module.services
+│   ├── aws_ecs_cluster.this
+│   ├── aws_lb.backend
+│   ├── aws_lb_target_group.backend
+│   ├── aws_lb_listener.http
+│   ├── aws_lb_listener_rule.backend
+│   ├── aws_ecs_service.backend
+│   ├── aws_ecs_task_definition.backend
+│   ├── aws_iam_role.task_execution
+│   ├── aws_iam_role.task
+│   ├── aws_ecr_repository.backend
+│   └── aws_cloudwatch_log_group.backend
+├── module.vcf_import (batch_job)
+│   ├── aws_ecs_task_definition.this
+│   ├── aws_scheduler_schedule.this[0]
+│   ├── aws_iam_role.scheduler
+│   └── aws_iam_policy.scheduler
+├── random_password.origin_verify
+└── 各種 IAM Policy/Attachment
+
+stacks/edge:
+├── module.edge
+│   ├── aws_s3_bucket.frontend
+│   ├── aws_cloudfront_distribution.this
+│   ├── aws_cloudfront_function.ip_allowlist
+│   └── aws_cloudfront_origin_access_control.frontend
+├── aws_iam_openid_connect_provider.github (OIDC)
+├── aws_iam_role.gha_frontend
+└── aws_iam_role.gha_backend
+
+stacks/finalcode:
+├── aws_ecs_task_definition.finalcode
+├── aws_ecs_service.finalcode
+├── aws_lb.finalcode_nlb
+├── aws_lb_target_group.finalcode
+├── aws_apigatewayv2_api.finalcode (REST, Private)
+├── aws_apigatewayv2_vpc_link.finalcode
+├── aws_vpc_endpoint.execute_api
+├── aws_ecr_repository.finalcode
+└── 各種 IAM Role/Policy
+
+stacks/sftp:
+├── aws_transfer_server.this[0]
+├── aws_transfer_user.this[0]
+└── aws_iam_role.transfer_*
+
+stacks/build:
+├── aws_s3_bucket.artifacts
+└── aws_iam_role.gha_finalcode
+</div></code></pre>
+<hr>
+<blockquote>
+<p><strong>最後に</strong>: インフラは「一度作って終わり」ではなく、アプリケーションと共に進化するもの。
+このドキュメントを起点に、実際にコードを読み、<code>terraform plan</code> を実行し、
+小さな変更から始めることで、確実に力がつく。</p>
+</blockquote>
+
+</body>
+</html>

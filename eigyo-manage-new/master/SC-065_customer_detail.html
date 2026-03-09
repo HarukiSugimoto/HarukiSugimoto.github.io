@@ -13,19 +13,19 @@
     }
     body {
       font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-      background-color: #f5f7fa;
+      background-color: #f0f2f5;
       color: #333;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.5;
     }
     .header {
       background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
       color: #fff;
-      padding: 12px 24px;
+      padding: 0 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
       position: fixed;
       top: 0;
       left: 0;
@@ -43,23 +43,8 @@
       align-items: center;
     }
     .header-notification {
-      position: relative;
-      cursor: pointer;
-      padding: 4px;
-      text-decoration: none;
-    }
-    .header-notification-icon {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      color: #fff;
-      transition: opacity 0.2s;
-    }
-    .header-notification:hover .header-notification-icon {
-      opacity: 0.8;
+      position: relative; cursor: pointer; padding: 4px;
+      display: flex; align-items: center; color: #fff; text-decoration: none;
     }
     .notification-badge {
       position: absolute;
@@ -92,7 +77,8 @@
       align-items: center;
       justify-content: center;
       color: #2a5f41;
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 700;
     }
     .page-title { font-size: 20px; font-weight: 700; color: #1e4530; }
     .page-subtitle { font-size: 13px; color: #7f8c8d; }
@@ -274,7 +260,8 @@
       font-size: 11px; font-weight: 700; white-space: nowrap;
       background: #ecf0f1; color: #636e72;
     }
-    .keyman-star { color: #f1c40f; font-size: 16px; }
+    .keyman-star { color: #f1c40f; font-size: 14px;
+      font-weight: 700; }
     .pagination {
       display: flex;
       justify-content: space-between;
@@ -329,7 +316,8 @@
     }
     .keyman-star {
       color: #f1c40f;
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 700;
     }
     /* アラート行 */
     .data-table tr.has-alert {
@@ -341,7 +329,8 @@
     .alert-icon {
       color: #e74c3c;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 700;
     }
     /* サイドバー */
     .sidebar {
@@ -432,7 +421,7 @@
     .page-top-bar {
       background: #fff;
       border-bottom: 1px solid #dce0e4;
-      padding: 12px 24px;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -479,15 +468,9 @@
         display: flex !important;
       }
     }
-    .menu-toggle {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      color: #fff;
-    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .menu-toggle { cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center; }
+    .menu-toggle:hover { background: rgba(255,255,255,0.15); }
     /* モーダル */
     .modal-overlay {
       display: none;
@@ -516,7 +499,8 @@
       align-items: center;
     }
     .modal-title {
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 700;
       font-weight: 600;
     }
     .modal-close {
@@ -704,22 +688,23 @@
       border-radius: 6px;
     }
     .ocr-result-notice .material-icons {
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
   <header class="header">
-    <div style="display: flex; align-items: center; gap: 12px;">
+    <div class="header-left">
       <div class="menu-toggle" onclick="toggleSidebar()">
-        <span class="material-icons">menu</span>
+        <span class="material-icons" style="color:#fff">menu</span>
       </div>
       <div class="header-title">営業管理システム</div>
     </div>
     <div class="header-actions">
       <a href="../dashboard/SC-012_notifications.html" class="header-notification" title="通知">
-        <span class="material-icons header-notification-icon">notifications</span>
-        <span class="notification-badge">5</span>
+        <span class="material-icons">notifications</span>
+        <span class="notification-badge">3</span>
       </a>
       <div class="header-user">
         <div class="header-user-icon">山</div>

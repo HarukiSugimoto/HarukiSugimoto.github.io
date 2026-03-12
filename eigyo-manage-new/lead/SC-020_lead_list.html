@@ -1433,7 +1433,6 @@ function openNewModal() {
   document.getElementById('newProduct').value = '戦略コンサル';
   document.getElementById('newAcquiredDate').value = '';
   document.getElementById('newFirstMeetingDate').value = '';
-  document.getElementById('newNeeds').value = '';
 
   document.getElementById('newLeadModal').classList.add('active');
 }
@@ -1622,10 +1621,6 @@ renderBoard(leads);
           <label class="form-label">初回面談日</label>
           <input type="date" class="form-input" id="newFirstMeetingDate">
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">ニーズ・課題</label>
-        <textarea class="form-textarea" id="newNeeds" placeholder="ニーズや課題を入力"></textarea>
       </div>
     </div>
     <div class="modal-footer">

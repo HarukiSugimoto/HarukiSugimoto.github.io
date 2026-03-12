@@ -742,12 +742,6 @@
       <input type="text" placeholder="氏名で検索">
     </div>
     <select class="filter-select">
-      <option value="">役割：すべて</option>
-      <option value="sales">営業</option>
-      <option value="delivery">デリバリー</option>
-      <option value="both">両方</option>
-    </select>
-    <select class="filter-select">
       <option value="active">在籍のみ</option>
       <option value="all">全件（退職含む）</option>
     </select>
@@ -766,7 +760,6 @@
               <tr>
                 <th>ID</th>
                 <th>氏名</th>
-                <th>役割</th>
                 <th>在籍/退職</th>
                 <th>最終更新日</th>
               </tr>
@@ -775,28 +768,24 @@
               <tr class="clickable" onclick="location.href='SC-068_staff_detail.html'">
                 <td>U-001</td>
                 <td>山田</td>
-                <td><span>営業</span></td>
                 <td><span class="status-badge status-active">在籍</span></td>
                 <td>2026/02/18</td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-068_staff_detail.html'">
                 <td>U-002</td>
                 <td>佐藤</td>
-                <td><span>デリバリー</span></td>
                 <td><span class="status-badge status-retired">退職</span></td>
                 <td>2025/12/01</td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-068_staff_detail.html'">
                 <td>U-003</td>
                 <td>田中</td>
-                <td><span>両方</span></td>
                 <td><span class="status-badge status-active">在籍</span></td>
                 <td>2026/02/15</td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-068_staff_detail.html'">
                 <td>U-004</td>
                 <td>高橋</td>
-                <td><span>営業</span></td>
                 <td><span class="status-badge status-active">在籍</span></td>
                 <td>2026/02/10</td>
               </tr>
@@ -838,15 +827,6 @@
           <input type="text" class="form-input" id="modalStaffName" placeholder="例：山田">
         </div>
         <div class="form-group">
-          <label class="form-label">役割<span class="required-mark">*</span></label>
-          <select class="form-select" id="modalStaffRole">
-            <option value="">選択してください</option>
-            <option value="sales">営業</option>
-            <option value="delivery">デリバリー</option>
-            <option value="both">両方</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label class="form-label">在籍状態<span class="required-mark">*</span></label>
           <select class="form-select" id="modalStaffStatus">
             <option value="">選択してください</option>
@@ -882,17 +862,15 @@
     }
     function closeCreateModal() {
       document.getElementById('createModal').classList.remove('open');
-      ['modalStaffName','modalStaffRole','modalStaffStatus','modalStaffEmail','modalStaffPassword']
+      ['modalStaffName','modalStaffStatus','modalStaffEmail','modalStaffPassword']
         .forEach(id => document.getElementById(id).value = '');
     }
     function submitCreate() {
       const name   = document.getElementById('modalStaffName').value.trim();
-      const role   = document.getElementById('modalStaffRole').value;
       const status = document.getElementById('modalStaffStatus').value;
       const email  = document.getElementById('modalStaffEmail').value.trim();
       const pass   = document.getElementById('modalStaffPassword').value;
       if (!name)   { alert('氏名は必須です。'); return; }
-      if (!role)   { alert('役割は必須です。'); return; }
       if (!status) { alert('在籍状態は必須です。'); return; }
       if (!email)  { alert('メールアドレスは必須です。'); return; }
       if (!pass)   { alert('パスワードは必須です。'); return; }

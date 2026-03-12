@@ -685,10 +685,6 @@
             <span class="info-value">山田</span>
           </div>
           <div class="info-item">
-            <span class="info-label">役割</span>
-            <span class="info-value"><span class="role-badge">営業</span></span>
-          </div>
-          <div class="info-item">
             <span class="info-label">状態</span>
             <span class="info-value"><span class="status-badge status-active">在籍</span></span>
           </div>
@@ -774,14 +770,6 @@
           <input type="text" class="form-input" id="editStaffName" value="山田">
         </div>
         <div class="form-group">
-          <label class="form-label">役割<span class="required-mark">*</span></label>
-          <select class="form-select" id="editStaffRole">
-            <option value="sales" selected>営業</option>
-            <option value="manager">マネージャー</option>
-            <option value="support">サポート</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label class="form-label">在籍状態<span class="required-mark">*</span></label>
           <select class="form-select" id="editStaffStatus">
             <option value="active" selected>在籍</option>
@@ -813,10 +801,9 @@
     }
     function submitEdit() {
       const name   = document.getElementById('editStaffName').value.trim();
-      const role   = document.getElementById('editStaffRole').value;
       const status = document.getElementById('editStaffStatus').value;
       const email  = document.getElementById('editStaffEmail').value.trim();
-      if (!name || !role || !status || !email) {
+      if (!name || !status || !email) {
         alert('必須項目を入力してください');
         return;
       }

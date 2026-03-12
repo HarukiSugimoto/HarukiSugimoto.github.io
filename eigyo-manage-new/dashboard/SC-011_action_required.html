@@ -501,6 +501,125 @@
     }
     .legend-item { display: flex; align-items: center; gap: 6px; }
     .legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ===== ドロップゾーン ===== */
+    .trash-drop-zone {
+      margin: 10px; border: 2px dashed #e74c3c; border-radius: 8px;
+      min-height: 120px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #e74c3c; gap: 8px; opacity: 0.5;
+      transition: opacity 0.2s, background 0.2s; cursor: default;
+    }
+    .trash-drop-zone.drag-over { opacity: 1; background: rgba(231,76,60,0.08); }
+    .trash-drop-zone .material-icons { font-size: 32px; }
+    .result-drop-zone {
+      margin: 10px; border: 2px dashed #b2bec3; border-radius: 8px;
+      min-height: 120px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #b2bec3; gap: 8px; opacity: 0.6;
+      transition: opacity 0.2s, background 0.2s; cursor: default;
+    }
+    .result-drop-zone.drag-over { opacity: 1; background: rgba(42,95,65,0.06); border-color: #2a5f41; color: #2a5f41; }
+    .result-drop-zone .material-icons { font-size: 32px; }
+    .drop-zone-label { font-size: 12px; font-weight: 600; }
+
+    /* ===== モーダル ===== */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: 10px; width: 560px; max-width: 95vw;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      padding: 16px 20px; border-bottom: 1px solid #ecf0f1;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: #fff; z-index: 1;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; color: #1e4530; }
+    .modal-close {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      color: #7f8c8d; display: flex; align-items: center; border-radius: 4px;
+    }
+    .modal-close:hover { background: #f0f2f5; color: #2d3436; }
+    .modal-body { padding: 20px; }
+    .modal-footer {
+      padding: 14px 20px; border-top: 1px solid #ecf0f1;
+      display: flex; justify-content: flex-end; gap: 10px;
+      position: sticky; bottom: 0; background: #fff;
+    }
+    .m-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 6px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+    }
+    .m-btn .material-icons { font-size: 16px; }
+    .m-btn-primary { background: #2a5f41; color: #fff; }
+    .m-btn-primary:hover { background: #1e4530; }
+    .m-btn-outline { background: #fff; color: #1e4530; border: 1px solid #dce0e4; }
+    .m-btn-outline:hover { background: #f8f9fa; }
+    .m-btn-sm { padding: 4px 10px; font-size: 12px; }
+    .m-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .m-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .m-form-label { font-size: 13px; font-weight: 600; color: #1e4530; }
+    .m-form-input, .m-form-select, .m-form-textarea {
+      padding: 9px 12px; border: 1px solid #dce0e4; border-radius: 6px;
+      font-size: 13px; font-family: inherit; transition: border-color 0.2s;
+    }
+    .m-form-input:focus, .m-form-select:focus, .m-form-textarea:focus {
+      outline: none; border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1);
+    }
+    .m-form-textarea { resize: vertical; min-height: 80px; }
+
+    /* ===== モーダル内 MultiSelect ===== */
+    .multi-select { position: relative; }
+    .multi-select-tags {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+      padding: 6px 10px; border: 1px solid #dce0e4; border-radius: 6px;
+      min-height: 38px; cursor: text; transition: border-color 0.2s;
+    }
+    .multi-select-tags:focus-within { border-color: #2a5f41; box-shadow: 0 0 0 2px rgba(42,95,65,0.1); }
+    .multi-select-input {
+      border: none; outline: none; font-size: 13px; font-family: inherit;
+      flex: 1; min-width: 80px; padding: 2px 0;
+    }
+    .multi-select-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #eef5f0; border: 1px solid #c8e0cf; border-radius: 14px;
+      padding: 2px 6px 2px 10px; font-size: 12px; color: #1e4530; font-weight: 500;
+    }
+    .multi-select-tag-remove { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; color: #7f8c8d; }
+    .multi-select-tag-remove:hover { color: #e74c3c; }
+    .multi-select-tag-remove .material-icons { font-size: 14px; }
+    .multi-select-dropdown {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid #dce0e4; border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 10;
+      max-height: 180px; overflow-y: auto; margin-top: 4px;
+    }
+    .multi-select-dropdown.open { display: block; }
+    .multi-select-option {
+      padding: 8px 12px; font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; transition: background 0.1s;
+    }
+    .multi-select-option:hover { background: #f0f2f5; }
+    .multi-select-option.selected { color: #2a5f41; font-weight: 600; }
+    .multi-select-option .material-icons { font-size: 16px; color: #2a5f41; }
+    .multi-select-empty { padding: 12px; font-size: 12px; color: #95a5a6; text-align: center; }
+
+    /* ===== SC専用スタイル ===== */
+    .sc-section-divider { margin: 16px 0 10px; padding-top: 16px; border-top: 1px solid #f0f2f5; }
+    .sc-section-title { font-size: 13px; font-weight: 600; color: #1e4530; margin-bottom: 3px; }
+    .sc-section-hint { font-size: 11px; color: #7f8c8d; }
+    .sc-document-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; }
+    .sc-document-item { display: flex; gap: 6px; align-items: center; }
+    .sc-document-item .m-form-input { flex: 1; }
+    .sc-btn-remove { padding: 6px 10px; background: #fff; border: 1px solid #e74c3c; color: #e74c3c; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .sc-auto-update-info { padding: 12px 14px; background: #eafaf1; border: 1px solid #82e0aa; border-radius: 6px; margin-top: 16px; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -1012,36 +1131,60 @@ function renderBoard(data) {
 
     const totalAmt = stageItems.reduce((s, d) => s + (d.amount || 0), 0);
 
-    col.innerHTML = `
-      <div class="stage-header">
-        <div class="stage-name-row">
-          <div class="stage-name">
-            <span class="material-icons">${stage.icon}</span>
-            ${stage.name}
+    const isDropOnly = stage.id === 'trash' || stage.id === 'contracted' || stage.id === 'dismissed';
+
+    if (isDropOnly) {
+      const zoneClass = stage.id === 'trash' ? 'trash-drop-zone' : 'result-drop-zone';
+      col.innerHTML = `
+        <div class="stage-header">
+          <div class="stage-name-row">
+            <div class="stage-name">
+              <span class="material-icons">${stage.icon}</span>
+              ${stage.name}
+            </div>
+            <span class="stage-badge">${count}</span>
           </div>
-          <span class="stage-badge ${count > 0 ? 'has-alert' : ''}">${count}</span>
         </div>
-      </div>
-      <div class="stage-stats">
-        <div class="stage-stat">
-          <div class="stage-stat-label">要対応件数</div>
-          <div class="stage-stat-value">${count}件</div>
+        <div class="${zoneClass}"
+             data-stage="${stage.id}"
+             ondragover="onDragOver(event)"
+             ondragleave="onDragLeave(event)"
+             ondrop="onDrop(event)">
+          <span class="material-icons">${stage.icon}</span>
+          <span class="drop-zone-label">ここにドロップ</span>
+        </div>`;
+    } else {
+      col.innerHTML = `
+        <div class="stage-header">
+          <div class="stage-name-row">
+            <div class="stage-name">
+              <span class="material-icons">${stage.icon}</span>
+              ${stage.name}
+            </div>
+            <span class="stage-badge ${count > 0 ? 'has-alert' : ''}">${count}</span>
+          </div>
         </div>
-        <div class="stage-stat">
-          <div class="stage-stat-label">合計提案額</div>
-          <div class="stage-stat-value">${count > 0 ? formatAmount(totalAmt) : '—'}</div>
+        <div class="stage-stats">
+          <div class="stage-stat">
+            <div class="stage-stat-label">要対応件数</div>
+            <div class="stage-stat-value">${count}件</div>
+          </div>
+          <div class="stage-stat">
+            <div class="stage-stat-label">合計提案額</div>
+            <div class="stage-stat-value">${count > 0 ? formatAmount(totalAmt) : '—'}</div>
+          </div>
         </div>
-      </div>
-      <div class="stage-cards"
-           data-stage="${stage.id}"
-           ondragover="onDragOver(event)"
-           ondragleave="onDragLeave(event)"
-           ondrop="onDrop(event)">
-        ${stageItems.length > 0
-          ? stageItems.map(d => buildCardHTML(d)).join('')
-          : `<div class="stage-empty"><span class="material-icons" style="font-size:20px;display:block;margin-bottom:4px;color:#d2d8df;">check_circle</span>対応済み</div>`
-        }
-      </div>`;
+        <div class="stage-cards"
+             data-stage="${stage.id}"
+             ondragover="onDragOver(event)"
+             ondragleave="onDragLeave(event)"
+             ondrop="onDrop(event)">
+          ${stageItems.length > 0
+            ? stageItems.map(d => buildCardHTML(d)).join('')
+            : `<div class="stage-empty"><span class="material-icons" style="font-size:20px;display:block;margin-bottom:4px;color:#d2d8df;">check_circle</span>対応済み</div>`
+          }
+        </div>`;
+    }
 
     board.appendChild(col);
   });
@@ -1154,7 +1297,7 @@ function onDragStart(e) {
 
 function onDragEnd(e) {
   e.currentTarget.classList.remove('dragging');
-  document.querySelectorAll('.stage-cards').forEach(el => el.classList.remove('drag-over'));
+  document.querySelectorAll('.stage-cards, .trash-drop-zone, .result-drop-zone').forEach(el => el.classList.remove('drag-over'));
 }
 
 function onDragOver(e) {
@@ -1171,15 +1314,14 @@ function onDrop(e) {
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
   const newStage = e.currentTarget.dataset.stage;
-  if (dragId !== null && newStage) {
-    const item = allItems.find(d => d.id === dragId);
+  const currentDragId = dragId;
+  dragId = null;
+  if (currentDragId !== null && newStage) {
+    const item = allItems.find(d => d.id === currentDragId);
     if (item && item.stage !== newStage) {
-      item.stage = newStage;
-      renderBoard(allItems);
-      if (currentView === 'list') renderTable(allItems);
+      openStageChangeModal(currentDragId, newStage);
     }
   }
-  dragId = null;
 }
 
 // ===== グルーピングモード =====
@@ -1287,8 +1429,259 @@ function openDetail(id) {
   }
 }
 
+// ===== MultiSelect =====
+class MultiSelect {
+  constructor(containerId, allOptions) {
+    this.container = document.getElementById(containerId);
+    this.allOptions = allOptions;
+    this.selected = [];
+    this.tagsEl = this.container.querySelector('.multi-select-tags');
+    this.input = this.container.querySelector('.multi-select-input');
+    this.dropdown = this.container.querySelector('.multi-select-dropdown');
+    this._bind();
+  }
+  _bind() {
+    this.input.addEventListener('focus', () => this._showDropdown());
+    this.input.addEventListener('input', () => this._showDropdown());
+    this.tagsEl.addEventListener('click', () => this.input.focus());
+    document.addEventListener('click', (e) => {
+      if (!this.container.contains(e.target)) this.dropdown.classList.remove('open');
+    });
+  }
+  setSelected(values) { this.selected = [...values]; this._renderTags(); }
+  getSelected() { return [...this.selected]; }
+  _showDropdown() {
+    const q = this.input.value.trim().toLowerCase();
+    const filtered = this.allOptions.filter(o => o.toLowerCase().includes(q));
+    if (filtered.length === 0) {
+      this.dropdown.innerHTML = '<div class="multi-select-empty">該当なし</div>';
+    } else {
+      this.dropdown.innerHTML = filtered.map(name => {
+        const isSel = this.selected.includes(name);
+        return `<div class="multi-select-option ${isSel ? 'selected' : ''}" data-value="${name}">
+          ${isSel ? '<span class="material-icons">check</span>' : '<span style="width:16px"></span>'}
+          ${name}</div>`;
+      }).join('');
+      this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
+        opt.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const v = opt.dataset.value;
+          if (this.selected.includes(v)) this.selected = this.selected.filter(x => x !== v);
+          else this.selected.push(v);
+          this.input.value = '';
+          this._renderTags();
+          this._showDropdown();
+        });
+      });
+    }
+    this.dropdown.classList.add('open');
+  }
+  _renderTags() {
+    this.tagsEl.querySelectorAll('.multi-select-tag').forEach(el => el.remove());
+    this.selected.forEach(name => {
+      const tag = document.createElement('span');
+      tag.className = 'multi-select-tag';
+      tag.innerHTML = `${name}<button class="multi-select-tag-remove" type="button"><span class="material-icons">close</span></button>`;
+      tag.querySelector('.multi-select-tag-remove').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.selected = this.selected.filter(x => x !== name);
+        this._renderTags();
+      });
+      this.tagsEl.insertBefore(tag, this.input);
+    });
+  }
+}
+
+// ===== ステージ変更モーダル =====
+let pendingStageChange = null;
+let scMsContacts = null;
+const SC_CONTACT_OPTIONS = ['鈴木 太郎', '田中 花子', '山本 次郎', '佐藤 一郎', '高橋 美咲', '木村 三郎', '渡辺 恵子'];
+
+function openStageChangeModal(itemId, newStage) {
+  const item = allItems.find(d => d.id === itemId);
+  if (!item) return;
+  pendingStageChange = { itemId, newStage };
+  const fromLabel = STAGE_DISPLAY[item.stage]?.label || item.stage;
+  const toLabel   = STAGE_DISPLAY[newStage]?.label  || newStage;
+  document.getElementById('scItemTitle').textContent  = item.title;
+  document.getElementById('scFromStage').textContent  = fromLabel;
+  document.getElementById('scToStage').textContent    = toLabel;
+  document.getElementById('scActionDate').value       = '2026-03-12';
+  document.getElementById('scActionType').value       = '';
+  document.getElementById('scContent').value          = '';
+  document.getElementById('scCustomerNeeds').value    = '';
+  document.getElementById('scIssues').value           = '';
+  document.getElementById('scNextAcDate').value       = '';
+  document.getElementById('scNextAcContent').value    = '';
+  document.getElementById('scDocumentList').innerHTML = `
+    <div class="sc-document-item">
+      <input type="text" class="m-form-input" placeholder="資料名">
+      <input type="url" class="m-form-input" placeholder="リンクURL">
+      <button type="button" class="sc-btn-remove" onclick="scRemoveDocument(this)">×</button>
+    </div>`;
+  if (!scMsContacts) scMsContacts = new MultiSelect('scMsContacts', SC_CONTACT_OPTIONS);
+  scMsContacts.setSelected([]);
+  document.getElementById('stageChangeModal').classList.add('active');
+}
+
+function closeStageChangeModal() {
+  document.getElementById('stageChangeModal').classList.remove('active');
+  pendingStageChange = null;
+}
+
+function saveStageChange() {
+  if (!pendingStageChange) return;
+  const { itemId, newStage } = pendingStageChange;
+  const item = allItems.find(d => d.id === itemId);
+  if (item) {
+    item.stage = newStage;
+    renderBoard(allItems);
+    if (currentView === 'list') renderTable(allItems);
+  }
+  closeStageChangeModal();
+}
+
+function scAddDocument() {
+  const list = document.getElementById('scDocumentList');
+  const item = document.createElement('div');
+  item.className = 'sc-document-item';
+  item.innerHTML = `<input type="text" class="m-form-input" placeholder="資料名"><input type="url" class="m-form-input" placeholder="リンクURL"><button type="button" class="sc-btn-remove" onclick="scRemoveDocument(this)">×</button>`;
+  list.appendChild(item);
+}
+
+function scRemoveDocument(btn) {
+  const list = document.getElementById('scDocumentList');
+  if (list.children.length > 1) btn.closest('.sc-document-item').remove();
+}
+
 // ===== 初期描画 =====
 renderBoard(allItems);
 </script>
+<!-- ===== ステージ変更モーダル ===== -->
+<div class="modal-overlay" id="stageChangeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">アクション登録 &amp; ステージ移動</span>
+      <button class="modal-close" onclick="closeStageChangeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- 移動情報 -->
+      <div style="background:#f8f9fa;border-radius:8px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-weight:600;font-size:14px;" id="scItemTitle"></span>
+        <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+          <span class="stage-tag" id="scFromStage"></span>
+          <span class="material-icons" style="font-size:18px;color:#7f8c8d;">arrow_forward</span>
+          <span class="stage-tag" id="scToStage"></span>
+        </div>
+      </div>
+
+      <!-- 担当者 -->
+      <div class="m-form-group">
+        <label class="m-form-label">担当者（自分）</label>
+        <input type="text" class="m-form-input" value="山田 太郎" readonly style="background:#f8f9fa;color:#636e72;">
+      </div>
+
+      <!-- アクション日 + 種別 -->
+      <div class="m-form-row">
+        <div class="m-form-group" style="margin-bottom:0;">
+          <label class="m-form-label">アクション日 <span style="color:#e74c3c;">*</span></label>
+          <input type="date" class="m-form-input" id="scActionDate">
+        </div>
+        <div class="m-form-group" style="margin-bottom:0;">
+          <label class="m-form-label">種別 <span style="color:#e74c3c;">*</span></label>
+          <select class="m-form-select" id="scActionType">
+            <option value="">選択してください</option>
+            <option>電話</option>
+            <option>メール</option>
+            <option>訪問</option>
+            <option>Web会議</option>
+            <option>その他</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 相手先担当者 -->
+      <div class="m-form-group">
+        <label class="m-form-label">相手先担当者</label>
+        <div class="multi-select" id="scMsContacts">
+          <div class="multi-select-tags">
+            <input type="text" class="multi-select-input" placeholder="名前で検索...">
+          </div>
+          <div class="multi-select-dropdown"></div>
+        </div>
+      </div>
+
+      <!-- 内容・議事録 -->
+      <div class="m-form-group">
+        <label class="m-form-label">内容・議事録</label>
+        <textarea class="m-form-textarea" id="scContent" placeholder="アクションの内容や議事録を入力"></textarea>
+      </div>
+
+      <!-- 使用資料 -->
+      <div class="m-form-group">
+        <label class="m-form-label">使用資料</label>
+        <div class="sc-document-list" id="scDocumentList">
+          <div class="sc-document-item">
+            <input type="text" class="m-form-input" placeholder="資料名">
+            <input type="url" class="m-form-input" placeholder="リンクURL">
+            <button type="button" class="sc-btn-remove" onclick="scRemoveDocument(this)">×</button>
+          </div>
+        </div>
+        <button type="button" class="m-btn m-btn-outline m-btn-sm" style="margin-top:4px;" onclick="scAddDocument()">
+          <span class="material-icons" style="font-size:14px;">add</span>資料を追加
+        </button>
+      </div>
+
+      <!-- 顧客の課題・ニーズ -->
+      <div class="sc-section-divider">
+        <div class="sc-section-title">顧客の課題・ニーズ</div>
+        <div class="sc-section-hint">※今回のアクションで把握した顧客側の課題・ニーズ</div>
+      </div>
+      <div class="m-form-group">
+        <textarea class="m-form-textarea" id="scCustomerNeeds" placeholder="例：コスト削減が急務／現場の工数削減が優先課題 など" style="min-height:70px;"></textarea>
+      </div>
+
+      <!-- 営業担当者の課題 -->
+      <div class="sc-section-divider">
+        <div class="sc-section-title">営業担当者の課題</div>
+        <div class="sc-section-hint">※後でAIでグルーピングする前提</div>
+      </div>
+      <div class="m-form-group">
+        <textarea class="m-form-textarea" id="scIssues" placeholder="例：価格がネック／導入工数の懸念／稟議フロー不明 など" style="min-height:70px;"></textarea>
+      </div>
+
+      <!-- 次回アクション -->
+      <div class="m-form-row" style="margin-bottom:0;">
+        <div class="m-form-group" style="margin-bottom:0;">
+          <label class="m-form-label">次回アクション日</label>
+          <input type="date" class="m-form-input" id="scNextAcDate">
+        </div>
+      </div>
+      <div class="m-form-group" style="margin-top:12px;">
+        <label class="m-form-label">次回アクション内容</label>
+        <textarea class="m-form-textarea" id="scNextAcContent" placeholder="次回のアクション内容を入力" style="min-height:60px;"></textarea>
+      </div>
+
+      <!-- 保存時の自動更新情報 -->
+      <div class="sc-auto-update-info">
+        <div style="font-weight:600;margin-bottom:6px;">保存時に自動更新される情報</div>
+        <ul style="margin:0;padding-left:18px;line-height:1.8;">
+          <li>ステージが移動先に更新されます</li>
+          <li>最終アクション日が本日の日付に更新されます</li>
+          <li>次回アクション日が上記入力値に更新されます</li>
+        </ul>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-outline" onclick="closeStageChangeModal()">キャンセル</button>
+      <button class="m-btn m-btn-primary" onclick="saveStageChange()">
+        <span class="material-icons" style="font-size:16px;">save</span>保存して移動
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

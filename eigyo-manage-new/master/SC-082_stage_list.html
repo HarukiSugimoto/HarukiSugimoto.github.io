@@ -516,6 +516,40 @@
     .header-left { display: flex; align-items: center; gap: 12px; }
     .menu-toggle { cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center; }
     .menu-toggle:hover { background: rgba(255,255,255,0.15); }
+    .tooltip-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: default;
+    }
+    .tooltip-icon {
+      font-size: 14px !important;
+      color: #95a5a6;
+      vertical-align: middle;
+    }
+    .tooltip-wrap .tooltip-text {
+      visibility: hidden;
+      opacity: 0;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 400;
+      border-radius: 4px;
+      padding: 6px 10px;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 100;
+      transition: opacity 0.15s;
+      pointer-events: none;
+    }
+    .tooltip-wrap:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -691,6 +725,13 @@
                 <th>完了</th>
                 <th>アラート対象</th>
                 <th>アラート対象猶予期間</th>
+                <th>
+                  <div class="tooltip-wrap">
+                    見送り戻し先
+                    <span class="material-icons tooltip-icon">info_outline</span>
+                    <span class="tooltip-text">商談が見送りになった際にリードを戻すステージ。1つのみ設定可能</span>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -701,6 +742,7 @@
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td><span class="bool-badge bool-true">true</span></td>
                 <td>14日</td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">2</span></td>
@@ -709,14 +751,16 @@
                 <td><span class="bool-badge bool-true">true</span></td>
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td>-</td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">101</span></td>
                 <td>S-L03</td>
                 <td>冷却中</td>
                 <td><span class="bool-badge bool-false">false</span></td>
-                <td><span class="bool-badge bool-false">false</span></td>
-                <td>-</td>
+                <td><span class="bool-badge bool-true">true</span></td>
+                <td>30日</td>
+                <td><span class="bool-badge bool-true">true</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">102</span></td>
@@ -725,6 +769,7 @@
                 <td><span class="bool-badge bool-true">true</span></td>
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td>-</td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
             </tbody>
           </table>
@@ -786,7 +831,20 @@
                 <th>完了</th>
                 <th>アラート対象</th>
                 <th>アラート対象猶予期間</th>
-                <th>提案フラグ</th>
+                <th>
+                  <div class="tooltip-wrap">
+                    提案フラグ
+                    <span class="material-icons tooltip-icon">info_outline</span>
+                    <span class="tooltip-text">このステージを提案数の実績としてカウントします（ダッシュボード集計用）</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="tooltip-wrap">
+                    見送り
+                    <span class="material-icons tooltip-icon">info_outline</span>
+                    <span class="tooltip-text">このステージになると見送りとみなし、紐づくリードを「見送り戻し先」ステージへ自動移動します</span>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -796,7 +854,8 @@
                 <td>アポ設定中</td>
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td><span class="bool-badge bool-true">true</span></td>
-                <td>14日</td>
+                <td>7日</td>
+                <td><span class="bool-badge bool-false">false</span></td>
                 <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
@@ -807,6 +866,7 @@
                 <td><span class="bool-badge bool-true">true</span></td>
                 <td>14日</td>
                 <td><span class="bool-badge bool-false">false</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">3</span></td>
@@ -816,6 +876,7 @@
                 <td><span class="bool-badge bool-true">true</span></td>
                 <td>14日</td>
                 <td><span class="bool-badge bool-false">false</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">4</span></td>
@@ -823,8 +884,9 @@
                 <td>本提案中</td>
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td><span class="bool-badge bool-true">true</span></td>
-                <td>14日</td>
+                <td>10日</td>
                 <td><span class="bool-badge bool-true">true</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">5</span></td>
@@ -832,8 +894,9 @@
                 <td>条件交渉中</td>
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td><span class="bool-badge bool-true">true</span></td>
-                <td>14日</td>
+                <td>7日</td>
                 <td><span class="bool-badge bool-true">true</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">6</span></td>
@@ -841,8 +904,9 @@
                 <td>意思決定支援中</td>
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td><span class="bool-badge bool-true">true</span></td>
-                <td>14日</td>
+                <td>7日</td>
                 <td><span class="bool-badge bool-true">true</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">7</span></td>
@@ -852,6 +916,7 @@
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td>-</td>
                 <td><span class="bool-badge bool-true">true</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">101</span></td>
@@ -861,6 +926,7 @@
                 <td><span class="bool-badge bool-true">true</span></td>
                 <td>14日</td>
                 <td><span class="bool-badge bool-true">true</span></td>
+                <td><span class="bool-badge bool-false">false</span></td>
               </tr>
               <tr class="clickable" onclick="location.href='SC-084_stage_edit.html'" style="cursor:pointer;">
                 <td><span class="order-num">102</span></td>
@@ -870,6 +936,7 @@
                 <td><span class="bool-badge bool-false">false</span></td>
                 <td>-</td>
                 <td><span class="bool-badge bool-false">false</span></td>
+                <td><span class="bool-badge bool-true">true</span></td>
               </tr>
             </tbody>
           </table>

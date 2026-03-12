@@ -303,6 +303,46 @@
     .header-left { display: flex; align-items: center; gap: 12px; }
     .menu-toggle { cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center; }
     .menu-toggle:hover { background: rgba(255,255,255,0.15); }
+    .form-label-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .tooltip-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: default;
+    }
+    .tooltip-icon {
+      font-size: 14px !important;
+      color: #95a5a6;
+      vertical-align: middle;
+    }
+    .tooltip-wrap .tooltip-text {
+      visibility: hidden;
+      opacity: 0;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 400;
+      border-radius: 4px;
+      padding: 6px 10px;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      transform: none;
+      white-space: nowrap;
+      z-index: 100;
+      transition: opacity 0.15s;
+      pointer-events: none;
+    }
+    .tooltip-wrap:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -452,7 +492,7 @@
       <div class="card-body">
         <div class="form-group">
           <label class="form-label">種別<span class="required">*</span></label>
-          <select class="form-select">
+          <select class="form-select" onchange="onStageTypeChange(this.value)">
             <option value="">選択してください</option>
             <option value="lead">リード</option>
             <option value="deal">商談</option>
@@ -507,8 +547,14 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">提案<span class="required">*</span></label>
+        <div class="form-group" id="group-proposal" style="display:none;">
+          <label class="form-label">
+            <div class="tooltip-wrap">
+              提案フラグ<span class="required">*</span>
+              <span class="material-icons tooltip-icon">info_outline</span>
+              <span class="tooltip-text">このステージを提案数の実績としてカウントします（ダッシュボード集計用）</span>
+            </div>
+          </label>
           <div class="radio-group">
             <label>
               <input type="radio" name="is_proposal" value="no" checked>
@@ -516,6 +562,46 @@
             </label>
             <label>
               <input type="radio" name="is_proposal" value="yes">
+              はい
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="group-rejection-target" style="display:none;">
+          <label class="form-label">
+            <div class="tooltip-wrap">
+              見送り戻し先<span class="required">*</span>
+              <span class="material-icons tooltip-icon">info_outline</span>
+              <span class="tooltip-text">商談が見送りになった際にリードを戻すステージ。1つのみ設定可能</span>
+            </div>
+          </label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="is_rejection_target" value="no" checked>
+              いいえ
+            </label>
+            <label>
+              <input type="radio" name="is_rejection_target" value="yes">
+              はい
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="group-rejection" style="display:none;">
+          <label class="form-label">
+            <div class="tooltip-wrap">
+              見送り<span class="required">*</span>
+              <span class="material-icons tooltip-icon">info_outline</span>
+              <span class="tooltip-text">このステージになると見送りとみなし、紐づくリードを「見送り戻し先」ステージへ自動移動します</span>
+            </div>
+          </label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="is_rejection" value="no" checked>
+              いいえ
+            </label>
+            <label>
+              <input type="radio" name="is_rejection" value="yes">
               はい
             </label>
           </div>
@@ -534,6 +620,15 @@
     // カテゴリの折りたたみ
     function toggleCategory(header) {
       header.parentElement.classList.toggle('collapsed');
+    }
+
+    // 種別変更時にフィールド表示切り替え
+    function onStageTypeChange(value) {
+      const isLead = value === 'lead';
+      const isDeal = value === 'deal';
+      document.getElementById('group-proposal').style.display       = isDeal ? '' : 'none';
+      document.getElementById('group-rejection-target').style.display = isLead ? '' : 'none';
+      document.getElementById('group-rejection').style.display       = isDeal ? '' : 'none';
     }
   </script>
 </body>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC-013 売上ガントチャート | 営業管理システム</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #1e4530 0%, #2a5f41 100%);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+    /* サイドバー */
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 240px;
+      height: calc(100vh - 56px);
+      background: #1e4530;
+      overflow-y: auto;
+      z-index: 999;
+      transition: transform 0.3s;
+    }
+    .sidebar-nav {
+      padding: 16px 0;
+    }
+    .sidebar-category {
+      margin-bottom: 8px;
+    }
+    .sidebar-category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      color: #95a5a6;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sidebar-category-header:hover {
+      color: #ecf0f1;
+    }
+    .sidebar-category-header .material-icons {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .sidebar-category.collapsed .sidebar-category-header .material-icons {
+      transform: rotate(-90deg);
+    }
+    .sidebar-category.collapsed .sidebar-items {
+      display: none;
+    }
+    .sidebar-items {
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px 10px 24px;
+      color: #bdc3c7;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .sidebar-item.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-left-color: #7de8a8;
+    }
+    .sidebar-item .material-icons {
+      font-size: 20px;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 8px 16px;
+    }
+    /* メインコンテンツ調整 */
+    .main-wrapper {
+      margin-left: 240px;
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-user-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2a5f41;
+      font-size: 16px;
+    }
+    .header-notification {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .header-notification-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+    .header-notification:hover .header-notification-icon {
+      opacity: 0.8;
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    /* ===== ページトップバー（SC-021準拠） ===== */
+    .page-top-bar {
+      background: #fff;
+      border-bottom: 1px solid #dce0e4;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .page-top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #1e4530; }
+    .page-subtitle { font-size: 13px; color: #7f8c8d; }
+    .page-top-bar-right { display: flex; align-items: center; gap: 16px; }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-outline {
+      background: #fff;
+      border: 1px solid #dce0e4;
+      color: #636e72;
+    }
+    .btn-outline:hover {
+      background: #f8f9fa;
+      border-color: #b2bec3;
+    }
+
+    /* ===== 年度切り替え ===== */
+    .year-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .year-nav-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #dce0e4;
+      background: #fff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .year-nav-btn:hover {
+      background: #f8f9fa;
+      border-color: #b2bec3;
+    }
+    .year-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e4530;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    /* ===== カード ===== */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 600;
+      color: #1e4530;
+      background: #f8f9fa;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .card-header.confirmed {
+      background: #eaf5ee;
+      color: #1e4530;
+    }
+    .card-header.expected {
+      background: #f0f2f5;
+      color: #636e72;
+    }
+    .card-body {
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    /* ===== ガントチャートテーブル ===== */
+    .gantt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 900px;
+    }
+    .gantt-table th,
+    .gantt-table td {
+      border: 1px solid #ecf0f1;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .gantt-table thead th {
+      background: #f8f9fa;
+      color: #636e72;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 8px 4px;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .gantt-table thead th.highlight-month {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    /* 案件名列 */
+    .gantt-deal-cell {
+      text-align: left !important;
+      padding: 10px 14px !important;
+      white-space: nowrap;
+      position: sticky;
+      left: 0;
+      background: #fff;
+      z-index: 1;
+      min-width: 220px;
+      max-width: 260px;
+    }
+    .gantt-deal-name {
+      font-weight: 600;
+      color: #1e4530;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .gantt-deal-name:hover {
+      color: #27ae60;
+      text-decoration: underline;
+    }
+    .gantt-deal-sub {
+      font-size: 11px;
+      color: #95a5a6;
+      margin-top: 2px;
+    }
+    .gantt-deal-company {
+      color: #7f8c8d;
+    }
+    .gantt-deal-monthly {
+      font-weight: 600;
+      color: #2a5f41;
+    }
+
+    /* 金額列 */
+    .gantt-amount-cell {
+      text-align: right !important;
+      padding: 10px 14px !important;
+      white-space: nowrap;
+      font-weight: 600;
+      font-size: 13px;
+      min-width: 100px;
+    }
+    .gantt-amount-cell.confirmed-amount {
+      color: #1e4530;
+    }
+    .gantt-amount-cell.expected-amount {
+      color: #636e72;
+    }
+
+    /* 月セル */
+    .gantt-month-cell {
+      padding: 0 !important;
+      height: 48px;
+      min-width: 56px;
+      position: relative;
+    }
+
+    /* ガントバー */
+    .gantt-bar {
+      position: absolute;
+      top: 8px;
+      bottom: 8px;
+      left: 2px;
+      right: 2px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .gantt-bar.confirmed-bar {
+      background: #2a5f41;
+    }
+    .gantt-bar.confirmed-bar.bar-start {
+      border-radius: 4px 0 0 4px;
+      left: 4px;
+      right: 0;
+    }
+    .gantt-bar.confirmed-bar.bar-end {
+      border-radius: 0 4px 4px 0;
+      left: 0;
+      right: 4px;
+    }
+    .gantt-bar.confirmed-bar.bar-mid {
+      border-radius: 0;
+      left: 0;
+      right: 0;
+    }
+    .gantt-bar.confirmed-bar.bar-single {
+      left: 4px;
+      right: 4px;
+    }
+    .gantt-bar.expected-bar {
+      background: repeating-linear-gradient(
+        -45deg,
+        #95a5a6,
+        #95a5a6 3px,
+        #a8b5b8 3px,
+        #a8b5b8 6px
+      );
+    }
+    .gantt-bar.expected-bar.bar-start {
+      border-radius: 4px 0 0 4px;
+      left: 4px;
+      right: 0;
+    }
+    .gantt-bar.expected-bar.bar-end {
+      border-radius: 0 4px 4px 0;
+      left: 0;
+      right: 4px;
+    }
+    .gantt-bar.expected-bar.bar-mid {
+      border-radius: 0;
+      left: 0;
+      right: 0;
+    }
+    .gantt-bar.expected-bar.bar-single {
+      left: 4px;
+      right: 4px;
+    }
+
+    /* 月別サマリーテーブル */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 900px;
+    }
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #ecf0f1;
+      text-align: center;
+      padding: 8px 4px;
+      vertical-align: middle;
+    }
+    .summary-table thead th {
+      background: #f8f9fa;
+      color: #636e72;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .summary-row-header {
+      text-align: left !important;
+      padding: 8px 14px !important;
+      font-weight: 600;
+      background: #fff;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      min-width: 220px;
+      white-space: nowrap;
+    }
+    .summary-row-header.confirmed-label {
+      color: #1e4530;
+    }
+    .summary-row-header.expected-label {
+      color: #7f8c8d;
+    }
+    .summary-row-header.total-label {
+      color: #1e4530;
+      font-weight: 700;
+      background: #f0f4f8;
+    }
+    .summary-row-header.target-label {
+      color: #e74c3c;
+    }
+    .summary-cell {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .summary-cell.confirmed-val {
+      color: #1e4530;
+    }
+    .summary-cell.expected-val {
+      color: #7f8c8d;
+    }
+    .summary-cell.total-val {
+      color: #1e4530;
+      font-weight: 700;
+      background: #f0f4f8;
+    }
+    .summary-cell.target-val {
+      color: #e74c3c;
+    }
+    .summary-cell.over-target {
+      background: #eaf5ee;
+    }
+    .summary-cell.under-target {
+      background: #fdecea;
+    }
+    .summary-amount-total {
+      text-align: right !important;
+      padding-right: 14px !important;
+      font-weight: 700;
+      min-width: 100px;
+    }
+
+    /* ===== 凡例 ===== */
+    .gantt-legend {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      font-size: 12px;
+      color: #636e72;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-color {
+      width: 24px;
+      height: 12px;
+      border-radius: 3px;
+    }
+    .legend-color.confirmed-legend {
+      background: #2a5f41;
+    }
+    .legend-color.expected-legend {
+      background: repeating-linear-gradient(
+        -45deg,
+        #95a5a6,
+        #95a5a6 2px,
+        #a8b5b8 2px,
+        #a8b5b8 4px
+      );
+    }
+    /* ===== セクション件数バッジ ===== */
+    .section-badge {
+      font-size: 12px;
+      font-weight: 400;
+      color: #7f8c8d;
+    }
+    .section-total {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ===== 空セクション ===== */
+    .empty-message {
+      padding: 32px;
+      text-align: center;
+      color: #95a5a6;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="menu-toggle" onclick="toggleSidebar()">
+        <span class="material-icons">menu</span>
+      </div>
+      <div class="header-title">営業管理システム</div>
+    </div>
+    <div class="header-actions">
+      <a href="SC-012_notifications.html" class="header-notification" title="通知">
+        <span class="material-icons header-notification-icon">notifications</span>
+        <span class="notification-badge">5</span>
+      </a>
+      <div class="header-user">
+        <div class="header-user-icon">山</div>
+        <span>山田 ▼</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- サイドバー -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <a href="SC-010_dashboard.html" class="sidebar-item active">
+        <span class="material-icons">dashboard</span>
+        <span>ダッシュボード</span>
+      </a>
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>営業管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="SC-013_revenue_gantt.html" class="sidebar-item">
+            <span class="material-icons">bar_chart</span>
+            <span>売上ガントチャート</span>
+          </a>
+          <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
+            <span class="material-icons">person_search</span>
+            <span>リード一覧</span>
+          </a>
+          <a href="../deal/SC-030_deal_list.html" class="sidebar-item">
+            <span class="material-icons">handshake</span>
+            <span>商談一覧</span>
+          </a>
+          <a href="../master/SC-064_customer_list.html" class="sidebar-item">
+            <span class="material-icons">people</span>
+            <span>顧客一覧</span>
+          </a>
+        </div>
+      </div>
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>分析・年間計画</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../plan/SC-040_annual_plan_setting.html" class="sidebar-item">
+            <span class="material-icons">trending_up</span>
+            <span>年間計画</span>
+          </a>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>マスタ管理</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-061_company_list.html" class="sidebar-item">
+            <span class="material-icons">business</span>
+            <span>企業マスタ</span>
+          </a>
+          <a href="../master/SC-067_staff_list.html" class="sidebar-item">
+            <span class="material-icons">badge</span>
+            <span>営業担当者マスタ</span>
+          </a>
+          <a href="../master/SC-070_department_list.html" class="sidebar-item">
+            <span class="material-icons">account_tree</span>
+            <span>部署マスタ</span>
+          </a>
+          <a href="../master/SC-073_channel_list.html" class="sidebar-item">
+            <span class="material-icons">hub</span>
+            <span>獲得チャネルマスタ</span>
+          </a>
+          <a href="../master/SC-076_rank_list.html" class="sidebar-item">
+            <span class="material-icons">military_tech</span>
+            <span>ランクマスタ</span>
+          </a>
+          <a href="../master/SC-079_product_list.html" class="sidebar-item">
+            <span class="material-icons">inventory_2</span>
+            <span>商材マスタ</span>
+          </a>
+          <a href="../master/SC-082_stage_list.html" class="sidebar-item">
+            <span class="material-icons">linear_scale</span>
+            <span>ステージマスタ</span>
+          </a>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-category">
+        <div class="sidebar-category-header" onclick="toggleCategory(this)">
+          <span>設定</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+        <div class="sidebar-items">
+          <a href="../master/SC-100_role_list.html" class="sidebar-item">
+            <span class="material-icons">admin_panel_settings</span>
+            <span>ロール管理</span>
+          </a>
+          <a href="../master/SC-092_integration_settings.html" class="sidebar-item">
+            <span class="material-icons">settings</span>
+            <span>連携設定</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <div class="main-wrapper">
+
+  <!-- ページトップバー（SC-021準拠） -->
+  <div class="page-top-bar">
+    <div class="page-top-bar-left">
+      <a href="SC-010_dashboard.html" class="btn btn-outline" title="ダッシュボードへ戻る" style="padding:4px 8px;">
+        <span class="material-icons" style="font-size:20px;">arrow_back</span>
+      </a>
+      <div>
+        <div class="page-title">売上ガントチャート</div>
+        <div class="page-subtitle">案件ごとの売上期間・金額を月別に表示</div>
+      </div>
+    </div>
+    <div class="page-top-bar-right">
+      <div class="gantt-legend">
+        <div class="legend-item"><div class="legend-color confirmed-legend"></div>受注済み</div>
+        <div class="legend-item"><div class="legend-color expected-legend"></div>見込み</div>
+      </div>
+      <div class="year-nav">
+        <button class="year-nav-btn" onclick="changeYear(-1)"><span class="material-icons" style="font-size:18px;color:#636e72;">chevron_left</span></button>
+        <span class="year-label" id="yearLabel">2026年度</span>
+        <button class="year-nav-btn" onclick="changeYear(1)"><span class="material-icons" style="font-size:18px;color:#636e72;">chevron_right</span></button>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-container">
+
+    <!-- ===== 受注済み案件 ===== -->
+    <div class="card">
+      <div class="card-header confirmed">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="material-icons" style="font-size:18px;">verified</span>
+          受注済み案件
+          <span class="section-badge" id="confirmedCount"></span>
+        </span>
+        <span class="section-total" id="confirmedTotal" style="color:#1e4530;"></span>
+      </div>
+      <div class="card-body">
+        <table class="gantt-table" id="confirmedTable">
+          <thead>
+            <tr>
+              <th style="min-width:220px;text-align:left;padding-left:14px;">案件名</th>
+              <th>1月</th><th>2月</th><th>3月</th><th>4月</th><th>5月</th><th>6月</th>
+              <th>7月</th><th>8月</th><th>9月</th><th>10月</th><th>11月</th><th>12月</th>
+              <th style="min-width:100px;">PJ総額</th>
+            </tr>
+          </thead>
+          <tbody id="confirmedBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 見込み案件 ===== -->
+    <div class="card">
+      <div class="card-header expected">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="material-icons" style="font-size:18px;">pending</span>
+          見込み案件
+          <span class="section-badge" id="expectedCount"></span>
+        </span>
+        <span class="section-total" id="expectedTotal" style="color:#636e72;"></span>
+      </div>
+      <div class="card-body">
+        <table class="gantt-table" id="expectedTable">
+          <thead>
+            <tr>
+              <th style="min-width:220px;text-align:left;padding-left:14px;">案件名</th>
+              <th>1月</th><th>2月</th><th>3月</th><th>4月</th><th>5月</th><th>6月</th>
+              <th>7月</th><th>8月</th><th>9月</th><th>10月</th><th>11月</th><th>12月</th>
+              <th style="min-width:100px;">PJ総額</th>
+            </tr>
+          </thead>
+          <tbody id="expectedBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 月別サマリー ===== -->
+    <div class="card">
+      <div class="card-header">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="material-icons" style="font-size:18px;">summarize</span>
+          月別サマリー（万円）
+        </span>
+      </div>
+      <div class="card-body">
+        <table class="summary-table" id="summaryTable">
+          <thead>
+            <tr>
+              <th style="min-width:220px;text-align:left;padding-left:14px;">区分</th>
+              <th>1月</th><th>2月</th><th>3月</th><th>4月</th><th>5月</th><th>6月</th>
+              <th>7月</th><th>8月</th><th>9月</th><th>10月</th><th>11月</th><th>12月</th>
+              <th style="min-width:100px;">年間合計</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+  </div>
+
+<script>
+// ===== ユーティリティ =====
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+function toggleCategory(header) {
+  header.parentElement.classList.toggle('collapsed');
+}
+
+let currentYear = 2026;
+
+function changeYear(delta) {
+  currentYear += delta;
+  document.getElementById('yearLabel').textContent = `${currentYear}年度`;
+  render();
+}
+
+// URLパラメータからハイライト月を取得
+function getHighlightMonth() {
+  const params = new URLSearchParams(window.location.search);
+  const m = parseInt(params.get('month'));
+  return (m >= 1 && m <= 12) ? m : null;
+}
+
+// ===== ダミーデータ =====
+const deals = [
+  // 受注済み案件
+  {
+    id: 4, title: 'AI物流最適化システム', company: 'グローバルロジスティクス', staff: '山田',
+    proposalMonthly: 40, proposalTotal: 480, orderAmount: 480,
+    startMonth: 2, months: 12, isExpected: false, product: 'システム開発',
+  },
+  {
+    id: 6, title: 'クラウド基幹移行PJ', company: 'テクノソリューション', staff: '佐藤',
+    proposalMonthly: 60, proposalTotal: 360, orderAmount: 360,
+    startMonth: 4, months: 6, isExpected: false, product: 'システム開発',
+  },
+  {
+    id: 7, title: 'データ分析基盤構築', company: 'アナリティクスパートナーズ', staff: '田中',
+    proposalMonthly: 50, proposalTotal: 300, orderAmount: 300,
+    startMonth: 1, months: 6, isExpected: false, product: 'DX伴走支援',
+  },
+  {
+    id: 9, title: '社内ポータル刷新', company: 'メディアコーポレーション', staff: '山田',
+    proposalMonthly: 35, proposalTotal: 210, orderAmount: 210,
+    startMonth: 3, months: 6, isExpected: false, product: 'システム開発',
+  },
+  {
+    id: 11, title: 'RPA導入支援', company: '三和商事', staff: '佐藤',
+    proposalMonthly: 25, proposalTotal: 75, orderAmount: 75,
+    startMonth: 6, months: 3, isExpected: false, product: 'DX伴走支援',
+  },
+  // 見込み案件
+  {
+    id: 2, title: 'DX伴走支援 本提案', company: 'テックイノベーション', staff: '田中',
+    proposalMonthly: 50, proposalTotal: 600, orderAmount: null,
+    startMonth: 4, months: 12, isExpected: true, product: '戦略コンサル',
+  },
+  {
+    id: 3, title: 'セキュリティ統合基盤', company: 'グローバルセキュリティ', staff: '山田',
+    proposalMonthly: 45, proposalTotal: 270, orderAmount: null,
+    startMonth: 5, months: 6, isExpected: true, product: 'システム開発',
+  },
+  {
+    id: 5, title: 'ERP刷新プロジェクト', company: 'インターナショナル商事', staff: '山田',
+    proposalMonthly: 80, proposalTotal: 480, orderAmount: null,
+    startMonth: 7, months: 6, isExpected: true, product: 'システム開発',
+  },
+  {
+    id: 10, title: '営業DX支援', company: '東京フィナンシャル', staff: '佐藤',
+    proposalMonthly: 30, proposalTotal: 180, orderAmount: null,
+    startMonth: 5, months: 6, isExpected: true, product: '戦略コンサル',
+  },
+  {
+    id: 12, title: 'BIダッシュボード開発', company: 'デジタルサービス', staff: '田中',
+    proposalMonthly: 40, proposalTotal: 160, orderAmount: null,
+    startMonth: 8, months: 4, isExpected: true, product: 'DX伴走支援',
+  },
+];
+
+// 月次目標（万円）
+const monthlyTargets = [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600];
+
+// ===== 描画 =====
+function render() {
+  const highlightMonth = getHighlightMonth();
+  const confirmed = deals.filter(d => !d.isExpected);
+  const expected = deals.filter(d => d.isExpected);
+
+  renderGantt('confirmedBody', confirmed, 'confirmed', highlightMonth);
+  renderGantt('expectedBody', expected, 'expected', highlightMonth);
+  renderSummary(confirmed, expected, highlightMonth);
+
+  // ヘッダーのハイライト
+  document.querySelectorAll('.gantt-table thead th, .summary-table thead th').forEach(th => {
+    th.classList.remove('highlight-month');
+  });
+  if (highlightMonth) {
+    document.querySelectorAll('.gantt-table thead tr, .summary-table thead tr').forEach(tr => {
+      const th = tr.children[highlightMonth]; // 0=案件名, 1=1月...
+      if (th) th.classList.add('highlight-month');
+    });
+  }
+
+  // 件数・合計
+  const confirmedTotal = confirmed.reduce((s, d) => s + (d.orderAmount || d.proposalTotal), 0);
+  const expectedTotal = expected.reduce((s, d) => s + d.proposalTotal, 0);
+  document.getElementById('confirmedCount').textContent = `（${confirmed.length}件）`;
+  document.getElementById('expectedCount').textContent = `（${expected.length}件）`;
+  document.getElementById('confirmedTotal').textContent = `合計: ${confirmedTotal.toLocaleString()}万円`;
+  document.getElementById('expectedTotal').textContent = `合計: ${expectedTotal.toLocaleString()}万円`;
+}
+
+function renderGantt(tbodyId, items, type, highlightMonth) {
+  const tbody = document.getElementById(tbodyId);
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="14" class="empty-message">該当する案件がありません</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = items.map(deal => {
+    const endMonth = deal.startMonth + deal.months - 1;
+    const barType = type === 'confirmed' ? 'confirmed-bar' : 'expected-bar';
+    const amountClass = type === 'confirmed' ? 'confirmed-amount' : 'expected-amount';
+    const totalAmount = type === 'confirmed' ? (deal.orderAmount || deal.proposalTotal) : deal.proposalTotal;
+
+    let monthCells = '';
+    for (let m = 1; m <= 12; m++) {
+      const isInRange = m >= deal.startMonth && m <= endMonth;
+      const hlClass = (m === highlightMonth) ? ' highlight-month' : '';
+      if (isInRange) {
+        let posClass = '';
+        if (deal.months === 1) posClass = 'bar-single';
+        else if (m === deal.startMonth) posClass = 'bar-start';
+        else if (m === endMonth) posClass = 'bar-end';
+        else posClass = 'bar-mid';
+        monthCells += `<td class="gantt-month-cell${hlClass}"><div class="gantt-bar ${barType} ${posClass}">${deal.proposalMonthly}</div></td>`;
+      } else {
+        monthCells += `<td class="gantt-month-cell${hlClass}"></td>`;
+      }
+    }
+
+    return `
+      <tr>
+        <td class="gantt-deal-cell">
+          <a class="gantt-deal-name" href="../deal/SC-031_deal_detail.html?id=${deal.id}">${deal.title}</a>
+          <div class="gantt-deal-sub">
+            <span class="gantt-deal-company">${deal.company}</span>
+            ・<span class="gantt-deal-monthly">${deal.proposalMonthly}万/月</span>
+            ・${deal.staff}
+          </div>
+        </td>
+        ${monthCells}
+        <td class="gantt-amount-cell ${amountClass}">${totalAmount.toLocaleString()}万円</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderSummary(confirmed, expected, highlightMonth) {
+  const tbody = document.getElementById('summaryBody');
+
+  // 月別集計
+  const cMonthly = new Array(12).fill(0);
+  const eMonthly = new Array(12).fill(0);
+
+  confirmed.forEach(d => {
+    const end = d.startMonth + d.months - 1;
+    for (let m = d.startMonth; m <= Math.min(end, 12); m++) {
+      cMonthly[m - 1] += d.proposalMonthly;
+    }
+  });
+  expected.forEach(d => {
+    const end = d.startMonth + d.months - 1;
+    for (let m = d.startMonth; m <= Math.min(end, 12); m++) {
+      eMonthly[m - 1] += d.proposalMonthly;
+    }
+  });
+
+  const total = cMonthly.map((v, i) => v + eMonthly[i]);
+  const cSum = cMonthly.reduce((a, b) => a + b, 0);
+  const eSum = eMonthly.reduce((a, b) => a + b, 0);
+  const tSum = cSum + eSum;
+  const targetSum = monthlyTargets.reduce((a, b) => a + b, 0);
+
+  function buildRow(label, labelClass, data, valClass, yearTotal) {
+    const hlMonth = highlightMonth;
+    let cells = data.map((v, i) => {
+      const hl = (i + 1 === hlMonth) ? ' highlight-month' : '';
+      return `<td class="summary-cell ${valClass}${hl}">${v > 0 ? v.toLocaleString() : '—'}</td>`;
+    }).join('');
+    return `
+      <tr>
+        <td class="summary-row-header ${labelClass}">${label}</td>
+        ${cells}
+        <td class="summary-amount-total ${valClass}">${yearTotal.toLocaleString()}万円</td>
+      </tr>`;
+  }
+
+  // 達成状況行
+  let diffCells = '';
+  for (let i = 0; i < 12; i++) {
+    const diff = total[i] - monthlyTargets[i];
+    const hl = (i + 1 === highlightMonth) ? ' highlight-month' : '';
+    const cls = diff >= 0 ? 'over-target' : 'under-target';
+    const sign = diff >= 0 ? '+' : '';
+    diffCells += `<td class="summary-cell ${cls}${hl}" style="font-size:11px;">${sign}${diff.toLocaleString()}</td>`;
+  }
+  const totalDiff = tSum - targetSum;
+  const diffSign = totalDiff >= 0 ? '+' : '';
+  const diffCls = totalDiff >= 0 ? 'over-target' : 'under-target';
+
+  tbody.innerHTML =
+    buildRow('受注済み', 'confirmed-label', cMonthly, 'confirmed-val', cSum) +
+    buildRow('見込み', 'expected-label', eMonthly, 'expected-val', eSum) +
+    `<tr style="border-top:2px solid #dce0e4;">` +
+    buildRow('合計', 'total-label', total, 'total-val', tSum).replace('<tr>', '').replace('</tr>', '') +
+    `</tr>` +
+    buildRow('目標', 'target-label', monthlyTargets, 'target-val', targetSum) +
+    `<tr>
+      <td class="summary-row-header" style="color:#2a5f41;font-weight:600;">差異</td>
+      ${diffCells}
+      <td class="summary-amount-total ${diffCls}" style="font-size:12px;">${diffSign}${totalDiff.toLocaleString()}万円</td>
+    </tr>`;
+}
+
+// 初期描画
+document.addEventListener('DOMContentLoaded', render);
+</script>
+</body>
+</html>

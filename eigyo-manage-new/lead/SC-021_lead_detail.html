@@ -451,8 +451,8 @@
         <span class="material-icons">expand_more</span>
       </div>
       <div class="sidebar-items">
-        <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
-          <span class="material-icons">warning</span><span>要対応一覧</span>
+        <a href="../dashboard/SC-013_revenue_gantt.html" class="sidebar-item">
+          <span class="material-icons">bar_chart</span><span>売上ガントチャート</span>
         </a>
         <a href="SC-020_lead_list.html" class="sidebar-item active">
           <span class="material-icons">person_search</span><span>リード一覧</span>
@@ -580,6 +580,7 @@
                 <th>課題</th>
                 <th>次回AC日</th>
                 <th>ステージ</th>
+                <th>チェック状況</th>
                 <th>次回AC内容</th>
               </tr>
             </thead>
@@ -726,8 +727,8 @@ const leadsDB = {
     projectName: 'テクノソリューション案件',
     projectId: 101,
     activities: [
-      { staff: '山田', date: '2026-02-25', type: 'MTG', customer: '鈴木 部長', content: '初回ヒアリング。現行システムの課題整理と移行要件を確認。次回はソリューション提案。', hasIssue: false, nextDate: '2026-02-28', stage: '接触前', nextAction: 'ソリューション提案の実施' },
-      { staff: '山田', date: '2026-02-10', type: '展示会', customer: '鈴木 部長', content: '展示会にて名刺交換。クラウド移行に強い関心あり。', hasIssue: false, nextDate: '2026-02-25', stage: '接触前', nextAction: '初回ヒアリングの実施' },
+      { staff: '山田', date: '2026-02-25', type: 'MTG', customer: '鈴木 部長', content: '初回ヒアリング。現行システムの課題整理と移行要件を確認。次回はソリューション提案。', hasIssue: false, nextDate: '2026-02-28', stage: '接触前', nextAction: 'ソリューション提案の実施', checkDone: 2, checkTotal: 3 },
+      { staff: '山田', date: '2026-02-10', type: '展示会', customer: '鈴木 部長', content: '展示会にて名刺交換。クラウド移行に強い関心あり。', hasIssue: false, nextDate: '2026-02-25', stage: '接触前', nextAction: '初回ヒアリングの実施', checkDone: 3, checkTotal: 3 },
     ],
   },
   2: {
@@ -748,7 +749,7 @@ const leadsDB = {
     product: 'DX伴走支援',
     projectName: null, projectId: null,
     activities: [
-      { staff: '佐藤', date: '2026-02-20', type: '電話', customer: '高橋 課長', content: 'アウトバウンドで架電。RPA導入に関心あり、面談日程調整中。', hasIssue: false, nextDate: '2026-03-10', stage: '接触前', nextAction: '面談日程の確定' },
+      { staff: '佐藤', date: '2026-02-20', type: '電話', customer: '高橋 課長', content: 'アウトバウンドで架電。RPA導入に関心あり、面談日程調整中。', hasIssue: false, nextDate: '2026-03-10', stage: '接触前', nextAction: '面談日程の確定', checkDone: 3, checkTotal: 3 },
     ],
   },
   4: {
@@ -772,9 +773,9 @@ const leadsDB = {
     projectName: 'グローバルロジック セキュリティ案件',
     projectId: 104,
     activities: [
-      { staff: '田中', date: '2026-02-15', type: 'メール', customer: '伊藤 室長', content: '予算確保が難航しているとの連絡。来期予算での検討を依頼。', hasIssue: true, nextDate: '2026-02-20', stage: '接触前', nextAction: '来期予算確定後にフォローアップ' },
-      { staff: '田中', date: '2026-01-25', type: 'MTG', customer: '伊藤 室長', content: '初回面談。セキュリティ現状と課題のヒアリング。診断スコープの提案を実施。', hasIssue: false, nextDate: '2026-02-10', stage: '接触前', nextAction: '見積書の作成・送付' },
-      { staff: '田中', date: '2026-01-15', type: '電話', customer: '伊藤 室長', content: '知人紹介。セキュリティ診断に関心あり、面談日程調整。', hasIssue: false, nextDate: '2026-01-25', stage: '接触前', nextAction: '初回面談の実施' },
+      { staff: '田中', date: '2026-02-15', type: 'メール', customer: '伊藤 室長', content: '予算確保が難航しているとの連絡。来期予算での検討を依頼。', hasIssue: true, nextDate: '2026-02-20', stage: '接触前', nextAction: '来期予算確定後にフォローアップ', checkDone: 1, checkTotal: 3 },
+      { staff: '田中', date: '2026-01-25', type: 'MTG', customer: '伊藤 室長', content: '初回面談。セキュリティ現状と課題のヒアリング。診断スコープの提案を実施。', hasIssue: false, nextDate: '2026-02-10', stage: '接触前', nextAction: '見積書の作成・送付', checkDone: 3, checkTotal: 3 },
+      { staff: '田中', date: '2026-01-15', type: '電話', customer: '伊藤 室長', content: '知人紹介。セキュリティ診断に関心あり、面談日程調整。', hasIssue: false, nextDate: '2026-01-25', stage: '接触前', nextAction: '初回面談の実施', checkDone: 2, checkTotal: 3 },
     ],
   },
   5: {
@@ -797,8 +798,8 @@ const leadsDB = {
     projectName: '東京フィナンシャル DX案件',
     projectId: 105,
     activities: [
-      { staff: '山田', date: '2026-03-01', type: 'MTG', customer: '佐々木 取締役', content: '初回面談。DX推進の現状と経営課題をヒアリング。次回は戦略フレームワークの提示を予定。', hasIssue: false, nextDate: '2026-03-07', stage: '接触前', nextAction: '戦略フレームワークの提示' },
-      { staff: '山田', date: '2026-02-20', type: '講演', customer: '佐々木 取締役', content: '講演後に名刺交換。DX推進について強い関心。', hasIssue: false, nextDate: '2026-03-01', stage: '接触前', nextAction: '初回面談の設定' },
+      { staff: '山田', date: '2026-03-01', type: 'MTG', customer: '佐々木 取締役', content: '初回面談。DX推進の現状と経営課題をヒアリング。次回は戦略フレームワークの提示を予定。', hasIssue: false, nextDate: '2026-03-07', stage: '接触前', nextAction: '戦略フレームワークの提示', checkDone: 2, checkTotal: 3 },
+      { staff: '山田', date: '2026-02-20', type: '講演', customer: '佐々木 取締役', content: '講演後に名刺交換。DX推進について強い関心。', hasIssue: false, nextDate: '2026-03-01', stage: '接触前', nextAction: '初回面談の設定', checkDone: 3, checkTotal: 3 },
     ],
   },
   8: {
@@ -821,9 +822,9 @@ const leadsDB = {
     projectName: 'インターナショナル商事 ERP案件',
     projectId: 108,
     activities: [
-      { staff: '山田', date: '2026-03-02', type: 'MTG', customer: '木村 CFO', content: '最終提案。見積内容の確認と契約スケジュールの協議。商談化へ移行。', hasIssue: false, nextDate: '2026-03-06', stage: '商談化済み', nextAction: '契約書ドラフトの作成' },
-      { staff: '山田', date: '2026-02-15', type: 'MTG', customer: '西田 課長', content: '要件定義の詳細ヒアリング。現行フローの洗い出し完了。', hasIssue: false, nextDate: '2026-03-02', stage: '接触前', nextAction: '最終提案の実施' },
-      { staff: '山田', date: '2026-01-20', type: 'MTG', customer: '木村 CFO', content: '初回ヒアリング。ERP刷新の背景と要件をヒアリング。', hasIssue: false, nextDate: '2026-02-15', stage: '接触前', nextAction: '要件定義の詳細ヒアリング' },
+      { staff: '山田', date: '2026-03-02', type: 'MTG', customer: '木村 CFO', content: '最終提案。見積内容の確認と契約スケジュールの協議。商談化へ移行。', hasIssue: false, nextDate: '2026-03-06', stage: '商談化済み', nextAction: '契約書ドラフトの作成', checkDone: 2, checkTotal: 2 },
+      { staff: '山田', date: '2026-02-15', type: 'MTG', customer: '西田 課長', content: '要件定義の詳細ヒアリング。現行フローの洗い出し完了。', hasIssue: false, nextDate: '2026-03-02', stage: '接触前', nextAction: '最終提案の実施', checkDone: 3, checkTotal: 3 },
+      { staff: '山田', date: '2026-01-20', type: 'MTG', customer: '木村 CFO', content: '初回ヒアリング。ERP刷新の背景と要件をヒアリング。', hasIssue: false, nextDate: '2026-02-15', stage: '接触前', nextAction: '要件定義の詳細ヒアリング', checkDone: 1, checkTotal: 3 },
     ],
   },
 };
@@ -933,7 +934,7 @@ function renderActivities(activities) {
   const tbody = document.getElementById('activityTableBody');
 
   if (!activities || activities.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:#95a5a6;">アクション履歴がありません</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:#95a5a6;">アクション履歴がありません</td></tr>';
     document.getElementById('paginationInfo').textContent = '全 0 件中 0〜0 件を表示';
     return;
   }
@@ -951,6 +952,7 @@ function renderActivities(activities) {
         <td><span class="issue-badge ${a.hasIssue ? 'issue-yes' : 'issue-no'}">${a.hasIssue ? '有' : '無'}</span></td>
         <td class="${nextAcClass}">${formatDate(a.nextDate)}</td>
         <td>${a.stage}</td>
+        <td>${a.checkTotal > 0 ? `<span class="issue-badge ${a.checkDone === a.checkTotal ? 'issue-yes' : 'issue-no'}">${a.checkDone}/${a.checkTotal}</span>` : '—'}</td>
         <td class="content-preview">${a.nextAction || ''}</td>
       </tr>`;
   }).join('');

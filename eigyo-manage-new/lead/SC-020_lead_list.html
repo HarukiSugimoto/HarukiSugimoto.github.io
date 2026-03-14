@@ -318,6 +318,25 @@
       color: #e74c3c; border-radius: 4px; cursor: pointer; font-size: 12px; white-space: nowrap;
     }
     .sc-btn-remove:hover { background: #fdecea; }
+    /* ===== チェック項目（モーダル内） ===== */
+    .sc-checklist-card {
+      background: #fff; border: 1px solid #d5e8d4; border-radius: 8px; margin-bottom: 16px; overflow: hidden;
+    }
+    .sc-checklist-card .card-header {
+      background: #eaf5ee; color: #2a5f41; padding: 10px 14px; font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .sc-checklist-card .card-body { padding: 10px 14px; }
+    .sc-checklist-items { display: flex; flex-direction: column; gap: 4px; }
+    .sc-checklist-item {
+      display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; transition: background .15s;
+    }
+    .sc-checklist-item:hover { background: #f8f9fa; }
+    .sc-checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #27ae60; }
+    .sc-checklist-item label { font-size: 14px; cursor: pointer; flex: 1; }
+    .sc-checklist-item.checked label { color: #95a5a6; text-decoration: line-through; }
+    .sc-checklist-progress { font-size: 12px; color: #7f8c8d; font-weight: 400; margin-left: auto; }
+
     .sc-auto-update-info {
       padding: 12px 14px; background: #eafaf1; border: 1px solid #82e0aa;
       border-radius: 6px; margin-top: 16px; font-size: 12px;
@@ -683,8 +702,8 @@
         <span class="material-icons">expand_more</span>
       </div>
       <div class="sidebar-items">
-        <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
-          <span class="material-icons">warning</span><span>要対応一覧</span>
+        <a href="../dashboard/SC-013_revenue_gantt.html" class="sidebar-item">
+          <span class="material-icons">bar_chart</span><span>売上ガントチャート</span>
         </a>
         <a href="SC-020_lead_list.html" class="sidebar-item active">
           <span class="material-icons">person_search</span><span>リード一覧</span>
@@ -1500,7 +1519,55 @@ function openStageChangeModal(leadId, newStage) {
   }
   scMsContacts.setSelected([]);
 
+  renderScChecklist(toLabel);
   document.getElementById('stageChangeModal').classList.add('active');
+}
+
+// ===== チェック項目（ステージ変更モーダル用） =====
+const scStageChecklists = {
+  '接触前': [
+    'ターゲット企業の基本情報を調査したか',
+    'キーマン・決裁者を特定したか',
+    '初回アプローチ方法を決定したか',
+  ],
+  '商談化済み': [],
+  '冷却中': [
+    'フォローアップの時期を設定したか',
+    '冷却理由を記録したか',
+  ],
+  '捨て': [],
+};
+
+function renderScChecklist(stageLabel) {
+  const section = document.getElementById('scChecklistSection');
+  const container = document.getElementById('scChecklistItems');
+  const items = scStageChecklists[stageLabel];
+
+  if (!items || items.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = '';
+  container.innerHTML = items.map((text, i) => `
+    <div class="sc-checklist-item" id="sccli-${i}">
+      <input type="checkbox" id="sccl-${i}" onchange="scToggleCheckItem(this)">
+      <label for="sccl-${i}">${text}</label>
+    </div>
+  `).join('');
+  scUpdateProgress();
+}
+
+function scToggleCheckItem(cb) {
+  const item = cb.closest('.sc-checklist-item');
+  item.classList.toggle('checked', cb.checked);
+  scUpdateProgress();
+}
+
+function scUpdateProgress() {
+  const all = document.querySelectorAll('#scChecklistItems input[type="checkbox"]');
+  const checked = document.querySelectorAll('#scChecklistItems input[type="checkbox"]:checked');
+  document.getElementById('scChecklistProgress').textContent = `${checked.length} / ${all.length} 完了`;
 }
 
 function closeStageChangeModal() {
@@ -1727,6 +1794,17 @@ renderBoard(leads);
       </div>
       <div class="form-group">
         <textarea class="form-textarea" id="scIssues" placeholder="例：価格がネック／導入工数の懸念／稟議フロー不明 など" style="min-height:70px;"></textarea>
+      </div>
+
+      <!-- チェック項目 -->
+      <div class="sc-checklist-card" id="scChecklistSection" style="display:none;">
+        <div class="card-header">
+          <span class="material-icons">checklist</span>チェック項目
+          <span class="sc-checklist-progress" id="scChecklistProgress"></span>
+        </div>
+        <div class="card-body">
+          <div class="sc-checklist-items" id="scChecklistItems"></div>
+        </div>
       </div>
 
       <!-- 次回アクション日・内容 -->

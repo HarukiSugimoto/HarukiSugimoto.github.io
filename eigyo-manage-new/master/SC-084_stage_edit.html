@@ -203,6 +203,70 @@
       padding-top: 20px;
       border-top: 1px solid #ecf0f1;
     }
+    /* チェック項目 */
+    .checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .checklist-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checklist-row .drag-handle {
+      cursor: grab;
+      color: #95a5a6;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .checklist-row .drag-handle:active {
+      cursor: grabbing;
+    }
+    .checklist-row .form-input {
+      flex: 1;
+    }
+    .checklist-row .btn-icon {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e74c3c;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .checklist-row .btn-icon:hover {
+      background: #fdf0ef;
+    }
+    .btn-add-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 14px;
+      border: 1px dashed #bdc3c7;
+      background: #f8f9fa;
+      border-radius: 6px;
+      color: #2a5f41;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .btn-add-item:hover {
+      background: #eaf5ee;
+      border-color: #2a5f41;
+    }
+    .checklist-empty {
+      color: #95a5a6;
+      font-size: 13px;
+      padding: 12px 0;
+    }
       /* サイドバー */
     .sidebar {
       position: fixed;
@@ -381,9 +445,9 @@
           <span class="material-icons">expand_more</span>
         </div>
         <div class="sidebar-items">
-          <a href="../dashboard/SC-011_action_required.html" class="sidebar-item">
-            <span class="material-icons">warning</span>
-            <span>要対応一覧</span>
+          <a href="../dashboard/SC-013_revenue_gantt.html" class="sidebar-item">
+            <span class="material-icons">bar_chart</span>
+            <span>売上ガントチャート</span>
           </a>
           <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
             <span class="material-icons">person_search</span>
@@ -608,6 +672,40 @@
         </div>
       </div>
     </div>
+
+    <!-- チェック項目 -->
+    <div class="card">
+      <div class="card-header">チェック項目</div>
+      <div class="card-body">
+        <div class="checklist-items" id="checklist-items">
+          <div class="checklist-row">
+            <span class="material-icons drag-handle">drag_indicator</span>
+            <input type="text" class="form-input" value="担当者との初回接触が完了しているか" />
+            <button class="btn-icon" onclick="removeChecklistItem(this)" title="削除">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <div class="checklist-row">
+            <span class="material-icons drag-handle">drag_indicator</span>
+            <input type="text" class="form-input" value="企業情報（業種・規模）を確認したか" />
+            <button class="btn-icon" onclick="removeChecklistItem(this)" title="削除">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <div class="checklist-row">
+            <span class="material-icons drag-handle">drag_indicator</span>
+            <input type="text" class="form-input" value="キーマンを特定できているか" />
+            <button class="btn-icon" onclick="removeChecklistItem(this)" title="削除">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        </div>
+        <button class="btn-add-item" onclick="addChecklistItem()">
+          <span class="material-icons" style="font-size:18px">add</span>
+          項目を追加
+        </button>
+      </div>
+    </div>
   </main>
   </div>
 
@@ -629,6 +727,26 @@
       document.getElementById('group-proposal').style.display       = isDeal ? '' : 'none';
       document.getElementById('group-rejection-target').style.display = isLead ? '' : 'none';
       document.getElementById('group-rejection').style.display       = isDeal ? '' : 'none';
+    }
+
+    // チェック項目を追加
+    function addChecklistItem() {
+      const container = document.getElementById('checklist-items');
+      const row = document.createElement('div');
+      row.className = 'checklist-row';
+      row.innerHTML = `
+        <span class="material-icons drag-handle">drag_indicator</span>
+        <input type="text" class="form-input" placeholder="チェック項目を入力してください" />
+        <button class="btn-icon" onclick="removeChecklistItem(this)" title="削除">
+          <span class="material-icons">close</span>
+        </button>
+      `;
+      container.appendChild(row);
+    }
+
+    // チェック項目を削除
+    function removeChecklistItem(btn) {
+      btn.closest('.checklist-row').remove();
     }
   </script>
 </body>

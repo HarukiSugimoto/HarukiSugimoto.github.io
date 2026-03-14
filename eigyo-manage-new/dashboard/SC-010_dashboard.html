@@ -314,9 +314,9 @@
           <span class="material-icons">expand_more</span>
         </div>
         <div class="sidebar-items">
-          <a href="SC-011_action_required.html" class="sidebar-item">
-            <span class="material-icons">warning</span>
-            <span>要対応一覧</span>
+          <a href="SC-013_revenue_gantt.html" class="sidebar-item">
+            <span class="material-icons">bar_chart</span>
+            <span>売上ガントチャート</span>
           </a>
           <a href="../lead/SC-020_lead_list.html" class="sidebar-item">
             <span class="material-icons">person_search</span>
@@ -460,7 +460,15 @@
             font-size: 11px;
             padding: 4px 8px;
           }
+          .carry-count {
+            font-size: 11px;
+            color: #95a5a6;
+            font-weight: 400;
+          }
         </style>
+        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 12px;">
+          ※ 実績の数字はその月に<strong>新規</strong>でそのステージに入った件数です。<span class="carry-count">（n）</span>は前月以前から同ステージに滞留している<strong>累積キャリー</strong>件数を表します。
+        </p>
         <table class="data-table">
           <thead>
             <tr>
@@ -502,17 +510,17 @@
             <tr>
               <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">実績</th>
               <td class="col-actual status-unachieved">8</td>
-              <td class="col-actual status-achieved">14</td>
-              <td class="col-actual status-achieved">16</td>
-              <td class="col-actual status-achieved">11</td>
-              <td class="col-actual status-unachieved">9</td>
-              <td class="col-actual status-unachieved">10</td>
-              <td class="col-actual status-achieved">18</td>
-              <td class="col-actual status-unachieved">8</td>
-              <td class="col-actual status-achieved">12</td>
-              <td class="col-actual status-achieved">14</td>
-              <td class="col-actual status-achieved">16</td>
-              <td class="col-actual status-achieved">11</td>
+              <td class="col-actual status-achieved">14 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">16 <span class="carry-count">(3)</span></td>
+              <td class="col-actual status-achieved">11 <span class="carry-count">(4)</span></td>
+              <td class="col-actual status-unachieved">9 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-unachieved">10 <span class="carry-count">(3)</span></td>
+              <td class="col-actual status-achieved">18 <span class="carry-count">(5)</span></td>
+              <td class="col-actual status-unachieved">8 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">12 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">14 <span class="carry-count">(3)</span></td>
+              <td class="col-actual status-achieved">16 <span class="carry-count">(4)</span></td>
+              <td class="col-actual status-achieved">11 <span class="carry-count">(2)</span></td>
               <td class="cell-total col-actual status-achieved">147</td>
             </tr>
             <!-- 提案 -->
@@ -536,17 +544,17 @@
             <tr>
               <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">実績</th>
               <td class="col-actual status-unachieved">4</td>
-              <td class="col-actual status-achieved">7</td>
-              <td class="col-actual status-achieved">9</td>
-              <td class="col-actual status-achieved">6</td>
-              <td class="col-actual status-unachieved">4</td>
-              <td class="col-actual status-unachieved">5</td>
-              <td class="col-actual status-achieved">10</td>
-              <td class="col-actual status-unachieved">4</td>
-              <td class="col-actual status-achieved">6</td>
-              <td class="col-actual status-achieved">8</td>
-              <td class="col-actual status-achieved">9</td>
-              <td class="col-actual status-achieved">5</td>
+              <td class="col-actual status-achieved">7 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">9 <span class="carry-count">(3)</span></td>
+              <td class="col-actual status-achieved">6 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-unachieved">4 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-unachieved">5 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">10 <span class="carry-count">(4)</span></td>
+              <td class="col-actual status-unachieved">4 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">6 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">8 <span class="carry-count">(3)</span></td>
+              <td class="col-actual status-achieved">9 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">5 <span class="carry-count">(1)</span></td>
               <td class="cell-total col-actual status-achieved">77</td>
             </tr>
             <!-- 受注 -->
@@ -570,17 +578,17 @@
             <tr>
               <th class="sub-row-header" style="position: sticky; left: 120px; z-index: 1;">実績</th>
               <td class="col-actual status-unachieved">1</td>
-              <td class="col-actual status-achieved">4</td>
-              <td class="col-actual status-achieved">5</td>
-              <td class="col-actual status-achieved">3</td>
+              <td class="col-actual status-achieved">4 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">5 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">3 <span class="carry-count">(1)</span></td>
               <td class="col-actual status-achieved">2</td>
-              <td class="col-actual status-unachieved">2</td>
-              <td class="col-actual status-achieved">6</td>
+              <td class="col-actual status-unachieved">2 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">6 <span class="carry-count">(2)</span></td>
               <td class="col-actual status-unachieved">1</td>
-              <td class="col-actual status-achieved">3</td>
-              <td class="col-actual status-achieved">4</td>
-              <td class="col-actual status-achieved">5</td>
-              <td class="col-actual status-achieved">3</td>
+              <td class="col-actual status-achieved">3 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">4 <span class="carry-count">(1)</span></td>
+              <td class="col-actual status-achieved">5 <span class="carry-count">(2)</span></td>
+              <td class="col-actual status-achieved">3 <span class="carry-count">(1)</span></td>
               <td class="cell-total col-actual status-achieved">39</td>
             </tr>
           </tbody>
@@ -890,7 +898,28 @@
                 }
               }
             }
+          },
+          onClick: function(event, elements) {
+            if (elements.length > 0) {
+              const el = elements[0];
+              const datasetIndex = el.datasetIndex;
+              // datasetIndex: 0=目標(line), 1=受注済み(bar), 2=見込み(bar)
+              if (datasetIndex === 1 || datasetIndex === 2) {
+                const monthIndex = el.index + 1; // 1月=1, 2月=2, ...
+                window.location.href = `SC-013_revenue_gantt.html?month=${monthIndex}`;
+              }
+            }
           }
+        }
+      });
+
+      // 棒グラフ上でカーソルをポインターに変更
+      document.getElementById('salesChart').addEventListener('mousemove', function(e) {
+        const points = salesChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
+        if (points.length > 0 && (points[0].datasetIndex === 1 || points[0].datasetIndex === 2)) {
+          e.target.style.cursor = 'pointer';
+        } else {
+          e.target.style.cursor = 'default';
         }
       });
     });
